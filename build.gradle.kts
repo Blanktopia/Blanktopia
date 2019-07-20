@@ -31,6 +31,7 @@ val plugin_main: String by project
 val plugin_name: String by project
 val plugin_description: String by project
 val plugin_author: String by project
+val plugin_website: String by project
 
 bukkit {
     name = plugin_name
@@ -38,6 +39,7 @@ bukkit {
     main = plugin_main
     author = plugin_author
     description = plugin_description
+    website = plugin_website
 }
 
 tasks.withType<KotlinCompile> {
