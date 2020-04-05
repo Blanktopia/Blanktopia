@@ -1,0 +1,293 @@
+items:
+  guidebook:
+    right-click:
+      player-command: /help
+
+books:
+  title: Encyclopedia Blanktopia
+  author: chendol
+  pages:
+    help:
+      - |2
+               Welcome to
+              &9&lBlanktopia&r
+
+        1. [&1&nRules](/help rules hover=Read the rules of the server.)
+        2. [&1&nAbout](/help about hover=Find out what makes Blanktopia unique!)
+        3. [&1&nDiscord/Map](/help links hover=Visit our Discord and world map!)
+        4. [&1&nClaiming](run_command=/help claims hover=Protect your builds by claiming!)
+        5. [&1&nEnchantments](run_command=/help enchantments hover=Read about our custom enchantments!)
+        6. [&1&nPlayer Shops](run_command=/help shop hover=Learn how to set up your own shops!)
+        7. [&1&nVoting](run_command=/help vote hover=Support the server by voting!)
+
+    rules:
+      - |
+        **Rules**
+        We have some basic rules so everyone can have fun:
+
+        &41. Be friendly&r
+        No griefing, trolling, or harrassment!
+
+        &42. No cheating&r
+        No hacked clients, X-rays, or exploits.
+
+        [&1&l« Back](/help hover=Back to Contents)
+
+    links:
+      - |
+        **Links**
+        Here are some useful links:
+
+        [&1&nDiscord](https://discord.gg/UXXmUzv)
+        [&1&nMap](https://blanktopia.weiwen.me/)
+
+        [&1&l« Back](/help hover=Back to Contents)
+
+    about:
+      - |
+        **About**
+        Here are some unique changes we have:
+
+        1. [&1&nTeleporting](/help teleport hover=Find out how to teleport!).
+        2. [&1&nEnchantments](/help enchantments hover=Read about our custom enchantments!).
+        3. [&1&nPlayer shops](/help shop hover=Learn how to set up your own shops!).
+        4. Trees drop instantly when chopped!
+        5. Ender dragon drops an elytra and a dragon egg on death.
+      - |
+        6. Right click with a slime ball to find slime chunks.
+        7. Use crafting tables, ender chests, and shulker boxes from your inventory.
+
+        [&1&l« Back](/help hover=Back to Contents)
+
+    shop:
+      - |
+        **Player Shops**
+        To make a shop, place a sign on a chest that matches this format:
+
+        &7Line 1:&r [Shop]
+        &7Line 2:&r <description>
+        &7Line 3:&r <cost e.g. 1 diamond>
+        &7Line 4:&r <blank>
+
+        Make sure your chest is in a [&1&nclaimed region](/help claims hover=How to claim regions)!
+        [&1&l« Back](/help hover=Back to Contents)
+
+    claims:
+      - |
+        **Claiming**
+        Right click two corners of a rectangle to claim:
+
+          &6#&7----+
+          |        |
+          +----&6#&r
+
+        Use &6/trust&r to allow friends to build in your claims.
+
+        [&1&l« Back](/help hover=Back to Contents)
+
+    vote:
+      - |
+        **Voting**
+        Voting helps us attract new users. Click on the link below to vote!
+
+        [&1&nClick here to vote](/vote hover=Click here to vote)
+
+        If you're having fun, invite your friends to join us!
+
+        [&1&l« Back](/help hover=Back to Contents)
+
+    teleport:
+      - |
+        **Teleporting**
+        &6/spawn&r
+        ##Teleport to spawn##
+        &6/sethome <name>&r
+        ##Save your location for later.##
+        &6/home&r
+        ##Teleport to a saved location.##
+        &6/tpa <player>&r
+        ##Teleport to a friend.##
+        &6/tpahere <player>&r
+        ##Teleport a friend to you.##
+        [&1&l« Back](/help about hover=Back to About)
+
+    enchantments:
+      - |
+        **Custom Enchantments**
+        Use an enchanting table to get one of these enchantments!
+
+        ● [&1&nSoulbound](run_command=/help enchantments soulbound hover=Will not drop on death.
+        Rarity: &5Legendary&r
+        Found on: All
+        Enchantable on: All)
+        ● [&1&nNight Vision](/help enchantments nightvision hover=See in the dark.
+        Rarity: &1Rare&r
+        Found on: Helmets
+        Enchantable on: Helmets)
+        ● [&1&nSpring](/help enchantments spring hover=Jump higher with every jump!
+        Rarity: &2Uncommon&r
+        Found on: Leggings
+        Enchantable on: Leggings)
+        ● [&1&nStride](/help enchantments stride hover=Walk faster!
+        Rarity: &2Uncommon&r
+        Found on: Boots
+        Enchantable on: Boots)
+        ● [&1&nSmelt](/help enchantments smelt hover=Smelts the blocks you mine.
+        Rarity: &1Rare&r
+        Found on: Pickaxes
+        Enchantable on: Pickaxes, Axes, Shovels)
+        ● [&1&nBeheading](/help enchantments beheading hover=Gives a chance of dropping mob heads.
+        Rarity: &1Rare&r
+        Found on: Axes
+        Enchantable on: Axes)
+        ● [&1&nFrost](/help enchantments frost hover=Slows the target
+        Rarity: &2Uncommon&r
+        Found on: Swords, Axes
+        Enchantable on: Swords, Axes)
+        ● [&1&nSting](/help enchantments sting hover=Poisons the target
+        Rarity: &2Uncommon&r
+        Found on: Swords, Axes
+        Enchantable on: Swords, Axes)
+      - |
+        ● [&1&nSpectral](/help enchantments spectral hover=Make the target glow
+        Rarity: &1Rare&r
+        Found on: Swords, Axes
+        Enchantable on: Swords, Axes)
+        ● [&1&nSniper](/help enchantments sniper hover=Fire arrows faster and further
+        Rarity: &2Uncommon&r
+        Found on: Bows, Crossbows
+        Enchantable on: Bows, Crossbows)
+        ● [&1&nFinal](/help enchantments final hover=Cannot be modified on an anvil.
+        Rarity: Common
+        Found on: Unobtainable
+        Enchantable on: All)
+
+        [&1&l« Back](/help hover=Back to Contents)
+
+    'enchantments soulbound':
+      - |
+        **Soulbound**
+        ##Will not drop on death.##
+
+        Rarity: &5Legendary&r
+        Found on: All
+        Enchantable on: All
+
+        [&1&l« Back](/help enchantments hover=Back to Enchantments)
+
+    'enchantments nightvision':
+      - |
+        **Night Vision**
+        ##See in the dark.##
+
+        Rarity: &1Rare&r
+        Found on: Helmets
+        Enchantable on: Helmets)
+
+        [&1&l« Back](/help enchantments hover=Back to Enchantments)
+
+    'enchantments spring':
+      - |
+        **Spring**
+        ##Jump higher with every jump!##
+
+        Rarity: &2Uncommon&r
+        Max Level: III
+        Found on: Leggings
+        Enchantable on: Leggings
+
+        [&1&l« Back](/help enchantments hover=Back to Enchantments)
+
+    'enchantments stride':
+      - |
+        **Stride**
+        ##Walk faster!##
+
+        Rarity: &2Uncommon&r
+        Max Level: V
+        Found on: Boots
+        Enchantable on: Boots
+
+        [&1&l« Back](/help enchantments hover=Back to Enchantments)
+
+    'enchantments smelt':
+      - |
+        **Smelt**
+        ##Smelts the blocks you mine.##
+
+        Rarity: &1Rare&r
+        Found on: Pickaxes
+        Enchantable on: Pickaxes, Axes, Shovels
+
+        [&1&l« Back](/help enchantments hover=Back to Enchantments)
+
+    'enchantments beheading':
+      - |
+        **Beheading**
+        ##Gives a chance of dropping mob heads.##
+
+        Rarity: &1Rare&r
+        Max Level: V
+        Found on: Axes
+        Enchantable on: Axes
+
+        [&1&l« Back](/help enchantments hover=Back to Enchantments)
+
+    'enchantments frost':
+      - |
+        **Frost**
+        ##Slows the target##
+
+        Rarity: &2Uncommon&r
+        Max Level: III
+        Found on: Swords, Axes
+        Enchantable on: Swords, Axes
+
+        [&1&l« Back](/help enchantments hover=Back to Enchantments)
+
+    'enchantments sting':
+      - |
+        **Sting**
+        ##Poisons the target##
+
+        Rarity: &2Uncommon&r
+        Max Level: III
+        Found on: Swords, Axes
+        Enchantable on: Swords, Axes
+
+        [&1&l« Back](/help enchantments hover=Back to Enchantments)
+
+    'enchantments spectral':
+      - |
+        **Spectral**
+        ##Make the target glow##
+
+        Rarity: &1Rare&r
+        Max Level: III
+        Found on: Swords, Axes
+        Enchantable on: Swords, Axes
+
+        [&1&l« Back](/help enchantments hover=)
+
+    'enchantments sniper':
+      - |
+        **Sniper**
+        ##Fire arrows faster and further##
+
+        Rarity: &1Rare&r
+        Max Level: III
+        Found on: Bows, Crossbows
+        Enchantable on: Bows, Crossbows
+
+        [&1&l« Back](/help enchantments hover=Back to Enchantments)
+
+    'enchantments final':
+      - |
+        **Final**
+        ##Cannot be modified on an anvil.##
+
+        Rarity: &4Unique&r
+        Found on: None
+        Enchantable on: All
+
+        [&1&l« Back](/help enchantments hover=Back to Enchantments)
