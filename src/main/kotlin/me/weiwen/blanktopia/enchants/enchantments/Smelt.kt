@@ -1,21 +1,19 @@
 package me.weiwen.blanktopia.enchants.enchantments
 
-import me.weiwen.blanktopia.Blanktopia
 import me.weiwen.blanktopia.enchants.*
 import me.weiwen.blanktopia.playSoundAt
 import me.weiwen.blanktopia.spawnParticleAt
 import org.bukkit.*
 import org.bukkit.enchantments.Enchantment
-import org.bukkit.entity.Damageable
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.ExperienceOrb
+import org.bukkit.entity.Item
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.block.BlockDropItemEvent
 import org.bukkit.inventory.ItemStack
 import kotlin.math.ceil
 import kotlin.math.floor
-import kotlin.math.roundToInt
 import kotlin.random.Random
 
 
@@ -37,46 +35,36 @@ object Smelt : Listener {
     init {}
 
     @EventHandler
-    fun onBlockBreak(event: BlockBreakEvent) {
+    fun onBlockDropItem(event: BlockDropItemEvent) {
         val player = event.player
-        if (player.gameMode != GameMode.SURVIVAL) {
-            return
-        }
         val tool = player.inventory.itemInMainHand
-        if (!tool.containsEnchantment(SMELT)) {
-            return
-        }
+        if (!tool.containsEnchantment(SMELT)) return
         val block = event.block
-        if (event.isDropItems) {
-            event.isDropItems = false
-            val drops = mutableSetOf<ItemStack>()
-            var smelted = false
-            var experience = 0.0
-            for (drop in block.getDrops(tool)) {
-                val smeltedDrop = getSmeltedDrops(drop)
-                if (smeltedDrop != null) {
-                    smelted = true
-                    drops.add(smeltedDrop.first)
-                    experience += smeltedDrop.second
-                } else {
-                    drops.add(drop)
-                }
+        var smelted = false
+        var experience = 0.0
+        val items = event.items
+        val removedItems = mutableSetOf<Item>()
+        for (item in items) {
+            val smeltedItem = getSmeltedDrops(item.itemStack)
+            if (smeltedItem != null) {
+                removedItems.add(item)
+                smelted = true
+                block.world.dropItemNaturally(block.location, smeltedItem.first)
+                experience += smeltedItem.second
             }
-            if (smelted) {
-                spawnParticleAt(Particle.FLAME, block, 1, 0.01)
-                playSoundAt(Sound.BLOCK_FIRE_AMBIENT, block, SoundCategory.BLOCKS, 0.5f, 0.8f)
-            }
-                for (drop in drops) {
-                    block.world.dropItemNaturally(block.location, drop)
-                }
-                if (experience > 0) {
-                    val orb = block.world.spawnEntity(block.location, EntityType.EXPERIENCE_ORB) as ExperienceOrb
-                    orb.experience = if (Random.nextDouble() > experience.rem(1.0)) {
-                        ceil(experience)
-                    } else {
-                        floor(experience)
-                    }.toInt()
-                }
+        }
+        items.removeAll(removedItems)
+        if (smelted) {
+            spawnParticleAt(Particle.FLAME, block, 1, 0.01)
+            playSoundAt(Sound.BLOCK_FIRE_AMBIENT, block, SoundCategory.BLOCKS, 0.5f, 0.8f)
+        }
+        if (experience > 0) {
+            val orb = block.world.spawnEntity(block.location, EntityType.EXPERIENCE_ORB) as ExperienceOrb
+            orb.experience = if (Random.nextDouble() > experience.rem(1.0)) {
+                ceil(experience)
+            } else {
+                floor(experience)
+            }.toInt()
         }
     }
 

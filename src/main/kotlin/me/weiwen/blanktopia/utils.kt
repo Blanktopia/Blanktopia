@@ -7,6 +7,7 @@ import org.bukkit.SoundCategory
 import org.bukkit.block.Block
 import org.bukkit.entity.Entity
 import org.bukkit.entity.ExperienceOrb
+import kotlin.math.round
 import kotlin.math.sqrt
 
 var ExperienceOrb.level: Double
@@ -18,13 +19,13 @@ var ExperienceOrb.level: Double
         (sqrt(72 * experience - 54215.0) + 325) / 18
     }
     set(level: Double) {
-        if (level < 16) {
+        experience = (if (level < 16) {
             level * level + 6 * level
         } else if (level < 31) {
             2.5 * level * level - 40.5 * level + 360
         } else {
             4.5 * level * level - 162 * level + 2220
-        }
+        }).toInt()
     }
 
 fun Int.toRomanNumerals(): String {

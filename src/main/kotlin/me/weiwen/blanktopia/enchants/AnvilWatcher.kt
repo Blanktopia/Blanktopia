@@ -1,17 +1,20 @@
 package me.weiwen.blanktopia.enchants
 
+import me.weiwen.blanktopia.Blanktopia
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.PrepareAnvilEvent
+import org.bukkit.inventory.AnvilInventory
 import org.bukkit.inventory.meta.Damageable
 import org.bukkit.inventory.meta.EnchantmentStorageMeta
 import org.bukkit.inventory.meta.Repairable
 import kotlin.math.ceil
 
-object AnvilWatcher : Listener {
+class AnvilWatcher(val plugin: Blanktopia) : Listener {
     @EventHandler
     private fun onPrepareAnvil(event: PrepareAnvilEvent) {
         val target = event.inventory.contents[0] ?: return
@@ -56,14 +59,13 @@ object AnvilWatcher : Listener {
 
         result.itemMeta = resultMeta
 
-        var targetBookMeta = targetMeta as? EnchantmentStorageMeta
+        val targetBookMeta = targetMeta as? EnchantmentStorageMeta
         val targetEnchantments = targetBookMeta?.storedEnchants ?: target.enchantments
-        var sacrificeBookMeta = sacrificeMeta as? EnchantmentStorageMeta
+        val sacrificeBookMeta = sacrificeMeta as? EnchantmentStorageMeta
         val sacrificeEnchantments = sacrificeBookMeta?.storedEnchants ?: sacrifice.enchantments
 
         // Combining
         for ((enchant, sacrificeLevel) in sacrificeEnchantments.entries) {
-            (targetMeta as? EnchantmentStorageMeta)?.getStoredEnchantLevel(enchant)
             val targetLevel = targetBookMeta?.getStoredEnchantLevel(enchant) ?: target.getEnchantmentLevel(enchant)
             if (sacrificeLevel < targetLevel) continue
             if (targetBookMeta == null) {
@@ -102,8 +104,10 @@ object AnvilWatcher : Listener {
         repairCost = minOf(repairCost, 39)
         event.result = result
         val inventory = event.inventory
-        inventory.repairCost = repairCost
         (event.viewers.get(0) as? Player)?.updateInventory()
+        plugin.server.scheduler.runTask(plugin, {
+            inventory.repairCost = repairCost
+        } as () -> Unit)
     }
 }
 

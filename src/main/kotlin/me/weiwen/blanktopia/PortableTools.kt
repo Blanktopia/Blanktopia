@@ -1,29 +1,23 @@
 package me.weiwen.blanktopia
 
 import org.bukkit.Material
-import org.bukkit.Sound
-import org.bukkit.SoundCategory
-import org.bukkit.block.Block
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryCloseEvent
-import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.inventory.InventoryHolder
-import org.bukkit.inventory.InventoryView
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.BlockStateMeta
-import java.util.*
 
 class PortableTools(private val plugin: Blanktopia) :
-    Listener {
-    init {
+    Listener, Module {
+    override fun enable() {
         plugin.server.pluginManager.registerEvents(this, plugin)
     }
+
+    override fun disable() {}
+
+    override fun reload() {}
 
     @EventHandler
     fun onPlayerInteract(event: PlayerInteractEvent) {

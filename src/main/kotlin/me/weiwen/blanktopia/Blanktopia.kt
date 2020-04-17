@@ -3,16 +3,16 @@ package me.weiwen.blanktopia
 import me.weiwen.blanktopia.books.Books
 import me.weiwen.blanktopia.enchants.CustomEnchants
 import me.weiwen.blanktopia.items.CustomItems
+import me.weiwen.blanktopia.kits.Kits
 import me.weiwen.blanktopia.storage.Storage
 import org.bukkit.ChatColor
-import org.bukkit.configuration.file.FileConfiguration
-import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 
 
 class Blanktopia : JavaPlugin() {
     lateinit var storage: Storage
+    var modules = mutableListOf<Module>()
 
     companion object {
         lateinit var INSTANCE: Blanktopia
@@ -30,23 +30,40 @@ class Blanktopia : JavaPlugin() {
         getCommand("blanktopia")?.setExecutor { sender, _, _, args ->
             when (args[0]) {
                 "reload" -> {
-                    this.onDisable()
-                    this.onEnable()
-                    sender.sendMessage(ChatColor.GOLD.toString() + "Reloaded!")
+                    for (module in modules) {
+                        module.reload()
+                    }
+                    sender.sendMessage(ChatColor.GOLD.toString() + "Reloaded configuration!")
+                    true
+                }
+                "save" -> {
+                    storage.save()
+                    sender.sendMessage(ChatColor.GOLD.toString() + "Saved player data!")
                     true
                 }
                 else -> false
             }
         }
-        PortableTools(this)
-        CustomEnchants(this)
-        Books(this)
-        CustomItems(this)
+        modules.add(storage)
+        modules.add(PortableTools(this))
+        modules.add(SinglePlayerSleep(this))
+        modules.add(EnderDragon(this, storage))
+        modules.add(CustomEnchants(this))
+        val customItems = CustomItems(this)
+        modules.add(customItems)
+        modules.add(Books(this, customItems))
+        modules.add(Kits(this, customItems))
+        for (module in modules) {
+            module.enable()
+        }
         logger.info("Blanktopia is enabled")
     }
 
     override fun onDisable() {
-        storage.save()
+        for (module in modules) {
+            module.disable()
+        }
+        modules = mutableListOf()
         logger.info("Blanktopia is disabled")
     }
 
@@ -65,3 +82,8 @@ class Blanktopia : JavaPlugin() {
     }
 }
 
+interface Module {
+    fun enable()
+    fun disable()
+    fun reload()
+}

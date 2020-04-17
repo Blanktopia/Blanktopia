@@ -1,7 +1,35 @@
+kits:
+  starter:
+    - custom-item: guidebook
+    - material: wooden_sword
+      enchantments:
+        soulbound: 1
+        unbreaking: 2
+    - material: wooden_pickaxe
+      enchantments:
+        soulbound: 1
+        unbreaking: 2
+    - material: wooden_axe
+      enchantments:
+        soulbound: 1
+        unbreaking: 2
+    - material: wooden_shovel
+      enchantments:
+        soulbound: 1
+        unbreaking: 2
+    - material: bread
+      amount: 16
+      enchantments:
+        soulbound: 1
+
 items:
   guidebook:
+    material: KNOWLEDGE_BOOK
+    name: Beginner's Guide
+    enchantments:
+      soulbound: 1
     right-click:
-      player-command: /help
+      player-command: help
 
 books:
   title: Encyclopedia Blanktopia
@@ -14,11 +42,12 @@ books:
 
         1. [&1&nRules](/help rules hover=Read the rules of the server.)
         2. [&1&nAbout](/help about hover=Find out what makes Blanktopia unique!)
-        3. [&1&nDiscord/Map](/help links hover=Visit our Discord and world map!)
+        3. [&1&nDiscord](/help discord hover=Join us on Discord!)
         4. [&1&nClaiming](run_command=/help claims hover=Protect your builds by claiming!)
         5. [&1&nEnchantments](run_command=/help enchantments hover=Read about our custom enchantments!)
         6. [&1&nPlayer Shops](run_command=/help shop hover=Learn how to set up your own shops!)
         7. [&1&nVoting](run_command=/help vote hover=Support the server by voting!)
+        8. [&1&nRanks](/help ranks hover=Rank up and gain more perks!)
 
     rules:
       - |
@@ -33,13 +62,13 @@ books:
 
         [&1&l« Back](/help hover=Back to Contents)
 
-    links:
+    discord:
       - |
         **Links**
         Here are some useful links:
 
         [&1&nDiscord](https://discord.gg/UXXmUzv)
-        [&1&nMap](https://blanktopia.weiwen.me/)
+        [&1&nWorld Map](https://blanktopia.weiwen.me/)
 
         [&1&l« Back](/help hover=Back to Contents)
 
@@ -51,11 +80,12 @@ books:
         1. [&1&nTeleporting](/help teleport hover=Find out how to teleport!).
         2. [&1&nEnchantments](/help enchantments hover=Read about our custom enchantments!).
         3. [&1&nPlayer shops](/help shop hover=Learn how to set up your own shops!).
-        4. Trees drop instantly when chopped!
-        5. Ender dragon drops an elytra and a dragon egg on death.
+        4. Only one person needs to sleep.
+        5. Trees drop instantly when chopped!
+        6. Ender dragon drops an elytra and a dragon egg on death.
       - |
-        6. Right click with a slime ball to find slime chunks.
-        7. Use crafting tables, ender chests, and shulker boxes from your inventory.
+        7. Right click with a slime ball to find slime chunks.
+        8. Use crafting tables, ender chests, and shulker boxes from your inventory.
 
         [&1&l« Back](/help hover=Back to Contents)
 
@@ -93,6 +123,24 @@ books:
         [&1&nClick here to vote](/vote hover=Click here to vote)
 
         If you're having fun, invite your friends to join us!
+
+        [&1&l« Back](/help hover=Back to Contents)
+
+    ranks:
+      - |
+        **Ranks**
+        Gain more [&1&nhomes](/help teleport hover=Find out how to teleport!) and [&1&nclaim blocks](/help claims hover=How to claim regions) by [&1&nvoting](/help voting hover=Support the server by voting!). Hover over the ranks to see their perks!
+
+        0 votes: [&rChick](hover=3 homes
+        1000 claim blocks)
+        1 votes: [&2Squirrel](hover=5 homes
+        2000 claim blocks)
+        3 votes: [&aRabbit](hover=10 homes
+        4000 claim blocks)
+        9 votes: [&3Hedgehog](hover=15 homes
+        6000 claim blocks)
+        18 votes: [&bKitten](hover=20 homes
+        8000 claim blocks)
 
         [&1&l« Back](/help hover=Back to Contents)
 
@@ -149,6 +197,10 @@ books:
         Found on: Swords, Axes
         Enchantable on: Swords, Axes)
       - |
+        ● [&1&nHarvest](/help enchantments harvest hover=Automatically replant crops
+        Rarity: &1Rare&r
+        Found on: Hoes
+        Enchantable on: Swords, Axes)
         ● [&1&nSpectral](/help enchantments spectral hover=Make the target glow
         Rarity: &1Rare&r
         Found on: Swords, Axes
@@ -242,6 +294,7 @@ books:
         Max Level: III
         Found on: Swords, Axes
         Enchantable on: Swords, Axes
+        Conflicts with: Fire Aspect, Sting
 
         [&1&l« Back](/help enchantments hover=Back to Enchantments)
 
@@ -254,6 +307,7 @@ books:
         Max Level: III
         Found on: Swords, Axes
         Enchantable on: Swords, Axes
+        Conflicts with: Fire Aspect, Frost
 
         [&1&l« Back](/help enchantments hover=Back to Enchantments)
 
@@ -266,6 +320,18 @@ books:
         Max Level: III
         Found on: Swords, Axes
         Enchantable on: Swords, Axes
+
+        [&1&l« Back](/help enchantments hover=)
+
+    'enchantments harvest':
+      - |
+        **Harvest**
+        ##Automatically replants crops.##
+
+        Rarity: &1Rare&r
+        Max Level: I
+        Found on: Hoes
+        Enchantable on: Hoes
 
         [&1&l« Back](/help enchantments hover=)
 

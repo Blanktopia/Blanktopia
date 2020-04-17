@@ -1,6 +1,7 @@
 package me.weiwen.blanktopia.enchants
 
 import me.weiwen.blanktopia.Blanktopia
+import me.weiwen.blanktopia.Module
 import me.weiwen.blanktopia.enchants.enchantments.*
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
@@ -14,6 +15,7 @@ val ENCHANTMENTS = setOf(
     BEHEADING,
     FINAL,
     FROST,
+    HARVEST,
     NIGHT_VISION,
     SMELT,
     SNIPER,
@@ -27,13 +29,13 @@ val ENCHANTMENTS = setOf(
 private val ENCHANTMENTS_TICKABLE= ENCHANTMENTS.filter { it.listener is EveryTenTicks }
 
 class CustomEnchants(private val plugin: Blanktopia) :
-    Listener {
+    Listener, Module {
 
-    init {
+    override fun enable() {
         plugin.server.pluginManager.registerEvents(this, plugin)
         plugin.server.pluginManager.registerEvents(EnchantingTableWatcher, plugin)
-        plugin.server.pluginManager.registerEvents(AnvilWatcher, plugin)
-        plugin.server.pluginManager.registerEvents(GrindStoneWatcher, plugin)
+        plugin.server.pluginManager.registerEvents(AnvilWatcher(plugin), plugin)
+        plugin.server.pluginManager.registerEvents(GrindStoneWatcher(plugin), plugin)
 
         plugin.server.scheduler.runTaskTimer(plugin, ::everyTenTicks as (() -> Unit), 10, 10)
 
@@ -41,7 +43,11 @@ class CustomEnchants(private val plugin: Blanktopia) :
         registerEnchantments()
     }
 
-    fun everyTenTicks() {
+    override fun disable() {}
+
+    override fun reload() {}
+
+    private fun everyTenTicks() {
         for (player in Bukkit.getOnlinePlayers()) {
             for (item in player.inventory.armorContents) {
                 if (item != null && !item.enchantments.isEmpty()) {

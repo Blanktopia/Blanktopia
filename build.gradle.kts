@@ -32,6 +32,7 @@ dependencies {
     compileOnly("org.spigotmc:spigot-api:$spigot_version")
     compileOnly("org.bukkit:bukkit:$bukkit_version")
     compile("de.themoep:minedown:1.5-SNAPSHOT")
+    compile("io.papermc:paperlib:1.0.2")
 }
 
 val plugin_main: String by project
@@ -59,6 +60,22 @@ bukkit {
             description = "Find out more about Blanktopia!"
             usage = "/<command> <page>"
         }
+        register("rules") {
+            description = "Read the rules of the server."
+            usage = "/<command>"
+        }
+        register("about") {
+            description = "Find out what makes Blanktopia unique!"
+            usage = "/<command>"
+        }
+        register("shop") {
+            description = "Learn how to set up your own shops!"
+            usage = "/<command>"
+        }
+        register("ranks") {
+            description = "Rank up and gain more perks!"
+            usage = "/<command>"
+        }
         register("wenchant") {
             description = "Enchants held item with custom enchantments"
             usage = "/<command> <enchant> [level]"
@@ -69,11 +86,17 @@ bukkit {
             usage = "/<command> <type>"
             permission = "blanktopia.item"
         }
+        register("wkit") {
+            description = "Gives user a kit"
+            usage = "/<command> <kit> [player]"
+            permission = "blanktopia.kit"
+        }
     }
     permissions {
         register("blanktopia.admin") { }
         register("blanktopia.enchant") { }
         register("blanktopia.item") { }
+        register("blanktopia.kit") { }
         register("blanktopia.help") {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.TRUE
         }
