@@ -5,10 +5,14 @@ import org.bukkit.Particle
 import org.bukkit.Sound
 import org.bukkit.SoundCategory
 import org.bukkit.block.Block
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Entity
 import org.bukkit.entity.ExperienceOrb
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.Damageable
 import kotlin.math.round
 import kotlin.math.sqrt
+import kotlin.random.Random
 
 var ExperienceOrb.level: Double
     get() = if (experience < 352) {
@@ -38,6 +42,15 @@ fun Int.toRomanNumerals(): String {
         }
     }
     return ""
+}
+
+fun ItemStack.damage(damage: Int) {
+    val meta = this.itemMeta
+    val unbreaking = meta.getEnchantLevel(Enchantment.DURABILITY)
+    if (meta is Damageable && (100 / (unbreaking + 1)) > Random.nextDouble()) {
+            meta.damage += damage
+    }
+    this.itemMeta = meta
 }
 
 data class Trie<S, T>(var value: T?) {
