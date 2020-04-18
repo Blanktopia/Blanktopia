@@ -47,7 +47,7 @@ fun Int.toRomanNumerals(): String {
 fun ItemStack.damage(damage: Int) {
     val meta = this.itemMeta
     val unbreaking = meta.getEnchantLevel(Enchantment.DURABILITY)
-    if (meta is Damageable && (100 / (unbreaking + 1)) > Random.nextDouble()) {
+    if (meta is Damageable && (1.0 / (unbreaking + 1)) > Random.nextDouble()) {
             meta.damage += damage
     }
     this.itemMeta = meta
