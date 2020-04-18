@@ -1,3 +1,5 @@
+max-shulkers-per-chunk: 10
+
 kits:
   starter:
     - custom-item: guidebook

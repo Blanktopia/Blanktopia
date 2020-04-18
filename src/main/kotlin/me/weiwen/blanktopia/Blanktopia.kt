@@ -48,6 +48,7 @@ class Blanktopia : JavaPlugin() {
         modules.add(PortableTools(this))
         modules.add(SinglePlayerSleep(this))
         modules.add(EnderDragon(this, storage))
+        modules.add(ShulkerRespawn(this))
         modules.add(CustomEnchants(this))
         val customItems = CustomItems(this)
         modules.add(customItems)
