@@ -26,19 +26,20 @@ class EnderDragon(val plugin: Blanktopia, val storage: Storage) : Module, Listen
     fun onPlayerPortalEvent(event: PlayerPortalEvent) {
         if (event.cause != PlayerTeleportEvent.TeleportCause.END_PORTAL) return
         val world = event.to.world
-        val enderDragonBattle = world.enderDragonBattle ?: return
         val player = event.player
         val config = storage.player(player)
-        if (!config.getBoolean("has-spawned-dragon")
-            && enderDragonBattle.hasBeenPreviouslyKilled()
-            && enderDragonBattle.enderDragon == null) {
-            val loc = enderDragonBattle.endPortalLocation
-            PaperLib.getChunkAtAsync(loc).thenAccept {
-                world.spawnEntity(loc.clone().add(Vector(3.5, 1.0, 0.5)), EntityType.ENDER_CRYSTAL)
-                world.spawnEntity(loc.clone().add(Vector(-2.5, 1.0, 0.5)), EntityType.ENDER_CRYSTAL)
-                world.spawnEntity(loc.clone().add(Vector(0.5, 1.0, 3.5)), EntityType.ENDER_CRYSTAL)
-                world.spawnEntity(loc.clone().add(Vector(0.5, 1.0, -2.5)), EntityType.ENDER_CRYSTAL)
-                enderDragonBattle.initiateRespawn()
+        if (!config.getBoolean("has-spawned-dragon")) {
+            PaperLib.getChunkAtAsync(world, 0, 0, false).thenAccept {
+                val enderDragonBattle = world.enderDragonBattle ?: return@thenAccept
+                if (enderDragonBattle.hasBeenPreviouslyKilled()
+                    && enderDragonBattle.enderDragon == null) {
+                    val loc = enderDragonBattle.endPortalLocation
+                    world.spawnEntity(loc.clone().add(Vector(3.5, 1.0, 0.5)), EntityType.ENDER_CRYSTAL)
+                    world.spawnEntity(loc.clone().add(Vector(-2.5, 1.0, 0.5)), EntityType.ENDER_CRYSTAL)
+                    world.spawnEntity(loc.clone().add(Vector(0.5, 1.0, 3.5)), EntityType.ENDER_CRYSTAL)
+                    world.spawnEntity(loc.clone().add(Vector(0.5, 1.0, -2.5)), EntityType.ENDER_CRYSTAL)
+                    enderDragonBattle.initiateRespawn()
+                }
             }
         }
         config.set("has-spawned-dragon", true)
