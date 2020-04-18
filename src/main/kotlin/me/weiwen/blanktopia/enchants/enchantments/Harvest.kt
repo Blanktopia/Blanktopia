@@ -31,6 +31,9 @@ val HARVEST = CustomEnchantment(
     Harvest
 )
 
+val HARVESTABLE_BLOCKS = setOf(Material.WHEAT, Material.CARROTS, Material.POTATOES, Material.BEETROOTS, Material.COCOA)
+val HARVESTABLE_ITEMS = setOf(Material.WHEAT_SEEDS, Material.CARROT, Material.POTATO, Material.BEETROOT_SEEDS, Material.COCOA_BEANS)
+
 object Harvest : Listener {
     init {}
 
@@ -40,18 +43,15 @@ object Harvest : Listener {
         val tool = player.inventory.itemInMainHand ?: return
         if (tool.containsEnchantment(HARVEST)) {
             val blockData = event.block.blockData as? Ageable ?: return
+            if (!HARVESTABLE_BLOCKS.contains(event.block.type)) return
+
             event.isCancelled = true
 
             tool.damage(1)
 
             for (drop in event.block.getDrops(tool)) {
-                when (drop.type) {
-                    Material.WHEAT_SEEDS,
-                        Material.CARROT,
-                        Material.POTATO,
-                        Material.BEETROOT_SEEDS,
-                        Material.COCOA_BEANS -> drop.amount -= 1
-                    else -> Unit
+                if (HARVESTABLE_ITEMS.contains(drop.type)) {
+                    drop.amount -= 1
                 }
                 if (drop.amount > 0) {
                     event.block.world.dropItemNaturally(event.block.location, drop)
