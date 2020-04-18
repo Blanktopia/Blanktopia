@@ -42,7 +42,7 @@ class AnvilWatcher(val plugin: Blanktopia) : Listener {
         }
 
         // Repair
-        if (resultMeta is Damageable && targetMeta is Damageable && sacrificeMeta is Damageable && targetMeta.hasDamage()) {
+        if (target.type == sacrifice.type && resultMeta is Damageable && targetMeta is Damageable && sacrificeMeta is Damageable && targetMeta.hasDamage()) {
             repairCost += 2
             val max = result.type.maxDurability.toInt()
             resultMeta.damage = max - minOf((max - targetMeta.damage + max - sacrificeMeta.damage + max * 1.12).toInt(), max)
