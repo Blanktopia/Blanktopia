@@ -52,21 +52,22 @@ object Beheading : Listener {
         if (killer != null) {
             val weapon = killer.equipment?.itemInMainHand ?: return
             if (weapon.containsEnchantment(BEHEADING)) {
+                if (entity is Player) {
+                    val skull = ItemStack(Material.PLAYER_HEAD)
+                    val skullMeta = skull.itemMeta as SkullMeta
+                    skullMeta.owningPlayer = entity
+                    skullMeta.setDisplayName(ChatColor.YELLOW.toString() + entity.name + "'s Head")
+                    skullMeta.lore =
+                        listOf(ChatColor.RESET.toString() + "Killed by " + ChatColor.RED + killer.name)
+                    skull.itemMeta = skullMeta
+                    skull
+                    return
+                }
                 val chance: Double =
                     weapon.getEnchantmentLevel(BEHEADING) * .1
                 val random = Math.random()
                 if (chance > random) {
                     val skull: ItemStack? = when (entity) {
-                        is Player -> {
-                            val skull = ItemStack(Material.PLAYER_HEAD)
-                            val skullMeta = skull.itemMeta as SkullMeta
-                            skullMeta.owningPlayer = entity
-                            skullMeta.setDisplayName(ChatColor.YELLOW.toString() + entity.name + "'s Head")
-                            skullMeta.lore =
-                                listOf(ChatColor.RESET.toString() + "Killed by " + ChatColor.RED + killer.name)
-                            skull.itemMeta = skullMeta
-                            skull
-                        }
                         is Bat -> playerHead("Bat", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzgyMGExMGRiMjIyZjY5YWMyMjE1ZDdkMTBkY2E0N2VlYWZhMjE1NTUzNzY0YTJiODFiYWZkNDc5ZTc5MzNkMSJ9fX0=")
                         is Bee -> playerHead("Bee", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTQ3MzIyZjgzMWUzYzE2OGNmYmQzZTI4ZmU5MjUxNDRiMjYxZTc5ZWIzOWM3NzEzNDlmYWM1NWE4MTI2NDczIn19fQ==")
                         is Blaze -> playerHead("Blaze", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjc4ZWYyZTRjZjJjNDFhMmQxNGJmZGU5Y2FmZjEwMjE5ZjViMWJmNWIzNWE0OWViNTFjNjQ2Nzg4MmNiNWYwIn19fQ==")
