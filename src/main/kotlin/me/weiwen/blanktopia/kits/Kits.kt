@@ -7,6 +7,7 @@ import me.weiwen.blanktopia.items.CustomItems
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
+import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -15,12 +16,12 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.inventory.ItemStack
 
 class Kits(val plugin: Blanktopia, val customItems: CustomItems) : Listener, Module {
-    private val config = plugin.config.getConfigurationSection("kits")!!
     private var kits = mapOf<String, List<ItemStack>>()
 
     override fun enable() {
-        kits = populateKits()
         plugin.server.pluginManager.registerEvents(this, plugin)
+        reload()
+
         val command = plugin.getCommand("wkit")
         command?.setExecutor { sender, _, _, args ->
             val name = args[0] ?: return@setExecutor false
@@ -34,7 +35,8 @@ class Kits(val plugin: Blanktopia, val customItems: CustomItems) : Listener, Mod
     override fun disable() {}
 
     override fun reload() {
-        kits = populateKits()
+        val config = plugin.config.getConfigurationSection("kits")!!
+        kits = populateKits(config)
     }
 
     fun giveKit(player: Player, name: String) {
@@ -45,7 +47,7 @@ class Kits(val plugin: Blanktopia, val customItems: CustomItems) : Listener, Mod
         }
     }
 
-    private fun populateKits(): Map<String, List<ItemStack>> {
+    private fun populateKits(config: ConfigurationSection): Map<String, List<ItemStack>> {
         val kits = mutableMapOf<String, List<ItemStack>>()
         for (name in config.getKeys(false)) {
             val kitConfig = config.getMapList(name)

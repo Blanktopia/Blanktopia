@@ -7,20 +7,19 @@ import me.weiwen.blanktopia.Trie
 import me.weiwen.blanktopia.items.CustomItems
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.Player
 import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BookMeta
 
 class Books(val plugin: Blanktopia, val customItems: CustomItems) : Listener, Module {
-    private val config = plugin.config.getConfigurationSection("books")!!
     private lateinit var books: Map<String, ItemStack>
     private lateinit var bookTitles: Trie<Char, String>
 
     override fun enable() {
-        books = populateBooks()
-        bookTitles = populateBookTitles()
         plugin.server.pluginManager.registerEvents(this, plugin)
+        reload()
 
         // Help
         val command = plugin.getCommand("help")
@@ -99,11 +98,12 @@ class Books(val plugin: Blanktopia, val customItems: CustomItems) : Listener, Mo
     override fun disable() {}
 
     override fun reload() {
-        books = populateBooks()
-        bookTitles = populateBookTitles()
+        val config = plugin.config.getConfigurationSection("books")!!
+        books = populateBooks(config)
+        bookTitles = populateBookTitles(config)
     }
 
-    private fun populateBooks(): Map<String, ItemStack> {
+    private fun populateBooks(config: ConfigurationSection): Map<String, ItemStack> {
         val title = config.getString("title")
         val author = config.getString("author")
         val books = mutableMapOf<String, ItemStack>()
@@ -127,7 +127,7 @@ class Books(val plugin: Blanktopia, val customItems: CustomItems) : Listener, Mo
         return books
     }
 
-    private fun populateBookTitles(): Trie<Char, String> {
+    private fun populateBookTitles(config: ConfigurationSection): Trie<Char, String> {
         val trie = Trie<Char, String>(null)
         val pages = config.getConfigurationSection("pages")
         if (pages == null) {
