@@ -34,11 +34,9 @@ fun playerHead(name: String, texture: String): ItemStack {
     val skull = ItemStack(Material.PLAYER_HEAD)
     val uuid = UUID(texture.hashCode().toLong(), texture.hashCode().toLong())
     Bukkit.getUnsafe().modifyItemStack(skull,
-        "{SkullOwner:{Id:\"$uuid\",Properties:{textures:[{Value:\"$texture\"}]}}}"
+        "{SkullOwner:{Name:\"$name\",Id:\"$uuid\",Properties:{textures:[{Value:\"$texture\"}]}}}"
+        // TODO: change in 1.16 {UUID:[I;1498693494,1027158888,1898994005,860320107]}
     )
-    val skullMeta = skull.itemMeta as SkullMeta
-    skullMeta.setDisplayName(ChatColor.YELLOW.toString() + name + " Head")
-    skull.itemMeta = skullMeta
     return skull
 }
 
