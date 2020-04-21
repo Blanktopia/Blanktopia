@@ -46,6 +46,7 @@ class Blanktopia : JavaPlugin() {
         }
         modules.add(storage)
         modules.add(PortableTools(this))
+        modules.add(PetTeleport(this))
         modules.add(SinglePlayerSleep(this))
         modules.add(EnderDragon(this, storage))
         modules.add(ShulkerRespawn(this))
