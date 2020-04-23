@@ -53,6 +53,7 @@ object Beheading : Listener {
                 if (entity is Player) {
                     val skull = ItemStack(Material.PLAYER_HEAD)
                     val skullMeta = skull.itemMeta as SkullMeta
+                    skullMeta.setOwningPlayer(entity)
                     skullMeta.setDisplayName(ChatColor.YELLOW.toString() + entity.name + "'s Head")
                     skullMeta.lore =
                         listOf(ChatColor.RESET.toString() + "Killed by " + ChatColor.RED + killer.name)
