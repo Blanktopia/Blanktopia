@@ -1,4 +1,5 @@
-max-shulkers-per-chunk: 10
+max-shulkers-per-chunk: 1
+shulker-spawn-chance: 0.1
 
 kits:
   starter:
