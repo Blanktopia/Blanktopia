@@ -1,6 +1,8 @@
 package me.weiwen.blanktopia
 
 import org.bukkit.Material
+import org.bukkit.Sound
+import org.bukkit.SoundCategory
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -42,6 +44,7 @@ class PortableTools(private val plugin: Blanktopia) :
             }
             return true
         } else if (item.type == Material.ENDER_CHEST) {
+            player.playSound(player.location, Sound.BLOCK_ENDER_CHEST_OPEN, SoundCategory.BLOCKS, 1.0f, 1.0f)
             plugin.server.scheduler.runTask(plugin) { ->
                 player.openInventory(player.enderChest)
             }
