@@ -52,10 +52,6 @@ class EnderDragon(val plugin: Blanktopia, val storage: Storage) : Module, Listen
         val player = event.entity.killer
         Bukkit.getScheduler().runTaskLater(plugin, runTaskLater@{
             player?.inventory?.addItem(ItemStack(Material.ELYTRA))
-            player?.giveExp(11500, true)
-            val eggLocation = enderDragonBattle.endPortalLocation.add(0.0, 4.0, 0.0)
-            val egg = world.getBlockAt(eggLocation)
-            if (egg.type == Material.AIR) egg.type = Material.DRAGON_EGG
         } as () -> Unit, 200)
     }
 }
