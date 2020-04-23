@@ -197,9 +197,12 @@ val HOES = setOf(
 val BOOKS = setOf(
     Material.BOOK
 )
+val ELYTRA = setOf(
+    Material.ELYTRA
+)
 val BOWS = setOf(Material.BOW, Material.CROSSBOW)
 val FISHING_ROD = setOf(Material.FISHING_ROD)
 val TRIDENT = setOf(Material.TRIDENT)
 val ARMOR = HELMET + CHESTPLATE + LEGGINGS + BOOTS
 val TOOLS = SWORDS + AXES + PICKAXES + SHOVELS + HOES
-val ALL = ARMOR + TOOLS + TRIDENT + BOWS + FISHING_ROD
+val ALL = ARMOR + TOOLS + TRIDENT + BOWS + FISHING_ROD + ELYTRA
