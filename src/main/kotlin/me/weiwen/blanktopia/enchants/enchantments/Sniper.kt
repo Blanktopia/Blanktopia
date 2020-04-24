@@ -1,5 +1,6 @@
 package me.weiwen.blanktopia.enchants.enchantments
 
+import me.weiwen.blanktopia.enchants.BOOKS
 import me.weiwen.blanktopia.enchants.BOWS
 import me.weiwen.blanktopia.enchants.CustomEnchantment
 import me.weiwen.blanktopia.enchants.NONE
@@ -12,7 +13,7 @@ val SNIPER = CustomEnchantment(
     "sniper",
     "Sniper",
     3,
-    BOWS,
+    BOWS + BOOKS,
     NONE,
     0.2,
     10,

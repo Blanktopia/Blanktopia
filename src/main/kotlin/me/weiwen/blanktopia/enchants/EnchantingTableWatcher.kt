@@ -22,7 +22,7 @@ object EnchantingTableWatcher : Listener {
         val modifiedLevel = maxOf(round(level * modifier), 1.0).toInt()
 
         val customEnchants = mutableSetOf<CustomEnchantment>()
-        for (enchant in ENCHANTMENTS) {
+        for (enchant in ENCHANTMENTS.shuffled()) {
             if (enchants.any { enchant.conflictsWith(it) }) continue
             if (customEnchants.any { enchant.conflictsWith(it) }) continue
             if (enchant.primaryItems.contains(item.type) && modifiedLevel > enchant.enchantCostBase) {

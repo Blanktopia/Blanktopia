@@ -3,6 +3,7 @@ package me.weiwen.blanktopia.enchants.enchantments
 import me.weiwen.blanktopia.enchants.ALL
 import me.weiwen.blanktopia.enchants.BOOKS
 import me.weiwen.blanktopia.enchants.CustomEnchantment
+import me.weiwen.blanktopia.enchants.NONE
 import org.bukkit.ChatColor
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.event.EventHandler
@@ -14,7 +15,7 @@ val SOULBOUND = CustomEnchantment(
     "Soulbound",
     1,
     ALL + BOOKS,
-    ALL + BOOKS,
+    NONE,
     0.05,
     30,
     30,
