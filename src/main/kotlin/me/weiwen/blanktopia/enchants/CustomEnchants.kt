@@ -17,6 +17,8 @@ val ENCHANTMENTS = setOf(
     FROST,
     HARVEST,
     NIGHT_VISION,
+    PARRY,
+    RUSH,
     SMELT,
     SNIPER,
     SOULBOUND,
