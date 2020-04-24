@@ -38,7 +38,7 @@ class Storage(private val plugin: Blanktopia) : Module {
         val uuid = player.uniqueId
         if (playerConfigs[uuid] != null) return playerConfigs[uuid]!!
 
-        val config = YamlConfiguration.loadConfiguration(File(playerDataFolder, "$uuid.json"))
+        val config = YamlConfiguration.loadConfiguration(File(playerDataFolder, "$uuid.yml"))
         playerConfigs[uuid] = config
         return config
     }
