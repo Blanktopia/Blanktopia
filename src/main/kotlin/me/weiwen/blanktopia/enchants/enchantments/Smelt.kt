@@ -24,12 +24,12 @@ val SMELT = CustomEnchantment(
     "Smelt",
     1,
     PICKAXES + BOOKS,
-    PICKAXES + SHOVELS + AXES + BOOKS,
+    SHOVELS + AXES,
     0.1,
     30,
     30,
     12,
-    { setOf(Enchantment.SILK_TOUCH, Enchantment.LOOT_BONUS_BLOCKS) },
+    { setOf() },
     Smelt
 )
 
