@@ -43,6 +43,7 @@ object Frost : Listener {
                 spawnParticleAt(Particle.SNOWBALL, entity, 20, 0.01)
                 playSoundAt(Sound.BLOCK_GLASS_BREAK, entity, SoundCategory.PLAYERS, 0.5f, 0.1f)
                 playSoundAt(Sound.ENTITY_SNOW_GOLEM_HURT, entity, SoundCategory.PLAYERS, 0.5f, 1.5f)
+                if (event.isCancelled) return
                 entity.fireTicks = 0
                 entity.addPotionEffect(PotionEffect(PotionEffectType.SLOW, 20 + level * 20, level))
             }

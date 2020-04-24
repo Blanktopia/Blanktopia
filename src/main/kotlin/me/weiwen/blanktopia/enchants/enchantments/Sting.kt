@@ -38,6 +38,7 @@ object Sting : Listener {
             if (weapon.containsEnchantment(STING)) {
                 val level = weapon.getEnchantmentLevel(STING)
                 spawnParticleAt(Particle.SNEEZE, entity, 10, 0.01)
+                if (event.isCancelled) return
                 entity.addPotionEffect(PotionEffect(PotionEffectType.POISON, 80,
                     when (level) {
                         0, 1 -> 0
