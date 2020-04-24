@@ -3,8 +3,10 @@ package me.weiwen.blanktopia.enchants.enchantments
 import me.weiwen.blanktopia.enchants.*
 import me.weiwen.blanktopia.playSoundAt
 import me.weiwen.blanktopia.spawnParticleAt
-import org.bukkit.*
-import org.bukkit.enchantments.Enchantment
+import org.bukkit.Material
+import org.bukkit.Particle
+import org.bukkit.Sound
+import org.bukkit.SoundCategory
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.ExperienceOrb
 import org.bukkit.entity.Item

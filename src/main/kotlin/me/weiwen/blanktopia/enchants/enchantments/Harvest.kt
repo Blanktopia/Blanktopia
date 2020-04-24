@@ -1,13 +1,11 @@
 package me.weiwen.blanktopia.enchants.enchantments
 
-import me.weiwen.blanktopia.Blanktopia
 import me.weiwen.blanktopia.damage
 import me.weiwen.blanktopia.enchants.BOOKS
 import me.weiwen.blanktopia.enchants.CustomEnchantment
 import me.weiwen.blanktopia.enchants.HOES
 import me.weiwen.blanktopia.enchants.NONE
 import me.weiwen.blanktopia.spawnParticleAt
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.block.data.Ageable
@@ -15,7 +13,6 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
-import org.bukkit.inventory.meta.Damageable
 
 val HARVEST = CustomEnchantment(
     "harvest",
