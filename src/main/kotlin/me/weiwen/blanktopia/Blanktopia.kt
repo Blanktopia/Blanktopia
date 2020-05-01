@@ -30,6 +30,7 @@ class Blanktopia : JavaPlugin() {
         getCommand("blanktopia")?.setExecutor { sender, _, _, args ->
             when (args[0]) {
                 "reload" -> {
+                    reloadConfig()
                     for (module in modules) {
                         module.reload()
                     }
