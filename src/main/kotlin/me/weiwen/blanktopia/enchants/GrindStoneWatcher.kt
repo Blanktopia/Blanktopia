@@ -7,23 +7,45 @@ import org.bukkit.entity.EntityType
 import org.bukkit.entity.ExperienceOrb
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryDragEvent
+import org.bukkit.event.inventory.InventoryInteractEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.GrindstoneInventory
+import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
 import org.bukkit.inventory.meta.Repairable
 
 class GrindStoneWatcher(val plugin: Blanktopia) : Listener {
+
+    @EventHandler
+    private fun onInventoryDrag(event: InventoryDragEvent) {
+        val inventory = event.inventory as? GrindstoneInventory ?: return
+        val player = event.whoClicked
+        if (player !is Player) return
+
+        val target = inventory.getItem(0)
+        val sacrifice = inventory.getItem(1)
+        val result = getResult(target, sacrifice)
+        inventory.setItem(2, result)
+        Bukkit.getScheduler().runTaskLater(plugin, { _ ->
+            val target = inventory.getItem(0)
+            val sacrifice = inventory.getItem(1)
+            inventory.setItem(2, getResult(target, sacrifice))
+        }, 2)
+    }
+
     @EventHandler
     private fun onInventoryClick(event: InventoryClickEvent) {
         val inventory = event.inventory as? GrindstoneInventory ?: return
-        if (event.whoClicked !is Player) return
+        val player = event.whoClicked
+        if (player !is Player) return
 
         if (event.slotType == InventoryType.SlotType.RESULT) {
             val target = inventory.getItem(0)
             val sacrifice = inventory.getItem(1)
-            val result = inventory.getItem(2)
             var exp = 0.0
             if (target != null) {
                 var targetExp = 0
@@ -43,13 +65,7 @@ class GrindStoneWatcher(val plugin: Blanktopia) : Listener {
                 }
                 exp += sacrificeExp * sacrifice.amount
             }
-            if (result != null) {
-                val meta = result.itemMeta
-                if (meta is Repairable) {
-                    meta.repairCost = 0
-                }
-                result.itemMeta = meta
-            }
+            inventory.setItem(2, getResult(target, sacrifice))
             if (exp > 0.0) {
                 event.inventory.location?.run {
                     val orb = world?.spawnEntity(this, EntityType.EXPERIENCE_ORB) as ExperienceOrb
@@ -57,41 +73,44 @@ class GrindStoneWatcher(val plugin: Blanktopia) : Listener {
                 }
             }
         } else {
-            Bukkit.getScheduler().runTask(plugin) { _ ->
+            val target = inventory.getItem(0)
+            val sacrifice = inventory.getItem(1)
+            val result = getResult(target, sacrifice)
+            inventory.setItem(2, result)
+            Bukkit.getScheduler().runTaskLater(plugin, { _ ->
                 val target = inventory.getItem(0)
                 val sacrifice = inventory.getItem(1)
+                inventory.setItem(2, getResult(target, sacrifice))
+            }, 2)
+        }
+    }
 
-                val result = if (target != null && sacrifice != null) {
-                    if (target.type != sacrifice.type) return@runTask
-                    val result = target.clone()
-                    val resultMeta = result.itemMeta
-                    val targetMeta = target.itemMeta
-                    val sacrificeMeta = sacrifice.itemMeta
-                    if (resultMeta is Damageable && targetMeta is Damageable && sacrificeMeta is Damageable) {
-                        val max = result.type.maxDurability.toInt()
-                        resultMeta.damage = max - minOf(
-                            (max - targetMeta.damage + max - sacrificeMeta.damage + max * 1.05).toInt(),
-                            max
-                        )
-                    }
-                    result
-                } else {
-                    (target ?: sacrifice ?: return@runTask).clone()
-                }
+    fun getResult(target: ItemStack?, sacrifice: ItemStack?): ItemStack? {
+        if (target != null && sacrifice != null && target.type != sacrifice.type) return null
+        val result = (target ?: sacrifice ?: return null).clone()
+        removeAllEnchantments(result)
+        if (target != null && sacrifice != null) {
+            val resultMeta = result.itemMeta
+            val targetMeta = target.itemMeta
+            val sacrificeMeta = sacrifice.itemMeta
+            if (resultMeta is Damageable && targetMeta is Damageable && sacrificeMeta is Damageable) {
+                val max = result.type.maxDurability.toInt()
+                resultMeta.damage = max - minOf(
+                    (max - targetMeta.damage + max - sacrificeMeta.damage + max * 1.05).toInt(),
+                    max
+                )
+                result.itemMeta = resultMeta
+            }
+        }
+        return result
+    }
 
-                val meta = result.itemMeta
-                if (meta?.hasEnchants() == true) {
-                    for (enchant in ENCHANTMENTS) {
-                        if (result.containsEnchantment(enchant)) {
-                            enchant.disenchantItem(result)
-                        }
-                    }
-                    for (enchant in result.enchantments.keys) {
-                        result.removeEnchantment(enchant)
-                    }
-                    inventory.setItem(2, result)
-                }
-                result.itemMeta = meta
+    fun removeAllEnchantments(item: ItemStack) {
+        for (enchant in item.enchantments.keys) {
+            if (enchant is CustomEnchantment) {
+                enchant.disenchantItem(item)
+            } else {
+                item.removeEnchantment(enchant)
             }
         }
     }
