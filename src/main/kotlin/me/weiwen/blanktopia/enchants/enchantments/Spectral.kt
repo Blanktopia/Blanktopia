@@ -3,6 +3,7 @@ package me.weiwen.blanktopia.enchants.enchantments
 import me.weiwen.blanktopia.enchants.*
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Entity
+import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -33,7 +34,11 @@ object Spectral : Listener {
         val damager = event.damager
         if (entity is LivingEntity && damager is LivingEntity) {
             val weapon = damager.equipment?.itemInMainHand ?: return
+            if (event.isCancelled) return
+            if (entity is HumanEntity && entity.isBlocking) return
             if (weapon.containsEnchantment(SPECTRAL)) {
+                if (event.isCancelled) return
+                if (entity is HumanEntity && entity.isBlocking) return
                 val level = weapon.getEnchantmentLevel(SPECTRAL)
                 entity.addPotionEffect(PotionEffect(PotionEffectType.GLOWING, 20 + level * 20, 0, true))
             }

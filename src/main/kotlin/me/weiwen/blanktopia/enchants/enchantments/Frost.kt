@@ -8,6 +8,7 @@ import org.bukkit.Sound
 import org.bukkit.SoundCategory
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Entity
+import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -44,6 +45,7 @@ object Frost : Listener {
                 playSoundAt(Sound.BLOCK_GLASS_BREAK, entity, SoundCategory.PLAYERS, 0.5f, 0.1f)
                 playSoundAt(Sound.ENTITY_SNOW_GOLEM_HURT, entity, SoundCategory.PLAYERS, 0.5f, 1.5f)
                 if (event.isCancelled) return
+                if (entity is HumanEntity && entity.isBlocking) return
                 entity.fireTicks = 0
                 entity.addPotionEffect(PotionEffect(PotionEffectType.SLOW, 20 + level * 20, level))
             }

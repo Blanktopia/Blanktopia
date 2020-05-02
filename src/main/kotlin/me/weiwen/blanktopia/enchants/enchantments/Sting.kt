@@ -5,6 +5,7 @@ import me.weiwen.blanktopia.spawnParticleAt
 import org.bukkit.Particle
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Entity
+import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -39,6 +40,7 @@ object Sting : Listener {
                 val level = weapon.getEnchantmentLevel(STING)
                 spawnParticleAt(Particle.SNEEZE, entity, 10, 0.01)
                 if (event.isCancelled) return
+                if (entity is HumanEntity && entity.isBlocking) return
                 entity.addPotionEffect(PotionEffect(PotionEffectType.POISON, 80,
                     when (level) {
                         0, 1 -> 0
