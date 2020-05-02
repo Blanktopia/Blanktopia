@@ -70,7 +70,7 @@ class AnvilWatcher(val plugin: Blanktopia) : Listener {
                 if (!enchant.canEnchantItem(result)) continue
                 if (enchant is CustomEnchantment && !enchant.canAnvilItem(result)) continue
             }
-            if (targetLevel == 0 && targetEnchantments.keys.any { enchant.conflictsWith(it) }) {
+            if (targetLevel == 0 && targetEnchantments.keys.any { enchant.conflictsWith(it) || it.conflictsWith(enchant) }) {
                 repairCost += 1
                 continue
             }
