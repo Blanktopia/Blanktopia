@@ -28,8 +28,8 @@ val HARVEST = CustomEnchantment(
     Harvest
 )
 
-val HARVESTABLE_BLOCKS = setOf(Material.WHEAT, Material.CARROTS, Material.POTATOES, Material.BEETROOTS, Material.COCOA)
-val HARVESTABLE_ITEMS = setOf(Material.WHEAT_SEEDS, Material.CARROT, Material.POTATO, Material.BEETROOT_SEEDS, Material.COCOA_BEANS)
+val HARVESTABLE_BLOCKS = setOf(Material.WHEAT, Material.CARROTS, Material.POTATOES, Material.BEETROOTS, Material.COCOA, Material.NETHER_WART)
+val HARVESTABLE_ITEMS = setOf(Material.WHEAT_SEEDS, Material.CARROT, Material.POTATO, Material.BEETROOT_SEEDS, Material.COCOA_BEANS, Material.NETHER_WART)
 
 object Harvest : Listener {
     init {}
