@@ -5,6 +5,7 @@ import me.weiwen.blanktopia.enchants.BOWS
 import me.weiwen.blanktopia.enchants.CustomEnchantment
 import me.weiwen.blanktopia.enchants.NONE
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.entity.AbstractArrow
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityShootBowEvent
@@ -34,11 +35,17 @@ object Sniper : Listener {
         val level = item.getEnchantmentLevel(SNIPER)
 
         val projectile = event.projectile
-        projectile.velocity = projectile.velocity.multiply(when (level) {
-            1 -> 1.25
-            2 -> 1.4
-            3 -> 1.5
-            else -> 1.5
-        })
+        val boost =
+            when (level) {
+                1 -> 1.25
+                2 -> 1.4
+                3 -> 1.5
+                else -> 1.5
+            }
+        projectile.velocity = projectile.velocity.multiply(boost)
+
+        if (projectile is AbstractArrow) {
+            projectile.damage = projectile.damage / boost
+        }
     }
 }
