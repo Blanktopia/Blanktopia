@@ -8,6 +8,7 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
@@ -32,13 +33,12 @@ object Spectral : Listener {
     fun onEntityDamageByEntity(event: EntityDamageByEntityEvent) {
         val entity: Entity = event.entity
         val damager = event.damager
+        if (event.cause != EntityDamageEvent.DamageCause.ENTITY_ATTACK && event.cause != EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK) return
+        if (entity is HumanEntity && entity.isBlocking) return
+        if (event.isCancelled) return
         if (entity is LivingEntity && damager is LivingEntity) {
             val weapon = damager.equipment?.itemInMainHand ?: return
-            if (event.isCancelled) return
-            if (entity is HumanEntity && entity.isBlocking) return
             if (weapon.containsEnchantment(SPECTRAL)) {
-                if (event.isCancelled) return
-                if (entity is HumanEntity && entity.isBlocking) return
                 val level = weapon.getEnchantmentLevel(SPECTRAL)
                 entity.addPotionEffect(PotionEffect(PotionEffectType.GLOWING, 20 + level * 20, 0, true))
             }

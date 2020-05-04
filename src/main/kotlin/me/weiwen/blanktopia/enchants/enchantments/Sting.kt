@@ -10,6 +10,7 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
@@ -34,13 +35,14 @@ object Sting : Listener {
     fun onEntityDamageByEntity(event: EntityDamageByEntityEvent) {
         val entity: Entity = event.entity
         val damager = event.damager
+        if (event.cause != EntityDamageEvent.DamageCause.ENTITY_ATTACK && event.cause != EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK) return
+        if (entity is HumanEntity && entity.isBlocking) return
         if (entity is LivingEntity && damager is LivingEntity) {
             val weapon = damager.equipment?.itemInMainHand ?: return
             if (weapon.containsEnchantment(STING)) {
                 val level = weapon.getEnchantmentLevel(STING)
                 spawnParticleAt(Particle.SNEEZE, entity, 10, 0.01)
                 if (event.isCancelled) return
-                if (entity is HumanEntity && entity.isBlocking) return
                 entity.addPotionEffect(PotionEffect(PotionEffectType.POISON, 80,
                     when (level) {
                         0, 1 -> 0
