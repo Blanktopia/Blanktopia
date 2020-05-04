@@ -11,6 +11,7 @@ import org.bukkit.Material
 import org.bukkit.entity.*
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
@@ -46,6 +47,10 @@ object Beheading : Listener {
     @EventHandler
     fun onEntityDeath(event: EntityDeathEvent) {
         val entity: Entity = event.entity
+        val lastDamageCause = entity.lastDamageCause
+        if (lastDamageCause != null) {
+            if (lastDamageCause.cause != EntityDamageEvent.DamageCause.ENTITY_ATTACK && lastDamageCause.cause != EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK) return
+        }
         val killer = event.entity.killer
         if (killer != null) {
             val weapon = killer.equipment?.itemInMainHand ?: return
