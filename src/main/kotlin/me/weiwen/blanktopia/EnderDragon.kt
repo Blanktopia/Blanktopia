@@ -48,7 +48,7 @@ class EnderDragon(val plugin: Blanktopia, val storage: Storage) : Module, Listen
     fun onEntityDeath(event: EntityDeathEvent) {
         if (event.entityType != EntityType.ENDER_DRAGON) return
         val world = event.entity.world
-        val enderDragonBattle = world.enderDragonBattle ?: return
+        if (world.enderDragonBattle == null) return
         val player = event.entity.killer
         Bukkit.getScheduler().runTaskLater(plugin, runTaskLater@{
             player?.inventory?.addItem(ItemStack(Material.ELYTRA))
