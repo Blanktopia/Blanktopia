@@ -3,6 +3,7 @@ package me.weiwen.blanktopia.enchants
 import me.weiwen.blanktopia.Blanktopia
 import me.weiwen.blanktopia.level
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.ExperienceOrb
 import org.bukkit.entity.Player
@@ -16,6 +17,7 @@ import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.GrindstoneInventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
+import org.bukkit.inventory.meta.EnchantmentStorageMeta
 import org.bukkit.inventory.meta.Repairable
 
 class GrindStoneWatcher(val plugin: Blanktopia) : Listener {
@@ -88,9 +90,15 @@ class GrindStoneWatcher(val plugin: Blanktopia) : Listener {
     fun getResult(target: ItemStack?, sacrifice: ItemStack?): ItemStack? {
         if (target != null && sacrifice != null && target.type != sacrifice.type) return null
         val result = (target ?: sacrifice ?: return null).clone()
-        removeAllEnchantments(result)
+        for (enchant in result.enchantments.keys) {
+            result.disenchant(enchant)
+        }
+        val meta = result.itemMeta
+        if (meta is EnchantmentStorageMeta) {
+            return ItemStack(Material.BOOK)
+        }
+        val resultMeta = result.itemMeta
         if (target != null && sacrifice != null) {
-            val resultMeta = result.itemMeta
             val targetMeta = target.itemMeta
             val sacrificeMeta = sacrifice.itemMeta
             if (resultMeta is Damageable && targetMeta is Damageable && sacrificeMeta is Damageable) {
@@ -99,20 +107,10 @@ class GrindStoneWatcher(val plugin: Blanktopia) : Listener {
                     (max - targetMeta.damage + max - sacrificeMeta.damage + max * 1.05).toInt(),
                     max
                 )
-                result.itemMeta = resultMeta
             }
         }
+        result.itemMeta = resultMeta
         return result
-    }
-
-    fun removeAllEnchantments(item: ItemStack) {
-        for (enchant in item.enchantments.keys) {
-            if (enchant is CustomEnchantment) {
-                enchant.disenchantItem(item)
-            } else {
-                item.removeEnchantment(enchant)
-            }
-        }
     }
 }
 

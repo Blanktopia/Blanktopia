@@ -76,9 +76,9 @@ class CustomEnchants(private val plugin: Blanktopia) :
                     val level =
                         args.getOrNull(1)?.toIntOrNull() ?: enchant.maxLevel
                     if (level == 0) {
-                        enchant.disenchantItem(sender.inventory.itemInMainHand)
+                        sender.inventory.itemInMainHand.disenchant(enchant)
                     } else {
-                        enchant.enchantItem(sender.inventory.itemInMainHand, level)
+                        sender.inventory.itemInMainHand.enchant(enchant, level)
                     }
                 } else {
                     sender.sendMessage("Unknown enchantment.")

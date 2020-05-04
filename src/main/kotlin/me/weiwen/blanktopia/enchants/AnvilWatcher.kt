@@ -16,27 +16,64 @@ class AnvilWatcher(val plugin: Blanktopia) : Listener {
     @EventHandler
     private fun onPrepareAnvil(event: PrepareAnvilEvent) {
         val target = event.inventory.contents[0] ?: return
-        val sacrifice = event.inventory.contents[1] ?: return
-
-        // Unit repair should be handled normally
-        if (target.type != sacrifice.type && sacrifice.type != Material.ENCHANTED_BOOK) return
+        val sacrifice = event.inventory.contents[1]
 
         val result = target.clone()
         val resultMeta = result.itemMeta ?: Bukkit.getItemFactory().getItemMeta(result.type)!!
         val targetMeta = target.itemMeta ?: Bukkit.getItemFactory().getItemMeta(target.type)!!
-        val sacrificeMeta = sacrifice.itemMeta ?: Bukkit.getItemFactory().getItemMeta(sacrifice.type)!!
+        val sacrificeMeta = if (sacrifice == null) { null } else {sacrifice.itemMeta ?: Bukkit.getItemFactory().getItemMeta(sacrifice.type)!!}
 
         var repairCost = 0
         var canAnvil = false
 
         // Rename
-        if (!event.inventory.renameText.isNullOrBlank() && event.inventory.renameText !== resultMeta.displayName) {
+        if (!event.inventory.renameText.isNullOrBlank() && event.inventory.renameText != targetMeta.displayName) {
             if (targetMeta is Repairable && target.amount != 1) {
                 targetMeta.repairCost += 1
             }
             resultMeta.setDisplayName(event.inventory.renameText)
             repairCost += 1
             canAnvil = true
+        } else if (sacrifice == null) {
+            return
+        }
+
+        // Prior work penalty
+        val targetRepairCost = (targetMeta as? Repairable)?.repairCost ?: 0
+        val sacrificeRepairCost = (sacrificeMeta as? Repairable)?.repairCost ?: 0
+        if (resultMeta is Repairable) {
+            repairCost += maxOf(0, 1 shl (targetRepairCost - 1)) + maxOf(0, 1 shl (sacrificeRepairCost - 1))
+        }
+
+        if (sacrifice == null) {
+            repairCost = minOf(repairCost, 39)
+            result.itemMeta = resultMeta
+            event.result = result
+            val inventory = event.inventory
+            (event.viewers.get(0) as? Player)?.updateInventory()
+            plugin.server.scheduler.runTask(plugin, {
+                inventory.repairCost = repairCost
+            } as () -> Unit)
+            return
+        }
+
+        // Prior work increase
+        if (resultMeta is Repairable) {
+            resultMeta.repairCost = maxOf(targetRepairCost, sacrificeRepairCost) + 1
+        }
+
+        // Unit repair should be handled normally
+        if (target.type != sacrifice.type && sacrifice.type != Material.ENCHANTED_BOOK) {
+            val result = event.result ?: return
+            if (result.type == Material.AIR) return
+            val targetMeta = target.itemMeta ?: Bukkit.getItemFactory().getItemMeta(target.type)!!
+            for ((enchant, level) in targetMeta.enchants.entries) {
+                result.enchant(enchant, level)
+            }
+            repairCost = minOf(repairCost, 39)
+            event.result = result
+            (event.viewers.get(0) as? Player)?.updateInventory()
+            return
         }
 
         // Repair
@@ -45,14 +82,6 @@ class AnvilWatcher(val plugin: Blanktopia) : Listener {
             val max = result.type.maxDurability.toInt()
             resultMeta.damage = max - minOf((max - targetMeta.damage + max - sacrificeMeta.damage + max * 1.12).toInt(), max)
             canAnvil = true
-        }
-
-        // Prior work
-        if (resultMeta is Repairable && targetMeta is Repairable && sacrificeMeta is Repairable) {
-            resultMeta.repairCost = maxOf(targetMeta.repairCost, sacrificeMeta.repairCost) + 1
-            val targetRepairCost = maxOf(0, 1 shl (targetMeta.repairCost - 1))
-            val sacrificeRepairCost = maxOf(0, 1 shl (sacrificeMeta.repairCost - 1))
-            repairCost += targetRepairCost + sacrificeRepairCost
         }
 
         result.itemMeta = resultMeta

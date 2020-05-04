@@ -49,7 +49,7 @@ object EnchantingTableWatcher : Listener {
         Bukkit.getScheduler().scheduleSyncDelayedTask(Blanktopia.INSTANCE, {
             val item = event.inventory.getItem(0) ?: return@scheduleSyncDelayedTask
             for ((enchant, level) in enchantsToAdd.entries) {
-                enchant.enchantItem(item, level)
+                item.enchant(enchant, level)
             }
         }, 1)
     }

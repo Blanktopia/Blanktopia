@@ -35,53 +35,6 @@ open class CustomEnchantment(
     var _startLevel = 1
 
     fun enchantItem(item: ItemStack, level: Int) {
-        val meta = item.itemMeta ?: Bukkit.getItemFactory().getItemMeta(item.type)!!
-        if (meta is EnchantmentStorageMeta) {
-            meta.addStoredEnchant(this, level, true)
-        } else {
-            meta.addEnchant(this, level, true)
-        }
-        val enchantmentLore = StringBuilder()
-        enchantmentLore.append(ChatColor.RESET)
-        enchantmentLore.append(ChatColor.GRAY)
-        enchantmentLore.append(name)
-        if (maxLevel != 1) {
-            enchantmentLore.append(" ")
-            enchantmentLore.append(level.toRomanNumerals())
-        }
-        val lore = meta.lore ?: ArrayList<String>()
-        var found = false
-        for (i in lore.indices) {
-            if (lore[i].startsWith(ChatColor.RESET.toString() + ChatColor.GRAY + name)) {
-                lore[i] = enchantmentLore.toString()
-                found = true
-                break
-            }
-        }
-        if (!found) {
-            lore.add(0, enchantmentLore.toString())
-        }
-        meta.lore = lore
-        item.itemMeta = meta
-    }
-
-    fun disenchantItem(item: ItemStack) {
-        val meta = item.itemMeta
-        if (meta is EnchantmentStorageMeta) {
-            meta.removeStoredEnchant(this)
-        } else {
-            item.removeEnchantment(this)
-        }
-        val itemMeta = item.itemMeta!!
-        val lore = itemMeta.lore ?: return
-        for (i in lore.indices) {
-            if (lore[i].startsWith(ChatColor.RESET.toString() + ChatColor.GRAY + name)) {
-                lore.removeAt(i)
-                break
-            }
-        }
-        itemMeta.lore = lore
-        item.itemMeta = itemMeta
     }
 
     override fun getName(): String {
@@ -123,4 +76,57 @@ open class CustomEnchantment(
 
 interface EveryTenTicks {
     fun everyTenTicks(player: Player, level: Int) {}
+}
+
+fun ItemStack.enchant(enchantment: Enchantment, level: Int) {
+    val meta = this.itemMeta ?: Bukkit.getItemFactory().getItemMeta(this.type)!!
+    if (meta is EnchantmentStorageMeta) {
+        meta.addStoredEnchant(enchantment, level, true)
+    } else {
+        meta.addEnchant(enchantment, level, true)
+    }
+    if (enchantment is CustomEnchantment) {
+        val enchantmentLore = StringBuilder()
+        enchantmentLore.append(ChatColor.RESET)
+        enchantmentLore.append(ChatColor.GRAY)
+        enchantmentLore.append(enchantment.name)
+        if (enchantment.maxLevel != 1) {
+            enchantmentLore.append(" ")
+            enchantmentLore.append(level.toRomanNumerals())
+        }
+        val lore = meta.lore ?: ArrayList<String>()
+        var found = false
+        for (i in lore.indices) {
+            if (lore[i].startsWith(ChatColor.RESET.toString() + ChatColor.GRAY + enchantment.name)) {
+                lore[i] = enchantmentLore.toString()
+                found = true
+                break
+            }
+        }
+        if (!found) {
+            lore.add(0, enchantmentLore.toString())
+        }
+        meta.lore = lore
+    }
+    this.itemMeta = meta
+}
+
+fun ItemStack.disenchant(enchantment: Enchantment) {
+    val meta = this.itemMeta
+    if (meta is EnchantmentStorageMeta) {
+        meta.removeStoredEnchant(enchantment)
+    } else {
+        meta.removeEnchant(enchantment)
+    }
+    if (enchantment is CustomEnchantment) {
+        val lore = meta.lore ?: return
+        for (i in lore.indices) {
+            if (lore[i].startsWith(ChatColor.RESET.toString() + ChatColor.GRAY + enchantment.name)) {
+                lore.removeAt(i)
+                break
+            }
+        }
+        meta.lore = lore
+    }
+    this.itemMeta = meta
 }
