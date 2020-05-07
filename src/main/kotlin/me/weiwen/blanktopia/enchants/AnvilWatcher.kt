@@ -105,15 +105,7 @@ class AnvilWatcher(val plugin: Blanktopia) : Listener {
             }
             canAnvil = true
             val level = minOf(enchant.maxLevel, if (targetLevel == sacrificeLevel) targetLevel + 1 else sacrificeLevel)
-            if (enchant is CustomEnchantment) {
-                enchant.enchantItem(result, level)
-            } else if (targetBookMeta != null) {
-                val meta = result.itemMeta as? EnchantmentStorageMeta
-                meta?.addStoredEnchant(enchant, level, true)
-                result.itemMeta = meta
-            } else {
-                result.addEnchantment(enchant, level)
-            }
+            result.enchant(enchant, level)
             repairCost += if (sacrificeBookMeta != null) {
                 enchant.getAnvilCostPerLevel() * level
             } else {

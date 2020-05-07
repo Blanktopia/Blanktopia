@@ -34,9 +34,6 @@ open class CustomEnchantment(
     var _isTreasure = false
     var _startLevel = 1
 
-    fun enchantItem(item: ItemStack, level: Int) {
-    }
-
     override fun getName(): String {
         return _name
     }

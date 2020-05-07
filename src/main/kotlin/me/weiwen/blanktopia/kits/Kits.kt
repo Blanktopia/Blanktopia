@@ -3,6 +3,7 @@ package me.weiwen.blanktopia.kits
 import me.weiwen.blanktopia.Blanktopia
 import me.weiwen.blanktopia.Module
 import me.weiwen.blanktopia.enchants.CustomEnchantment
+import me.weiwen.blanktopia.enchants.enchant
 import me.weiwen.blanktopia.items.CustomItems
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -76,11 +77,7 @@ class Kits(val plugin: Blanktopia, val customItems: CustomItems) : Listener, Mod
                                     )
                                 )
                             if (enchant != null) {
-                                if (enchant is CustomEnchantment) {
-                                    enchant.enchantItem(item, level)
-                                } else {
-                                    item.addEnchantment(enchant, level)
-                                }
+                                item.enchant(enchant, level)
                             }
                         }
                     }

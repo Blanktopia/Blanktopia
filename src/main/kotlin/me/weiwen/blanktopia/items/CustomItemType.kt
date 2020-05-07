@@ -2,6 +2,7 @@ package me.weiwen.blanktopia.items
 
 import me.weiwen.blanktopia.Blanktopia
 import me.weiwen.blanktopia.enchants.CustomEnchantment
+import me.weiwen.blanktopia.enchants.enchant
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -50,11 +51,7 @@ class CustomItemType(val type: String, config: ConfigurationSection) {
         meta.persistentDataContainer.set(NamespacedKey(Blanktopia.INSTANCE, "type"), PersistentDataType.STRING, type)
         item.itemMeta = meta
         for ((enchant, level) in enchantments) {
-            if (enchant is CustomEnchantment) {
-                enchant.enchantItem(item, level)
-            } else {
-                item.addEnchantment(enchant, level)
-            }
+            item.enchant(enchant, level)
         }
         return item
     }
