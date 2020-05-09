@@ -26,7 +26,9 @@ class SinglePlayerSleep(val plugin: Blanktopia) : Module, Listener {
         }
         val world = event.player.world
         world.time = 1000
-        world.setStorm(false)
+        if (world.hasStorm()) {
+            world.setStorm(false)
+        }
         plugin.server.broadcastMessage(event.player.displayName + ChatColor.GRAY + " went to bed. Sweet dreams!")
     }
 }
