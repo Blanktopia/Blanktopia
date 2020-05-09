@@ -1,7 +1,9 @@
 package me.weiwen.blanktopia.items
 
+import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent
 import me.weiwen.blanktopia.Blanktopia
 import me.weiwen.blanktopia.Module
+import me.weiwen.blanktopia.items.listeners.FlyInClaims
 import org.bukkit.NamespacedKey
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -14,12 +16,13 @@ import org.bukkit.persistence.PersistentDataType
 
 class CustomItems(private val plugin: Blanktopia) :
     Listener, Module {
-    private val config = plugin.config.getConfigurationSection("items")!!
+    private var config = plugin.config.getConfigurationSection("items")!!
     private lateinit var items: Map<String, CustomItemType>
 
     override fun enable() {
         items = populateItems()
         plugin.server.pluginManager.registerEvents(this, plugin)
+        plugin.server.pluginManager.registerEvents(FlyInClaims(plugin), plugin)
         val command = plugin.getCommand("witem")
         command?.setExecutor { sender, _, _, args ->
             if (sender is Player) {
@@ -31,7 +34,7 @@ class CustomItems(private val plugin: Blanktopia) :
             }
         }
         command?.setTabCompleter {
-                _, _, _, args ->
+                _, _, _, _ ->
             config.getKeys(false).toList()
         }
     }
@@ -39,6 +42,7 @@ class CustomItems(private val plugin: Blanktopia) :
     override fun disable() {}
 
     override fun reload() {
+        config = plugin.config.getConfigurationSection("items")!!
         items = populateItems()
     }
 
@@ -58,14 +62,33 @@ class CustomItems(private val plugin: Blanktopia) :
     fun onPlayerInteract(event: PlayerInteractEvent) {
         val data = event.player.inventory.itemInMainHand.itemMeta?.persistentDataContainer ?: return
         val type = data.get(NamespacedKey(plugin, "type"), PersistentDataType.STRING) ?: return
-        event.isCancelled = true
         val item = items[type] ?: return
         when (event.action) {
-            Action.LEFT_CLICK_AIR -> item.leftClickAir?.run(event.player)
-            Action.LEFT_CLICK_BLOCK -> item.leftClickBlock?.run(event.player)
-            Action.RIGHT_CLICK_AIR -> item.rightClickAir?.run(event.player)
-            Action.RIGHT_CLICK_BLOCK -> item.rightClickBlock?.run(event.player)
-            else -> Unit
+            Action.LEFT_CLICK_AIR -> item.leftClickAir?.run(event.player, null, null)
+            Action.LEFT_CLICK_BLOCK -> item.leftClickBlock?.run(event.player, event.clickedBlock, event.blockFace)
+            Action.RIGHT_CLICK_AIR -> item.rightClickAir?.run(event.player, null, null)
+            Action.RIGHT_CLICK_BLOCK -> item.rightClickBlock?.run(event.player, event.clickedBlock, event.blockFace)
+            else -> return
+        }
+        event.isCancelled = true
+    }
+
+    @EventHandler
+    fun onPlayerArmorChange(event: PlayerArmorChangeEvent) {
+        if (event.newItem == event.oldItem) return
+
+        event.newItem?.let {
+            val data = it.itemMeta?.persistentDataContainer ?: return@let
+            val type = data.get(NamespacedKey(plugin, "type"), PersistentDataType.STRING) ?: return@let
+            val item = items[type] ?: return@let
+            item.equipArmor?.run(event.player, null, null)
+        }
+
+        event.oldItem?.let {
+            val data = it.itemMeta?.persistentDataContainer ?: return@let
+            val type = data.get(NamespacedKey(plugin, "type"), PersistentDataType.STRING) ?: return@let
+            val item = items[type] ?: return@let
+            item.unequipArmor?.run(event.player, null, null)
         }
     }
 }

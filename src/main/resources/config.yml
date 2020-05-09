@@ -33,6 +33,45 @@ items:
       soulbound: 1
     right-click:
       player-command: help
+  hummingbird:
+    material: ELYTRA
+    name: '§dHummingbird§5 ⭐'
+    lore:
+      - '§8------------------------------'
+      - ''
+      - '§dAllows you to hover in your claims.'
+      - ''
+      - '§8------------------------------'
+      - '§6BUILDER''s Crate - May 2020'
+    enchantments:
+      soulbound: 1
+      final: 1
+    unbreakable: true
+    actions:
+      equip-armor:
+        message: "You feel like a hummingbird."
+        fly-in-claims: true
+      unequip-armor:
+        message: "You no longer feel like a hummingbird."
+        fly-in-claims: false
+  portable-beacon:
+    material: BEACON
+    name: '§dPortable Beacon§5 ⛏'
+    lore:
+      - '§8------------------------------'
+      - ''
+      - '§dConsumes a §eNether Star§d and'
+      - '§dgives §bHaste III§d to players'
+      - '§daround you for §b10 minutes§d.'
+      - ''
+      - '§8------------------------------'
+      - '§6BUILDER''s Crate - May 2020'
+    enchantments:
+      soulbound: 1
+      final: 1
+    actions:
+      right-click:
+        portable-beacon: true
 
 books:
   title: Encyclopedia Blanktopia

@@ -12,6 +12,8 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
 import kotlin.math.sqrt
 import kotlin.random.Random
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
+import org.bukkit.entity.Player
 
 var ExperienceOrb.level: Double
     get() = if (experience < 352) {
@@ -86,4 +88,14 @@ fun playSoundAt(sound: Sound, entity: Entity, category: SoundCategory, volume: F
 
 fun playSoundAt(sound: Sound, block: Block, category: SoundCategory, volume: Float, pitch: Float) {
     block.world.playSound(Location(block.world, block.x + 0.5, block.y + 0.5, block.z + 0.5), sound, category, volume, pitch)
+}
+
+fun isInOwnClaim(player: Player, location: Location): Boolean {
+    val claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null) ?: return false;
+    return claim.ownerID == player.uniqueId
+}
+
+fun isInTrustedClaim(player: Player, location: Location): Boolean {
+    val claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null) ?: return false;
+    return claim.allowContainers(player) == null
 }
