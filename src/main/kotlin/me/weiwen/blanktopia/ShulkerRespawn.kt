@@ -32,7 +32,8 @@ class ShulkerRespawn(val plugin: Blanktopia) : Module, Listener {
     fun onCreatureSpawn(event: CreatureSpawnEvent) {
         if (event.entity !is Enderman) return
         if (Random.nextDouble() > shulkerSpawnChance) return
-        if (!END_BIOMES.contains(event.location.world.getBiome(event.location.blockX, event.location.blockZ))) return
+        val world = event.location.world ?: return
+        if (!END_BIOMES.contains(world.getBiome(event.location.blockX, event.location.blockZ))) return
         if (!END_CITY_BLOCKS.contains(event.location.subtract(0.0, 1.0, 0.0).block.type)) return
         var shulkerCount = 0
         for (entity in event.location.chunk.entities) {
@@ -40,7 +41,7 @@ class ShulkerRespawn(val plugin: Blanktopia) : Module, Listener {
             if (shulkerCount > maxShulkersPerChunk) return
         }
         event.isCancelled = true
-        event.location.world.spawn(event.location, Shulker::class.java)
+        world.spawn(event.location, Shulker::class.java)
     }
 }
 

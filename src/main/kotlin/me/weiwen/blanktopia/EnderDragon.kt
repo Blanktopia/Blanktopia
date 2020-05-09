@@ -24,7 +24,7 @@ class EnderDragon(val plugin: Blanktopia, val storage: Storage) : Module, Listen
     @EventHandler
     fun onPlayerPortalEvent(event: PlayerPortalEvent) {
         if (event.cause != PlayerTeleportEvent.TeleportCause.END_PORTAL) return
-        val world = event.to.world
+        val world = event.to?.world ?: return
         val player = event.player
         val config = storage.player(player)
         if (!config.getBoolean("has-spawned-dragon")) {

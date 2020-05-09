@@ -109,7 +109,7 @@ fun ItemStack.enchant(enchantment: Enchantment, level: Int) {
 }
 
 fun ItemStack.disenchant(enchantment: Enchantment) {
-    val meta = this.itemMeta
+    val meta = this.itemMeta ?: return
     if (meta is EnchantmentStorageMeta) {
         meta.removeStoredEnchant(enchantment)
     } else {

@@ -37,7 +37,7 @@ object Harvest : Listener {
     @EventHandler
     fun onBlockBreak(event: BlockBreakEvent) {
         val player = event.player
-        val tool = player.inventory.itemInMainHand ?: return
+        val tool = player.inventory.itemInMainHand
         if (tool.containsEnchantment(HARVEST)) {
             val blockData = event.block.blockData as? Ageable ?: return
             if (!HARVESTABLE_BLOCKS.contains(event.block.type)) return
