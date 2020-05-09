@@ -1,6 +1,7 @@
 package me.weiwen.blanktopia.enchants
 
 import me.weiwen.blanktopia.Blanktopia
+import me.weiwen.blanktopia.enchants.enchantments.FINAL
 import me.weiwen.blanktopia.level
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -90,6 +91,7 @@ class GrindStoneWatcher(val plugin: Blanktopia) : Listener {
     fun getResult(target: ItemStack?, sacrifice: ItemStack?): ItemStack? {
         if (target != null && sacrifice != null && target.type != sacrifice.type) return null
         val result = (target ?: sacrifice ?: return null).clone()
+        if (result.enchantments.containsKey(FINAL)) retirm
         for (enchant in result.enchantments.keys) {
             result.disenchant(enchant)
         }
