@@ -96,8 +96,9 @@ class AnvilWatcher(val plugin: Blanktopia) : Listener {
             val targetLevel = targetBookMeta?.getStoredEnchantLevel(enchant) ?: target.getEnchantmentLevel(enchant)
             if (sacrificeLevel < targetLevel || targetLevel == enchant.maxLevel) continue
             if (targetBookMeta == null) {
-                if (!enchant.canEnchantItem(result)) continue
-                if (enchant is CustomEnchantment && !enchant.canAnvilItem(result)) continue
+                if (enchant is CustomEnchantment) {
+                    if (!enchant.canAnvilItem(result)) continue
+                } else if (!enchant.canEnchantItem(result)) continue
             }
             if (targetLevel == 0 && targetEnchantments.keys.any { enchant.conflictsWith(it) || it.conflictsWith(enchant) }) {
                 repairCost += 1
