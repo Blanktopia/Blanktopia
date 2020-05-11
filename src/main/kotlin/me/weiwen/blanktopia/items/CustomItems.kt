@@ -60,17 +60,17 @@ class CustomItems(private val plugin: Blanktopia) :
 
     @EventHandler
     fun onPlayerInteract(event: PlayerInteractEvent) {
-        val data = event.player.inventory.itemInMainHand.itemMeta?.persistentDataContainer ?: return
+        val item = event.item ?: return
+        val data = item.itemMeta?.persistentDataContainer ?: return
         val type = data.get(NamespacedKey(plugin, "type"), PersistentDataType.STRING) ?: return
-        val item = items[type] ?: return
+        val customItem = items[type] ?: return
         when (event.action) {
-            Action.LEFT_CLICK_AIR -> item.leftClickAir?.run(event.player, null, null)
-            Action.LEFT_CLICK_BLOCK -> item.leftClickBlock?.run(event.player, event.clickedBlock, event.blockFace)
-            Action.RIGHT_CLICK_AIR -> item.rightClickAir?.run(event.player, null, null)
-            Action.RIGHT_CLICK_BLOCK -> item.rightClickBlock?.run(event.player, event.clickedBlock, event.blockFace)
+            Action.LEFT_CLICK_AIR -> customItem.leftClickAir?.let { it.run(event.player, item, null, null); event.isCancelled = true }
+            Action.LEFT_CLICK_BLOCK -> customItem.leftClickBlock?.let { it.run(event.player, item, event.clickedBlock, event.blockFace); event.isCancelled = true }
+            Action.RIGHT_CLICK_AIR -> customItem.rightClickAir?.let { it.run(event.player, item, null, null); event.isCancelled = true }
+            Action.RIGHT_CLICK_BLOCK -> customItem.rightClickBlock?.let { it.run(event.player, item, event.clickedBlock, event.blockFace); event.isCancelled = true }
             else -> return
         }
-        event.isCancelled = true
     }
 
     @EventHandler
@@ -81,14 +81,14 @@ class CustomItems(private val plugin: Blanktopia) :
             val data = it.itemMeta?.persistentDataContainer ?: return@let
             val type = data.get(NamespacedKey(plugin, "type"), PersistentDataType.STRING) ?: return@let
             val item = items[type] ?: return@let
-            item.equipArmor?.run(event.player, null, null)
+            item.equipArmor?.run(event.player, it, null, null)
         }
 
         event.oldItem?.let {
             val data = it.itemMeta?.persistentDataContainer ?: return@let
             val type = data.get(NamespacedKey(plugin, "type"), PersistentDataType.STRING) ?: return@let
             val item = items[type] ?: return@let
-            item.unequipArmor?.run(event.player, null, null)
+            item.unequipArmor?.run(event.player, it, null, null)
         }
     }
 }

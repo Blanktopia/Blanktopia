@@ -55,6 +55,18 @@ class CustomItemType(val type: String, config: ConfigurationSection) {
                 rightClickBlock = CustomItemAction(it)
                 rightClickAir = rightClickBlock
             }
+            actions.getConfigurationSection("left-click-block")?.let {
+                leftClickBlock = CustomItemAction(it)
+            }
+            actions.getConfigurationSection("left-click-air")?.let {
+                leftClickAir = CustomItemAction(it)
+            }
+            actions.getConfigurationSection("right-click-block")?.let {
+                rightClickBlock = CustomItemAction(it)
+            }
+            actions.getConfigurationSection("right-click-air")?.let {
+                rightClickAir = CustomItemAction(it)
+            }
             actions.getConfigurationSection("equip-armor")?.let {
                 equipArmor = CustomItemAction(it)
             }
