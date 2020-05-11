@@ -1,6 +1,7 @@
 package me.weiwen.blanktopia.items
 
 import me.weiwen.blanktopia.Blanktopia
+import me.weiwen.blanktopia.isInTrustedClaim
 import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
@@ -28,14 +29,17 @@ class CustomItemAction(config: ConfigurationSection) {
     private var paintBrushPaint: Boolean = config.getString("paint-brush") == "paint"
 
     fun run(player: Player, item: ItemStack, block: Block?, face: BlockFace?) {
-        message?.let { player.sendMessage(it) }
+        message?.let {
+            val message = TextComponent(*TextComponent.fromLegacyText(it))
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message)
+        }
         playerCommand?.let { player.performCommand(it) }
         flyInClaims?.let {flyInClaims(player, it) }
         if (portableBeacon) portableBeacon(player)
         if (block != null && face != null) {
             if (buildersWandBuild) buildersWandBuild(player, block, face)
             if (paintBrushPick) paintBrushPick(player, item, block)
-            if (paintBrushPaint) paintBrushPaint(player, item, block, face)
+            if (paintBrushPaint) paintBrushPaint(player, item, block)
         }
     }
 }
@@ -292,7 +296,6 @@ fun paintBrushPick(
 ) {
     val colour = BLOCK_COLOUR_MAP[block.type]
     if (colour == null) {
-        player.playSound(block.location, Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 1.0f, 1.0f)
         return
     }
     val paint = when (colour) {
@@ -320,7 +323,10 @@ fun paintBrushPick(
     val data = meta.persistentDataContainer
     data.set(NamespacedKey(Blanktopia.INSTANCE, "paint"), PersistentDataType.STRING, paint)
     item.itemMeta = meta
-    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent("Paint: ${paint}"))
+    val message = TextComponent("Paint: ${paint}")
+    message.setColor(net.md_5.bungee.api.ChatColor.GOLD)
+    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message)
+    player.world.playSound(player.location, Sound.BLOCK_SLIME_BLOCK_STEP, 1.0f, 0.5f)
 }
 
 val WOOL: List<Material> = listOf(Material.WHITE_WOOL, Material.ORANGE_WOOL, Material.MAGENTA_WOOL, Material.LIGHT_BLUE_WOOL, Material.YELLOW_WOOL, Material.LIME_WOOL, Material.PINK_WOOL, Material.GRAY_WOOL, Material.LIGHT_GRAY_WOOL, Material.CYAN_WOOL, Material.PURPLE_WOOL, Material.BLUE_WOOL, Material.BROWN_WOOL, Material.GREEN_WOOL, Material.RED_WOOL, Material.BLACK_WOOL)
@@ -466,9 +472,14 @@ val BED_MAP: Map<DyeColor, Material> = mapOf(
     Pair(DyeColor.BLACK, Material.BLACK_BED)
 )
 
-fun paintBrushPaint(player: Player, item: ItemStack, block: Block, face: BlockFace) {
+fun paintBrushPaint(
+    player: Player,
+    item: ItemStack,
+    block: Block
+) {
     val data = item.itemMeta?.persistentDataContainer ?: return
     val paint = data.get(NamespacedKey(Blanktopia.INSTANCE, "paint"), PersistentDataType.STRING) ?: return
+    if (!isInTrustedClaim(player, block.location)) return
     val colour = when (paint) {
         "WHITE" -> DyeColor.WHITE
         "ORANGE" -> DyeColor.ORANGE
@@ -487,7 +498,6 @@ fun paintBrushPaint(player: Player, item: ItemStack, block: Block, face: BlockFa
         "RED" -> DyeColor.RED
         "BLACK" -> DyeColor.BLACK
         else -> {
-            player.playSound(block.location, Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 1.0f, 1.0f)
             return
         }
     }
@@ -508,5 +518,8 @@ fun paintBrushPaint(player: Player, item: ItemStack, block: Block, face: BlockFa
         block.type = CONCRETE_POWDER_MAP[colour]!!
     } else if (block.type in BED) {
         block.type = BED_MAP[colour]!!
+    } else {
+        return
     }
+    player.world.playSound(player.location, Sound.BLOCK_SLIME_BLOCK_PLACE, 1.0f, 0.5f)
 }

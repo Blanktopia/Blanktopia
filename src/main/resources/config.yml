@@ -37,41 +37,86 @@ items:
     material: ELYTRA
     name: '§dHummingbird§5 ⭐'
     lore:
-      - '§8------------------------------'
+      - '§8-------------------------'
       - ''
-      - '§dAllows you to hover in your claims.'
+      - '§rAllows you to hover in claims'
+      - '§ryou are §b/trusted§r in.'
       - ''
-      - '§8------------------------------'
-      - '§6BUILDER''s Crate - May 2020'
+      - '§8-------------------------'
+      - '§6BUILDER''s Crate Item'
     enchantments:
       soulbound: 1
       final: 1
     unbreakable: true
     actions:
       equip-armor:
-        message: "You feel like a hummingbird."
+        message: "§6You feel like a hummingbird."
         fly-in-claims: true
       unequip-armor:
-        message: "You no longer feel like a hummingbird."
         fly-in-claims: false
   portable-beacon:
     material: BEACON
     name: '§dPortable Beacon§5 ⛏'
     lore:
-      - '§8------------------------------'
+      - '§8-------------------------'
       - ''
-      - '§dConsumes a §eNether Star§d and'
-      - '§dgives §bHaste III§d to players'
-      - '§daround you for §b10 minutes§d.'
+      - '§rGive §bHaste III§r to players'
+      - '§raround you for §b10 minutes§r.'
       - ''
-      - '§8------------------------------'
-      - '§6BUILDER''s Crate - May 2020'
+      - '§rConsumes a §bNether Star§r.'
+      - ''
+      - '§8-------------------------'
+      - '§6BUILDER''s Crate Item'
     enchantments:
       soulbound: 1
       final: 1
     actions:
       right-click:
         portable-beacon: true
+  builders-wand:
+    material: BLAZE_ROD
+    name: '§dBuilder''s Wand§5 ⭐'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§bRight-click§r on a block'
+      - '§rto place blocks. in a §b3x3§r'
+      - '§rarea.'
+      - ''
+      - '§8-------------------------'
+      - '§6BUILDER''s Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+    actions:
+      right-click-block:
+        builders-wand: build
+  paint-brush:
+    material: WHEAT
+    name: '§dPaint Brush§5 ⭐'
+    lore:
+      - '§7Paint: NONE'
+      - '§8-------------------------'
+      - ''
+      - '§bLeft-click§r to pick a colour.'
+      - '§bRight-click§r to paint a block.'
+      - ''
+      - '§rWorks on:'
+      - '§8- §rGlass'
+      - '§8- §rWool'
+      - '§8- §rTerracotta'
+      - '§8- §rConcrete'
+      - ''
+      - '§8-------------------------'
+      - '§6BUILDER''s Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+    actions:
+      left-click-block:
+        paint-brush: pick
+      right-click-block:
+        paint-brush: paint
 
 books:
   title: Encyclopedia Blanktopia
