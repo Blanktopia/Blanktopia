@@ -5,6 +5,7 @@ import org.bukkit.Sound
 import org.bukkit.SoundCategory
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -21,16 +22,18 @@ class PortableTools(private val plugin: Blanktopia) :
 
     override fun reload() {}
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     fun onPlayerInteract(event: PlayerInteractEvent) {
+        if (event.isCancelled) return
         if (event.action != Action.RIGHT_CLICK_AIR) return
         val player = event.player
         val item = player.inventory.itemInMainHand
         event.isCancelled = usePortableTool(player, item)
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     fun onInventoryClick(event: InventoryClickEvent) {
+        if (event.isCancelled) return
         if (!event.isRightClick) return
         val item = event.currentItem ?: return
         val player = event.whoClicked as? Player ?: return
@@ -44,7 +47,7 @@ class PortableTools(private val plugin: Blanktopia) :
             }
             return true
         } else if (item.type == Material.ENDER_CHEST) {
-            player.playSound(player.location, Sound.BLOCK_ENDER_CHEST_OPEN, SoundCategory.BLOCKS, 1.0f, 1.0f)
+            player.world.playSound(player.location, Sound.BLOCK_ENDER_CHEST_OPEN, SoundCategory.BLOCKS, 1.0f, 1.0f)
             plugin.server.scheduler.runTask(plugin) { ->
                 player.openInventory(player.enderChest)
             }
