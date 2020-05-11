@@ -91,7 +91,7 @@ class GrindStoneWatcher(val plugin: Blanktopia) : Listener {
     fun getResult(target: ItemStack?, sacrifice: ItemStack?): ItemStack? {
         if (target != null && sacrifice != null && target.type != sacrifice.type) return null
         val result = (target ?: sacrifice ?: return null).clone()
-        if (result.enchantments.containsKey(FINAL)) return
+        if (result.enchantments.containsKey(FINAL)) return null
         for (enchant in result.enchantments.keys) {
             result.disenchant(enchant)
         }
