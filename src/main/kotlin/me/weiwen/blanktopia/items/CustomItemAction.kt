@@ -86,7 +86,7 @@ fun portableBeacon(player: Player) {
     }
 }
 
-fun buildersWandLocations(block: Block, face: BlockFace): MutableList<Location> {
+fun buildersWandLocations(block: Block, face: BlockFace): MutableList<Pair<Block, Location>> {
     val range = 1
     val (xOffset, yOffset) = if (face.modX != 0) {
         Pair(Vector(0, 1, 0), Vector(0, 0, 1))
@@ -97,24 +97,25 @@ fun buildersWandLocations(block: Block, face: BlockFace): MutableList<Location> 
     }
     val location = block.location
     val material = block.type
-    val locations: MutableList<Location> = mutableListOf()
+    val locations: MutableList<Pair<Block, Location>> = mutableListOf()
     for (x in -range .. range) {
         for (y in -range .. range) {
             val base = location.clone().add(xOffset.clone().multiply(x)).add(yOffset.clone().multiply(y))
             if (base.block.type != material) continue
             val other = base.add(face.direction)
             if (other.block.type != Material.AIR && other.block.type != Material.WATER && other.block.type != Material.LAVA) continue
-            locations.add(other)
+            locations.add(Pair(base.block, other))
         }
     }
     return locations
 }
 
 fun buildersWandBuild(player: Player, block: Block, face: BlockFace) {
+    if (BUILDERS_WAND_BLACKLIST.contains(block.type)) return
     val locations = buildersWandLocations(block, face)
     val item = ItemStack(block.type, 1)
-   var canBuild = false
-    for (location in locations) {
+    var canBuild = false
+    for ((base, location) in locations) {
         if (player.gameMode != GameMode.CREATIVE && !player.inventory.containsAtLeast(item, 1)) {
             if (!canBuild) {
                 block.world.playSound(block.location, Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 1.0f, 1.0f)
@@ -125,8 +126,8 @@ fun buildersWandBuild(player: Player, block: Block, face: BlockFace) {
             continue
         }
         val state = location.block.state
-        state.type = block.type
-        state.blockData = block.blockData
+        state.type = base.type
+        state.blockData = base.blockData
 
         val buildEvent = BlockPlaceEvent(
             location.block,
