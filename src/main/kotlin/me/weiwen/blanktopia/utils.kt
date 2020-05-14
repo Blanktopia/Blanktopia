@@ -91,11 +91,15 @@ fun playSoundAt(sound: Sound, block: Block, category: SoundCategory, volume: Flo
 }
 
 fun isInOwnClaim(player: Player, location: Location): Boolean {
-    val claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null) ?: return false;
+    val claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null) ?: return false
     return claim.ownerID == player.uniqueId
 }
 
 fun isInTrustedClaim(player: Player, location: Location): Boolean {
-    val claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null) ?: return false;
+    val claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null) ?: return false
     return claim.allowContainers(player) == null
+}
+
+fun canBuild(player: Player, location: Location): Boolean {
+    return GriefPrevention.instance.allowBuild(player, location) == null
 }

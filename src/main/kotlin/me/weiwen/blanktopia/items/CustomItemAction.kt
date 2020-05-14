@@ -482,7 +482,7 @@ fun paintBrushPaint(
 ) {
     val data = item.itemMeta?.persistentDataContainer ?: return
     val paint = data.get(NamespacedKey(Blanktopia.INSTANCE, "paint"), PersistentDataType.STRING)
-    if (!isInTrustedClaim(player, block.location)) return
+    if (!canBuild(player, block.location)) return
     val colour = when (paint) {
         "WHITE" -> DyeColor.WHITE
         "ORANGE" -> DyeColor.ORANGE
