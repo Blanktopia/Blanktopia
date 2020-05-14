@@ -18,6 +18,7 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.event.block.BlockPlaceEvent
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.entity.Entity
 
 class CustomItemAction(config: ConfigurationSection) {
     private var message: String? = config.getString("message")
@@ -28,7 +29,7 @@ class CustomItemAction(config: ConfigurationSection) {
     private var paintBrushPick: Boolean = config.getString("paint-brush") == "pick"
     private var paintBrushPaint: Boolean = config.getString("paint-brush") == "paint"
 
-    fun run(player: Player, item: ItemStack, block: Block?, face: BlockFace?) {
+    fun run(player: Player, item: ItemStack) {
         message?.let {
             val message = TextComponent(*TextComponent.fromLegacyText(it))
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message)
@@ -36,11 +37,18 @@ class CustomItemAction(config: ConfigurationSection) {
         playerCommand?.let { player.performCommand(it) }
         flyInClaims?.let {flyInClaims(player, it) }
         if (portableBeacon) portableBeacon(player)
-        if (block != null && face != null) {
-            if (buildersWandBuild) buildersWandBuild(player, block, face)
-            if (paintBrushPick) paintBrushPick(player, item, block)
-            if (paintBrushPaint) paintBrushPaint(player, item, block)
-        }
+    }
+
+    fun run(player: Player, item: ItemStack, block: Block?, face: BlockFace) {
+        run(player, item)
+        if (block == null) return
+        if (buildersWandBuild) buildersWandBuild(player, block, face)
+        if (paintBrushPick) paintBrushPick(player, item, block)
+        if (paintBrushPaint) paintBrushPaint(player, item, block)
+    }
+
+    fun run(player: Player, item: ItemStack, entity: Entity) {
+        run(player, item)
     }
 }
 

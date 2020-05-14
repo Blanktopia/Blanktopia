@@ -10,7 +10,9 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
+import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 
@@ -65,12 +67,21 @@ class CustomItems(private val plugin: Blanktopia) :
         val type = data.get(NamespacedKey(plugin, "type"), PersistentDataType.STRING) ?: return
         val customItem = items[type] ?: return
         when (event.action) {
-            Action.LEFT_CLICK_AIR -> customItem.leftClickAir?.let { it.run(event.player, item, null, null); event.isCancelled = true }
+            Action.LEFT_CLICK_AIR -> customItem.leftClickAir?.let { it.run(event.player, item); event.isCancelled = true }
             Action.LEFT_CLICK_BLOCK -> customItem.leftClickBlock?.let { it.run(event.player, item, event.clickedBlock, event.blockFace); event.isCancelled = true }
-            Action.RIGHT_CLICK_AIR -> customItem.rightClickAir?.let { it.run(event.player, item, null, null); event.isCancelled = true }
+            Action.RIGHT_CLICK_AIR -> customItem.rightClickAir?.let { it.run(event.player, item); event.isCancelled = true }
             Action.RIGHT_CLICK_BLOCK -> customItem.rightClickBlock?.let { it.run(event.player, item, event.clickedBlock, event.blockFace); event.isCancelled = true }
             else -> return
         }
+    }
+
+    @EventHandler
+    fun onPlayerInteractEntity(event: PlayerInteractEntityEvent) {
+        val item = if (event.hand == EquipmentSlot.HAND) event.player.inventory.itemInMainHand else if (event.hand === EquipmentSlot.OFF_HAND) event.player.inventory.itemInOffHand else return
+        val data = item.itemMeta?.persistentDataContainer ?: return
+        val type = data.get(NamespacedKey(plugin, "type"), PersistentDataType.STRING) ?: return
+        val customItem = items[type] ?: return
+        customItem.rightClickEntity?.let { it.run(event.player, item, event.rightClicked); event.isCancelled = true }
     }
 
     @EventHandler
@@ -81,14 +92,14 @@ class CustomItems(private val plugin: Blanktopia) :
             val data = it.itemMeta?.persistentDataContainer ?: return@let
             val type = data.get(NamespacedKey(plugin, "type"), PersistentDataType.STRING) ?: return@let
             val item = items[type] ?: return@let
-            item.equipArmor?.run(event.player, it, null, null)
+            item.equipArmor?.run(event.player, it)
         }
 
         event.oldItem?.let {
             val data = it.itemMeta?.persistentDataContainer ?: return@let
             val type = data.get(NamespacedKey(plugin, "type"), PersistentDataType.STRING) ?: return@let
             val item = items[type] ?: return@let
-            item.unequipArmor?.run(event.player, it, null, null)
+            item.unequipArmor?.run(event.player, it)
         }
     }
 }
