@@ -1,6 +1,7 @@
 package me.weiwen.blanktopia.items
 
 import me.weiwen.blanktopia.Blanktopia
+import me.weiwen.blanktopia.canBuild
 import me.weiwen.blanktopia.isInTrustedClaim
 import org.bukkit.*
 import org.bukkit.block.Block
@@ -86,6 +87,38 @@ fun portableBeacon(player: Player) {
     }
 }
 
+val BUILDERS_WAND_BLACKLIST = setOf(
+    Material.CHEST,
+    Material.WHITE_BED,
+    Material.ORANGE_BED,
+    Material.MAGENTA_BED,
+    Material.LIGHT_BLUE_BED,
+    Material.YELLOW_BED,
+    Material.LIME_BED,
+    Material.PINK_BED,
+    Material.GRAY_BED,
+    Material.LIGHT_GRAY_BED,
+    Material.CYAN_BED,
+    Material.PURPLE_BED,
+    Material.BLUE_BED,
+    Material.BROWN_BED,
+    Material.GREEN_BED,
+    Material.RED_BED,
+    Material.BLACK_BED,
+    Material.SUNFLOWER,
+    Material.LILAC,
+    Material.ROSE_BUSH,
+    Material.PEONY,
+    Material.TALL_GRASS,
+    Material.LARGE_FERN,
+    Material.IRON_DOOR,
+    Material.OAK_DOOR,
+    Material.SPRUCE_DOOR,
+    Material.BIRCH_DOOR,
+    Material.JUNGLE_DOOR,
+    Material.ACACIA_DOOR,
+    Material.DARK_OAK_DOOR
+)
 fun buildersWandLocations(block: Block, face: BlockFace): MutableList<Pair<Block, Location>> {
     val range = 1
     val (xOffset, yOffset) = if (face.modX != 0) {
