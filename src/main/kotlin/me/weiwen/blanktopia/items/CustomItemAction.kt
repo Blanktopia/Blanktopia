@@ -295,10 +295,8 @@ fun paintBrushPick(
     block: Block
 ) {
     val colour = BLOCK_COLOUR_MAP[block.type]
-    if (colour == null) {
-        return
-    }
     val paint = when (colour) {
+        null -> "NONE"
         DyeColor.WHITE -> "WHITE"
         DyeColor.ORANGE -> "ORANGE"
         DyeColor.MAGENTA -> "MAGENTA"
@@ -321,7 +319,11 @@ fun paintBrushPick(
     lore.set(2, "§7Paint: ${paint}")
     meta.lore = lore
     val data = meta.persistentDataContainer
-    data.set(NamespacedKey(Blanktopia.INSTANCE, "paint"), PersistentDataType.STRING, paint)
+    if (colour == null) {
+        data.remove(NamespacedKey(Blanktopia.INSTANCE, "paint"))
+    } else {
+        data.set(NamespacedKey(Blanktopia.INSTANCE, "paint"), PersistentDataType.STRING, paint)
+    }
     item.itemMeta = meta
     val message = TextComponent("Paint: ${paint}")
     message.setColor(net.md_5.bungee.api.ChatColor.GOLD)
@@ -337,6 +339,7 @@ val WOOL_MAP: Map<DyeColor, Material> = mapOf(
     Pair(DyeColor.LIGHT_BLUE, Material.LIGHT_BLUE_WOOL),
     Pair(DyeColor.YELLOW, Material.YELLOW_WOOL),
     Pair(DyeColor.LIME, Material.LIME_WOOL),
+    Pair(DyeColor.PINK, Material.PINK_WOOL),
     Pair(DyeColor.GRAY, Material.GRAY_WOOL),
     Pair(DyeColor.LIGHT_GRAY, Material.LIGHT_GRAY_WOOL),
     Pair(DyeColor.CYAN, Material.CYAN_WOOL),
@@ -348,13 +351,15 @@ val WOOL_MAP: Map<DyeColor, Material> = mapOf(
     Pair(DyeColor.BLACK, Material.BLACK_WOOL)
 )
 val STAINED_GLASS: List<Material> = listOf(Material.GLASS, Material.WHITE_STAINED_GLASS, Material.ORANGE_STAINED_GLASS, Material.MAGENTA_STAINED_GLASS, Material.LIGHT_BLUE_STAINED_GLASS, Material.YELLOW_STAINED_GLASS, Material.LIME_STAINED_GLASS, Material.PINK_STAINED_GLASS, Material.GRAY_STAINED_GLASS, Material.LIGHT_GRAY_STAINED_GLASS, Material.CYAN_STAINED_GLASS, Material.PURPLE_STAINED_GLASS, Material.BLUE_STAINED_GLASS, Material.BROWN_STAINED_GLASS, Material.GREEN_STAINED_GLASS, Material.RED_STAINED_GLASS, Material.BLACK_STAINED_GLASS)
-val STAINED_GLASS_MAP: Map<DyeColor, Material> = mapOf(
+val STAINED_GLASS_MAP: Map<DyeColor?, Material> = mapOf(
+    Pair(null, Material.GLASS),
     Pair(DyeColor.WHITE, Material.WHITE_STAINED_GLASS),
     Pair(DyeColor.ORANGE, Material.ORANGE_STAINED_GLASS),
     Pair(DyeColor.MAGENTA, Material.MAGENTA_STAINED_GLASS),
     Pair(DyeColor.LIGHT_BLUE, Material.LIGHT_BLUE_STAINED_GLASS),
     Pair(DyeColor.YELLOW, Material.YELLOW_STAINED_GLASS),
     Pair(DyeColor.LIME, Material.LIME_STAINED_GLASS),
+    Pair(DyeColor.PINK, Material.PINK_STAINED_GLASS),
     Pair(DyeColor.GRAY, Material.GRAY_STAINED_GLASS),
     Pair(DyeColor.LIGHT_GRAY, Material.LIGHT_GRAY_STAINED_GLASS),
     Pair(DyeColor.CYAN, Material.CYAN_STAINED_GLASS),
@@ -365,14 +370,16 @@ val STAINED_GLASS_MAP: Map<DyeColor, Material> = mapOf(
     Pair(DyeColor.RED, Material.RED_STAINED_GLASS),
     Pair(DyeColor.BLACK, Material.BLACK_STAINED_GLASS)
 )
-val STAINED_GLASS_PANE: List<Material> = listOf(Material.GLASS_PANE, Material.WHITE_STAINED_GLASS_PANE, Material.ORANGE_STAINED_GLASS_PANE, Material.MAGENTA_STAINED_GLASS_PANE, Material.LIGHT_BLUE_STAINED_GLASS_PANE, Material.YELLOW_STAINED_GLASS_PANE, Material.LIME_STAINED_GLASS_PANE, Material.PINK_STAINED_GLASS_PANE, Material.GRAY_STAINED_GLASS_PANE, Material.LIGHT_GRAY_STAINED_GLASS_PANE, Material.CYAN_STAINED_GLASS_PANE, Material.PURPLE_STAINED_GLASS_PANE, Material.BLUE_STAINED_GLASS_PANE, Material.BROWN_STAINED_GLASS_PANE, Material.GREEN_STAINED_GLASS_PANE, Material.RED_STAINED_GLASS_PANE)
-val STAINED_GLASS_PANE_MAP: Map<DyeColor, Material> = mapOf(
+val STAINED_GLASS_PANE: List<Material> = listOf(Material.GLASS_PANE, Material.WHITE_STAINED_GLASS_PANE, Material.ORANGE_STAINED_GLASS_PANE, Material.MAGENTA_STAINED_GLASS_PANE, Material.LIGHT_BLUE_STAINED_GLASS_PANE, Material.YELLOW_STAINED_GLASS_PANE, Material.LIME_STAINED_GLASS_PANE, Material.PINK_STAINED_GLASS_PANE, Material.GRAY_STAINED_GLASS_PANE, Material.LIGHT_GRAY_STAINED_GLASS_PANE, Material.CYAN_STAINED_GLASS_PANE, Material.PURPLE_STAINED_GLASS_PANE, Material.BLUE_STAINED_GLASS_PANE, Material.BROWN_STAINED_GLASS_PANE, Material.GREEN_STAINED_GLASS_PANE, Material.RED_STAINED_GLASS_PANE, Material.BLACK_STAINED_GLASS_PANE)
+val STAINED_GLASS_PANE_MAP: Map<DyeColor?, Material> = mapOf(
+    Pair(null, Material.GLASS_PANE),
     Pair(DyeColor.WHITE, Material.WHITE_STAINED_GLASS_PANE),
     Pair(DyeColor.ORANGE, Material.ORANGE_STAINED_GLASS_PANE),
     Pair(DyeColor.MAGENTA, Material.MAGENTA_STAINED_GLASS_PANE),
     Pair(DyeColor.LIGHT_BLUE, Material.LIGHT_BLUE_STAINED_GLASS_PANE),
     Pair(DyeColor.YELLOW, Material.YELLOW_STAINED_GLASS_PANE),
     Pair(DyeColor.LIME, Material.LIME_STAINED_GLASS_PANE),
+    Pair(DyeColor.PINK, Material.PINK_STAINED_GLASS_PANE),
     Pair(DyeColor.GRAY, Material.GRAY_STAINED_GLASS_PANE),
     Pair(DyeColor.LIGHT_GRAY, Material.LIGHT_GRAY_STAINED_GLASS_PANE),
     Pair(DyeColor.CYAN, Material.CYAN_STAINED_GLASS_PANE),
@@ -380,16 +387,19 @@ val STAINED_GLASS_PANE_MAP: Map<DyeColor, Material> = mapOf(
     Pair(DyeColor.BLUE, Material.BLUE_STAINED_GLASS_PANE),
     Pair(DyeColor.BROWN, Material.BROWN_STAINED_GLASS_PANE),
     Pair(DyeColor.GREEN, Material.GREEN_STAINED_GLASS_PANE),
-    Pair(DyeColor.RED, Material.RED_STAINED_GLASS_PANE)
+    Pair(DyeColor.RED, Material.RED_STAINED_GLASS_PANE),
+    Pair(DyeColor.BLACK, Material.BLACK_STAINED_GLASS_PANE)
 )
 val TERRACOTTA: List<Material> = listOf(Material.TERRACOTTA, Material.WHITE_TERRACOTTA, Material.ORANGE_TERRACOTTA, Material.MAGENTA_TERRACOTTA, Material.LIGHT_BLUE_TERRACOTTA, Material.YELLOW_TERRACOTTA, Material.LIME_TERRACOTTA, Material.PINK_TERRACOTTA, Material.GRAY_TERRACOTTA, Material.LIGHT_GRAY_TERRACOTTA, Material.CYAN_TERRACOTTA, Material.PURPLE_TERRACOTTA, Material.BLUE_TERRACOTTA, Material.BROWN_TERRACOTTA, Material.GREEN_TERRACOTTA, Material.RED_TERRACOTTA, Material.BLACK_TERRACOTTA)
-val TERRACOTTA_MAP: Map<DyeColor, Material> = mapOf(
+val TERRACOTTA_MAP: Map<DyeColor?, Material> = mapOf(
+    Pair(null, Material.TERRACOTTA),
     Pair(DyeColor.WHITE, Material.WHITE_TERRACOTTA),
     Pair(DyeColor.ORANGE, Material.ORANGE_TERRACOTTA),
     Pair(DyeColor.MAGENTA, Material.MAGENTA_TERRACOTTA),
     Pair(DyeColor.LIGHT_BLUE, Material.LIGHT_BLUE_TERRACOTTA),
     Pair(DyeColor.YELLOW, Material.YELLOW_TERRACOTTA),
     Pair(DyeColor.LIME, Material.LIME_TERRACOTTA),
+    Pair(DyeColor.PINK, Material.PINK_TERRACOTTA),
     Pair(DyeColor.GRAY, Material.GRAY_TERRACOTTA),
     Pair(DyeColor.LIGHT_GRAY, Material.LIGHT_GRAY_TERRACOTTA),
     Pair(DyeColor.CYAN, Material.CYAN_TERRACOTTA),
@@ -408,6 +418,7 @@ val GLAZED_TERRACOTTA_MAP: Map<DyeColor, Material> = mapOf(
     Pair(DyeColor.LIGHT_BLUE, Material.LIGHT_BLUE_GLAZED_TERRACOTTA),
     Pair(DyeColor.YELLOW, Material.YELLOW_GLAZED_TERRACOTTA),
     Pair(DyeColor.LIME, Material.LIME_GLAZED_TERRACOTTA),
+    Pair(DyeColor.PINK, Material.PINK_GLAZED_TERRACOTTA),
     Pair(DyeColor.GRAY, Material.GRAY_GLAZED_TERRACOTTA),
     Pair(DyeColor.LIGHT_GRAY, Material.LIGHT_GRAY_GLAZED_TERRACOTTA),
     Pair(DyeColor.CYAN, Material.CYAN_GLAZED_TERRACOTTA),
@@ -417,7 +428,7 @@ val GLAZED_TERRACOTTA_MAP: Map<DyeColor, Material> = mapOf(
     Pair(DyeColor.GREEN, Material.GREEN_GLAZED_TERRACOTTA),
     Pair(DyeColor.RED, Material.RED_GLAZED_TERRACOTTA)
 )
-val CONCRETE: List<Material> = listOf(Material.WHITE_CONCRETE, Material.ORANGE_CONCRETE, Material.MAGENTA_CONCRETE, Material.LIGHT_BLUE_CONCRETE, Material.YELLOW_CONCRETE, Material.LIME_CONCRETE, Material.PINK_CONCRETE, Material.GRAY_CONCRETE, Material.LIGHT_GRAY_CONCRETE, Material.CYAN_CONCRETE, Material.PURPLE_CONCRETE, Material.BLUE_CONCRETE, Material.BROWN_CONCRETE, Material.GREEN_CONCRETE, Material.RED_CONCRETE)
+val CONCRETE: List<Material> = listOf(Material.WHITE_CONCRETE, Material.ORANGE_CONCRETE, Material.MAGENTA_CONCRETE, Material.LIGHT_BLUE_CONCRETE, Material.YELLOW_CONCRETE, Material.LIME_CONCRETE, Material.PINK_CONCRETE, Material.GRAY_CONCRETE, Material.LIGHT_GRAY_CONCRETE, Material.CYAN_CONCRETE, Material.PURPLE_CONCRETE, Material.BLUE_CONCRETE, Material.BROWN_CONCRETE, Material.GREEN_CONCRETE, Material.RED_CONCRETE, Material.BLACK_CONCRETE)
 val CONCRETE_MAP: Map<DyeColor, Material> = mapOf(
     Pair(DyeColor.WHITE, Material.WHITE_CONCRETE),
     Pair(DyeColor.ORANGE, Material.ORANGE_CONCRETE),
@@ -425,6 +436,7 @@ val CONCRETE_MAP: Map<DyeColor, Material> = mapOf(
     Pair(DyeColor.LIGHT_BLUE, Material.LIGHT_BLUE_CONCRETE),
     Pair(DyeColor.YELLOW, Material.YELLOW_CONCRETE),
     Pair(DyeColor.LIME, Material.LIME_CONCRETE),
+    Pair(DyeColor.PINK, Material.PINK_CONCRETE),
     Pair(DyeColor.GRAY, Material.GRAY_CONCRETE),
     Pair(DyeColor.LIGHT_GRAY, Material.LIGHT_GRAY_CONCRETE),
     Pair(DyeColor.CYAN, Material.CYAN_CONCRETE),
@@ -443,6 +455,7 @@ val CONCRETE_POWDER_MAP: Map<DyeColor, Material> = mapOf(
     Pair(DyeColor.LIGHT_BLUE, Material.LIGHT_BLUE_CONCRETE_POWDER),
     Pair(DyeColor.YELLOW, Material.YELLOW_CONCRETE_POWDER),
     Pair(DyeColor.LIME, Material.LIME_CONCRETE_POWDER),
+    Pair(DyeColor.PINK, Material.PINK_CONCRETE_POWDER),
     Pair(DyeColor.GRAY, Material.GRAY_CONCRETE_POWDER),
     Pair(DyeColor.LIGHT_GRAY, Material.LIGHT_GRAY_CONCRETE_POWDER),
     Pair(DyeColor.CYAN, Material.CYAN_CONCRETE_POWDER),
@@ -453,24 +466,6 @@ val CONCRETE_POWDER_MAP: Map<DyeColor, Material> = mapOf(
     Pair(DyeColor.RED, Material.RED_CONCRETE_POWDER),
     Pair(DyeColor.BLACK, Material.BLACK_CONCRETE_POWDER)
 )
-val BED: List<Material> = listOf(Material.WHITE_BED, Material.ORANGE_BED, Material.MAGENTA_BED, Material.LIGHT_BLUE_BED, Material.YELLOW_BED, Material.LIME_BED, Material.PINK_BED, Material.GRAY_BED, Material.LIGHT_GRAY_BED, Material.CYAN_BED, Material.PURPLE_BED, Material.BLUE_BED, Material.BROWN_BED, Material.GREEN_BED, Material.RED_BED, Material.BLACK_BED)
-val BED_MAP: Map<DyeColor, Material> = mapOf(
-    Pair(DyeColor.WHITE, Material.WHITE_BED),
-    Pair(DyeColor.ORANGE, Material.ORANGE_BED),
-    Pair(DyeColor.MAGENTA, Material.MAGENTA_BED),
-    Pair(DyeColor.LIGHT_BLUE, Material.LIGHT_BLUE_BED),
-    Pair(DyeColor.YELLOW, Material.YELLOW_BED),
-    Pair(DyeColor.LIME, Material.LIME_BED),
-    Pair(DyeColor.GRAY, Material.GRAY_BED),
-    Pair(DyeColor.LIGHT_GRAY, Material.LIGHT_GRAY_BED),
-    Pair(DyeColor.CYAN, Material.CYAN_BED),
-    Pair(DyeColor.PURPLE, Material.PURPLE_BED),
-    Pair(DyeColor.BLUE, Material.BLUE_BED),
-    Pair(DyeColor.BROWN, Material.BROWN_BED),
-    Pair(DyeColor.GREEN, Material.GREEN_BED),
-    Pair(DyeColor.RED, Material.RED_BED),
-    Pair(DyeColor.BLACK, Material.BLACK_BED)
-)
 
 fun paintBrushPaint(
     player: Player,
@@ -478,7 +473,7 @@ fun paintBrushPaint(
     block: Block
 ) {
     val data = item.itemMeta?.persistentDataContainer ?: return
-    val paint = data.get(NamespacedKey(Blanktopia.INSTANCE, "paint"), PersistentDataType.STRING) ?: return
+    val paint = data.get(NamespacedKey(Blanktopia.INSTANCE, "paint"), PersistentDataType.STRING)
     if (!isInTrustedClaim(player, block.location)) return
     val colour = when (paint) {
         "WHITE" -> DyeColor.WHITE
@@ -497,9 +492,7 @@ fun paintBrushPaint(
         "GREEN" -> DyeColor.GREEN
         "RED" -> DyeColor.RED
         "BLACK" -> DyeColor.BLACK
-        else -> {
-            return
-        }
+        else -> null
     }
 
     if (block.type in WOOL) {
@@ -516,8 +509,6 @@ fun paintBrushPaint(
         block.type = CONCRETE_MAP[colour]!!
     } else if (block.type in CONCRETE_POWDER) {
         block.type = CONCRETE_POWDER_MAP[colour]!!
-    } else if (block.type in BED) {
-        block.type = BED_MAP[colour]!!
     } else {
         return
     }
