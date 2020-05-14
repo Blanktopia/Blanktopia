@@ -10,6 +10,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
+import org.bukkit.event.inventory.PrepareItemCraftEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
@@ -82,6 +83,16 @@ class CustomItems(private val plugin: Blanktopia) :
         val type = data.get(NamespacedKey(plugin, "type"), PersistentDataType.STRING) ?: return
         val customItem = items[type] ?: return
         customItem.rightClickEntity?.let { it.run(event.player, item, event.rightClicked); event.isCancelled = true }
+    }
+
+    @EventHandler
+    fun onPrepareItemCraft(event: PrepareItemCraftEvent) {
+        for (item in event.inventory.matrix) {
+            val data = item?.itemMeta?.persistentDataContainer ?: continue
+            if (data.get(NamespacedKey(plugin, "type"), PersistentDataType.STRING) != null) {
+                event.inventory.result = null
+            }
+        }
     }
 
     @EventHandler
