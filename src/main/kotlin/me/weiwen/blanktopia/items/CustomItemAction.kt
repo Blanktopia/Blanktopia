@@ -366,7 +366,7 @@ fun paintBrushPick(
         DyeColor.LIGHT_BLUE -> "LIGHT BLUE"
         DyeColor.YELLOW -> "YELLOW"
         DyeColor.LIME -> "LIME"
-        DyeColor.PINK -> "LIME"
+        DyeColor.PINK -> "PINK"
         DyeColor.GRAY -> "GRAY"
         DyeColor.LIGHT_GRAY -> "LIGHT GRAY"
         DyeColor.CYAN -> "CYAN"
