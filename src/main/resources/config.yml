@@ -31,8 +31,9 @@ items:
     name: Beginner's Guide
     enchantments:
       soulbound: 1
-    right-click:
-      player-command: help
+    actions:
+      right-click:
+        player-command: help
   hummingbird:
     material: ELYTRA
     name: '§dHummingbird§5 ⭐'
@@ -80,8 +81,9 @@ items:
       - '§8-------------------------'
       - ''
       - '§bRight-click§r on a block'
-      - '§rto place blocks. in a §b3x3§r'
-      - '§rarea.'
+      - '§rto place blocks in a §b3x3§r'
+      - '§rarea. Requires the block to'
+      - '§rbe in your inventory.'
       - ''
       - '§8-------------------------'
       - '§6BUILDER''s Crate Item'
@@ -117,6 +119,7 @@ items:
         paint-brush: pick
       right-click-block:
         paint-brush: paint
+      right-click-entity:
 
 books:
   title: Encyclopedia Blanktopia
