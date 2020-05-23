@@ -91,6 +91,7 @@ fun portableBeacon(player: Player) {
 
 val BUILDERS_WAND_BLACKLIST = setOf(
     Material.CHEST,
+    Material.TRAPPED_CHEST,
     Material.WHITE_BED,
     Material.ORANGE_BED,
     Material.MAGENTA_BED,
