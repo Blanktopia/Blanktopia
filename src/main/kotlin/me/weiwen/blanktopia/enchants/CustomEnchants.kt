@@ -28,8 +28,6 @@ val ENCHANTMENTS = setOf(
     STRIDE
 )
 
-private val ENCHANTMENTS_TICKABLE= ENCHANTMENTS.filter { it.listener is EveryTenTicks }
-
 class CustomEnchants(private val plugin: Blanktopia) :
     Listener, Module {
 
@@ -39,8 +37,6 @@ class CustomEnchants(private val plugin: Blanktopia) :
         plugin.server.pluginManager.registerEvents(AnvilWatcher(plugin), plugin)
         plugin.server.pluginManager.registerEvents(GrindStoneWatcher(plugin), plugin)
 
-        plugin.server.scheduler.runTaskTimer(plugin, ::everyTenTicks as (() -> Unit), 10, 10)
-
         registerCommands()
         registerEnchantments()
     }
@@ -48,23 +44,6 @@ class CustomEnchants(private val plugin: Blanktopia) :
     override fun disable() {}
 
     override fun reload() {}
-
-    private fun everyTenTicks() {
-        for (player in Bukkit.getOnlinePlayers()) {
-            for (item in player.inventory.armorContents) {
-                if (item != null && !item.enchantments.isEmpty()) {
-                    for (enchant in ENCHANTMENTS_TICKABLE) {
-                        if (item.containsEnchantment(enchant)) {
-                            (enchant.listener as EveryTenTicks).everyTenTicks(
-                                player,
-                                item.getEnchantmentLevel(enchant)
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     private fun registerCommands() {
         val command = plugin.getCommand("wenchant")

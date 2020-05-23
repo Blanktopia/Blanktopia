@@ -4,6 +4,7 @@ import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent
 import me.weiwen.blanktopia.Blanktopia
 import me.weiwen.blanktopia.Module
 import me.weiwen.blanktopia.items.listeners.FlyInClaims
+import me.weiwen.blanktopia.items.listeners.PotionEffect
 import org.bukkit.NamespacedKey
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -21,11 +22,13 @@ class CustomItems(private val plugin: Blanktopia) :
     Listener, Module {
     private var config = plugin.config.getConfigurationSection("items")!!
     private lateinit var items: Map<String, CustomItemType>
+    private var potionEffect = PotionEffect(plugin)
 
     override fun enable() {
         items = populateItems()
         plugin.server.pluginManager.registerEvents(this, plugin)
         plugin.server.pluginManager.registerEvents(FlyInClaims(plugin), plugin)
+        potionEffect.enable()
         val command = plugin.getCommand("witem")
         command?.setExecutor { sender, _, _, args ->
             if (sender is Player) {
@@ -42,7 +45,9 @@ class CustomItems(private val plugin: Blanktopia) :
         }
     }
 
-    override fun disable() {}
+    override fun disable() {
+        potionEffect.disable()
+    }
 
     override fun reload() {
         config = plugin.config.getConfigurationSection("items")!!
