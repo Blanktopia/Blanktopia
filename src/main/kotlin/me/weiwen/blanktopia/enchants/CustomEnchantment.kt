@@ -71,10 +71,6 @@ open class CustomEnchantment(
     }
 }
 
-interface EveryTenTicks {
-    fun everyTenTicks(player: Player, level: Int) {}
-}
-
 fun ItemStack.enchant(enchantment: Enchantment, level: Int) {
     val meta = this.itemMeta ?: Bukkit.getItemFactory().getItemMeta(this.type)!!
     if (meta is EnchantmentStorageMeta) {

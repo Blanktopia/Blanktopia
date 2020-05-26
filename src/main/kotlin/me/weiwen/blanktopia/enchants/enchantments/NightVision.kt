@@ -25,16 +25,13 @@ val NIGHT_VISION = CustomEnchantment(
     NightVision
 )
 
-object NightVision : Listener, EveryTenTicks {
+object NightVision : Listener {
     init {}
-
-    override fun everyTenTicks(player: Player, level: Int) {
-        player.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, 319, 0, true))
-    }
 
     @EventHandler
     fun onPlayerArmorChange(event: PlayerArmorChangeEvent) {
         val newItem = event.newItem
+        val oldItem = event.oldItem
         val player = event.player
         if (newItem != null && newItem.containsEnchantment(NIGHT_VISION)) {
             player.persistentDataContainer.set(
@@ -43,7 +40,7 @@ object NightVision : Listener, EveryTenTicks {
                 "NIGHT_VISION"
             )
             player.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, 619, 0, true))
-        } else {
+        } else if (oldItem != null && oldItem.containsEnchantment(NIGHT_VISION)) {
             player.persistentDataContainer.remove(
                 NamespacedKey(Blanktopia.INSTANCE, "potion-effect-type")
             )
