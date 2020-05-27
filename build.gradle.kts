@@ -29,9 +29,9 @@ repositories {
 dependencies {
     compile(kotlin("stdlib-jdk8", kotlin_version))
 
+    compileOnly("com.destroystokyo.paper:paper-api:$paper_version")
     compileOnly("org.spigotmc:spigot-api:$spigot_version")
     compileOnly("org.bukkit:bukkit:$bukkit_version")
-    compileOnly("com.destroystokyo.paper:paper-api:$paper_version")
     compileOnly("com.github.TechFortress:GriefPrevention:16.7.1")
     compile("de.themoep:minedown:1.5-SNAPSHOT")
     compile("io.papermc:paperlib:1.0.2")
@@ -52,6 +52,7 @@ bukkit {
     apiVersion = plugin_api_version
     author = plugin_author
     website = plugin_website
+    depend = listOf("GriefPrevention")
     commands {
         register("blanktopia") {
             description = "Manages the Blanktopia plugin"

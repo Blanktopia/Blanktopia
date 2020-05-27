@@ -1,8 +1,5 @@
 package me.weiwen.blanktopia.items
 
-import me.weiwen.blanktopia.Blanktopia
-import me.weiwen.blanktopia.canBuild
-import me.weiwen.blanktopia.isInTrustedClaim
 import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
@@ -13,7 +10,6 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
-import org.bukkit.util.Vector
 import org.bukkit.Bukkit
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.event.block.BlockPlaceEvent
@@ -21,7 +17,10 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.block.data.Ageable
 import org.bukkit.block.data.type.*
+import me.weiwen.blanktopia.*
 import org.bukkit.entity.Entity
+import org.bukkit.event.block.BlockBreakEvent
+
 
 class CustomItemAction(config: ConfigurationSection) {
     private var message: String? = config.getString("message")
@@ -31,9 +30,15 @@ class CustomItemAction(config: ConfigurationSection) {
     private var buildersWandBuild: Boolean = config.getString("builders-wand") == "build"
     private var paintBrushPick: Boolean = config.getString("paint-brush") == "pick"
     private var paintBrushPaint: Boolean = config.getString("paint-brush") == "paint"
-    private var potionEffects: Map<PotionEffectType, Int> = config.getObject("potion-effects", Map<String, Int>.class::java)?.mapKeys { PotionEffectType.getByName(it) }
+    private var addPotionEffects: Map<PotionEffectType, Int>? = config.getConfigurationSection("add-potion-effects")?.let {
+        it.getKeys(false).associate { name ->
+            Pair(PotionEffectType.getByName(name)!!, it.getInt(name))
+        }
+    }
+    private var removePotionEffects: Boolean = config.getBoolean("remove-potion-effects")
+    private var hammer: Int = config.getInt("hammer")
 
-    fun run(player: Player, item: ItemStack) {
+    fun run(key: String, player: Player, item: ItemStack) {
         message?.let {
             val message = TextComponent(*TextComponent.fromLegacyText(it))
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message)
@@ -41,18 +46,26 @@ class CustomItemAction(config: ConfigurationSection) {
         playerCommand?.let { player.performCommand(it) }
         flyInClaims?.let {flyInClaims(player, it) }
         if (portableBeacon) portableBeacon(player)
+        addPotionEffects?.let { Blanktopia.INSTANCE.customItems.potionEffect.addPotionEffects(player, key, it) }
+        if (removePotionEffects) Blanktopia.INSTANCE.customItems.potionEffect.removePotionEffects(player, key)
     }
 
-    fun run(player: Player, item: ItemStack, block: Block?, face: BlockFace) {
-        run(player, item)
+    fun run(key: String, player: Player, item: ItemStack, block: Block?, face: BlockFace) {
+        run(key, player, item, block)
         if (block == null) return
         if (buildersWandBuild) buildersWandBuild(player, block, face)
         if (paintBrushPick) paintBrushPick(player, item, block)
         if (paintBrushPaint) paintBrushPaint(player, item, block)
     }
 
-    fun run(player: Player, item: ItemStack, entity: Entity) {
-        run(player, item)
+    fun run(key: String, player: Player, item: ItemStack, block: Block?) {
+        run(key, player, item)
+        if (block == null) return
+        hammer?.let { hammer(player, item, block, it) }
+    }
+
+    fun run(key: String, player: Player, item: ItemStack, entity: Entity) {
+        run(key, player, item)
     }
 }
 
@@ -140,25 +153,14 @@ val BUILDERS_WAND_BLACKLIST = setOf(
     Material.DARK_OAK_DOOR
 )
 fun buildersWandLocations(block: Block, face: BlockFace): MutableList<Pair<Block, Location>> {
-    val range = 1
-    val (xOffset, yOffset) = if (face.modX != 0) {
-        Pair(Vector(0, 1, 0), Vector(0, 0, 1))
-    } else if (face.modY != 0) {
-        Pair(Vector(1, 0, 0), Vector(0, 0, 1))
-    } else {
-        Pair(Vector(1, 0, 0), Vector(0, 1, 0))
-    }
     val location = block.location
     val material = block.type
     val locations: MutableList<Pair<Block, Location>> = mutableListOf()
-    for (x in -range .. range) {
-        for (y in -range .. range) {
-            val base = location.clone().add(xOffset.clone().multiply(x)).add(yOffset.clone().multiply(y))
-            if (base.block.type != material) continue
-            val other = base.clone().add(face.direction)
-            if (other.block.type != Material.AIR && other.block.type != Material.WATER && other.block.type != Material.LAVA) continue
-            locations.add(Pair(base.block, other))
-        }
+    for (base in locationsInRange(block.location, face, 1)) {
+        if (base.block.type != material) continue
+        val other = base.clone().add(face.direction)
+        if (other.block.type != Material.AIR && other.block.type != Material.WATER && other.block.type != Material.LAVA) continue
+        locations.add(Pair(base.block, other))
     }
     return locations
 }
@@ -219,7 +221,7 @@ fun buildersWandBuild(player: Player, block: Block, face: BlockFace) {
         canBuild = true
     }
     if (canBuild) {
-        block.world.playSound(block.location, Sound.BLOCK_METAL_PLACE, 1.0f, 1.0f)
+        block.world.playSound(block.location, block.soundGroup.placeSound, 1.0f, 1.0f)
     } else {
         player.playSound(block.location, Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 1.0f, 1.0f)
     }
@@ -632,3 +634,15 @@ fun paintBrushPaint(
     }
     player.world.playSound(player.location, Sound.BLOCK_SLIME_BLOCK_PLACE, 1.0f, 0.5f)
 }
+
+fun hammer(player: Player, item: ItemStack, block: Block, range: Int) {
+    val face = player.rayTraceBlocks(6.0)?.hitBlockFace ?: return
+    if (!canMineBlock(block, item)) return
+    for (location in locationsInRange(block.location, face, range)) {
+        if (!canBuild(player, location)) continue
+        val block = location.block
+        if (!canMineBlock(block, item)) continue
+        block.breakNaturally(item)
+    }
+}
+
