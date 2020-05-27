@@ -34,17 +34,11 @@ object NightVision : Listener {
         val oldItem = event.oldItem
         val player = event.player
         if (newItem != null && newItem.containsEnchantment(NIGHT_VISION)) {
-            player.persistentDataContainer.set(
-                NamespacedKey(Blanktopia.INSTANCE, "potion-effect-type"),
-                PersistentDataType.STRING,
-                "NIGHT_VISION"
-            )
-            player.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, 619, 0, true))
+            Blanktopia.INSTANCE.customItems.potionEffect.addPotionEffects(player, "night_vision", mapOf(
+                Pair(PotionEffectType.NIGHT_VISION, 0)
+            ))
         } else if (oldItem != null && oldItem.containsEnchantment(NIGHT_VISION)) {
-            player.persistentDataContainer.remove(
-                NamespacedKey(Blanktopia.INSTANCE, "potion-effect-type")
-            )
-            player.removePotionEffect(PotionEffectType.NIGHT_VISION)
+            Blanktopia.INSTANCE.customItems.potionEffect.removePotionEffects(player, "night_vision")
         }
     }
 }

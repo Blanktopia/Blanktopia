@@ -31,6 +31,7 @@ class CustomItemAction(config: ConfigurationSection) {
     private var buildersWandBuild: Boolean = config.getString("builders-wand") == "build"
     private var paintBrushPick: Boolean = config.getString("paint-brush") == "pick"
     private var paintBrushPaint: Boolean = config.getString("paint-brush") == "paint"
+    private var potionEffects: Map<PotionEffectType, Int> = config.getObject("potion-effects", Map<String, Int>.class::java)?.mapKeys { PotionEffectType.getByName(it) }
 
     fun run(player: Player, item: ItemStack) {
         message?.let {
@@ -68,6 +69,22 @@ fun flyInClaims(player: Player, canFly: Boolean) {
         )
         player.allowFlight = false
     }
+}
+
+fun addPotionEffect(player: Player, potionEffect: PotionEffect) {
+    player.persistentDataContainer.set(
+        NamespacedKey(Blanktopia.INSTANCE, "potion-effect-type"),
+        PersistentDataType.STRING,
+        "NIGHT_VISION"
+    )
+    player.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, 619, 0, true))
+}
+
+fun removePotionEffect(player: Player, potionEffectType: PotionEffectType, level: Int) {
+    player.persistentDataContainer.remove(
+        NamespacedKey(Blanktopia.INSTANCE, "potion-effect-type")
+    )
+    player.removePotionEffect(potionEffectType)
 }
 
 fun portableBeacon(player: Player) {

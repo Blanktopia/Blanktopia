@@ -22,7 +22,7 @@ class CustomItems(private val plugin: Blanktopia) :
     Listener, Module {
     private var config = plugin.config.getConfigurationSection("items")!!
     private lateinit var items: Map<String, CustomItemType>
-    private var potionEffect = PotionEffect(plugin)
+    var potionEffect = PotionEffect(plugin)
 
     override fun enable() {
         items = populateItems()

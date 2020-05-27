@@ -12,7 +12,9 @@ import java.io.File
 
 class Blanktopia : JavaPlugin() {
     lateinit var storage: Storage
+
     var modules = mutableListOf<Module>()
+    lateinit var customItems: CustomItems
 
     companion object {
         lateinit var INSTANCE: Blanktopia
@@ -52,7 +54,7 @@ class Blanktopia : JavaPlugin() {
         modules.add(EnderDragon(this, storage))
         modules.add(ShulkerRespawn(this))
         modules.add(CustomEnchants(this))
-        val customItems = CustomItems(this)
+        customItems = CustomItems(this)
         modules.add(customItems)
         modules.add(Books(this, customItems))
         modules.add(Kits(this, customItems))
