@@ -622,11 +622,13 @@ fun paintBrushPaint(
 fun hammer(player: Player, item: ItemStack, block: Block, range: Int) {
     val face = player.rayTraceBlocks(6.0)?.hitBlockFace ?: return
     if (!canMineBlock(block, item)) return
+    val hardness = block.type.hardness
     for (location in locationsInRange(block.location, face, range)) {
         if (!canBuild(player, location)) continue
-        val block = location.block
-        if (!canMineBlock(block, item)) continue
-        block.breakNaturally(item)
+        val other = location.block
+        if (other.type.hardness > hardness) continue
+        if (!canMineBlock(other, item)) continue
+        other.breakNaturally(item)
     }
 }
 
