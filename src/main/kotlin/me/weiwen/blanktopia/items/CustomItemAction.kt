@@ -61,7 +61,7 @@ class CustomItemAction(config: ConfigurationSection) {
     fun run(key: String, player: Player, item: ItemStack, block: Block?) {
         run(key, player, item)
         if (block == null) return
-        hammer?.let { hammer(player, item, block, it) }
+        if (hammer != 0) { hammer(player, item, block, hammer) }
     }
 
     fun run(key: String, player: Player, item: ItemStack, entity: Entity) {
