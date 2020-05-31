@@ -1,5 +1,7 @@
 package me.weiwen.blanktopia
 
+import org.bukkit.DyeColor
+import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.bukkit.block.Block
 import org.bukkit.Material.*

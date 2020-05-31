@@ -1,5 +1,10 @@
 package me.weiwen.blanktopia.items
 
+import me.libraryaddict.disguise.DisguiseAPI
+import me.libraryaddict.disguise.disguisetypes.Disguise
+import me.libraryaddict.disguise.disguisetypes.DisguiseType
+import me.libraryaddict.disguise.disguisetypes.MobDisguise
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise
 import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
@@ -19,7 +24,6 @@ import org.bukkit.block.data.Ageable
 import org.bukkit.block.data.type.*
 import me.weiwen.blanktopia.*
 import org.bukkit.entity.Entity
-import org.bukkit.event.block.BlockBreakEvent
 
 
 class CustomItemAction(config: ConfigurationSection) {
@@ -37,6 +41,14 @@ class CustomItemAction(config: ConfigurationSection) {
     }
     private var removePotionEffects: Boolean = config.getBoolean("remove-potion-effects")
     private var hammer: Int = config.getInt("hammer")
+    private var disguise: Disguise? = config.getConfigurationSection("disguise")?.let {
+        when (it.getString("kind")) {
+            "mob" -> MobDisguise(DisguiseType.valueOf(it.getString("type")!!), !it.getBoolean("baby"))
+            "player" -> PlayerDisguise(it.getString("name")!!)
+            else -> null
+        }
+    }
+    private var undisguise: Boolean = config.getBoolean("undisguise")
 
     fun run(key: String, player: Player, item: ItemStack) {
         message?.let {
@@ -44,10 +56,16 @@ class CustomItemAction(config: ConfigurationSection) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message)
         }
         playerCommand?.let { player.performCommand(it) }
-        flyInClaims?.let {flyInClaims(player, it) }
+        flyInClaims?.let { flyInClaims(player, it) }
         if (portableBeacon) portableBeacon(player)
         addPotionEffects?.let { Blanktopia.INSTANCE.customItems.potionEffect.addPotionEffects(player, key, it) }
         if (removePotionEffects) Blanktopia.INSTANCE.customItems.potionEffect.removePotionEffects(player, key)
+        disguise?.let {
+            val disguise = it.clone()
+            disguise.entity = player
+            disguise.startDisguise()
+        }
+        if (undisguise) DisguiseAPI.undisguiseToAll(player)
     }
 
     fun run(key: String, player: Player, item: ItemStack, block: Block?, face: BlockFace) {
@@ -137,7 +155,6 @@ val BUILDERS_WAND_BLACKLIST = setOf(
     Material.DARK_OAK_DOOR
 )
 fun buildersWandLocations(block: Block, face: BlockFace): MutableList<Pair<Block, Location>> {
-    val location = block.location
     val material = block.type
     val locations: MutableList<Pair<Block, Location>> = mutableListOf()
     for (base in locationsInRange(block.location, face, 1)) {

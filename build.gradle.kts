@@ -24,6 +24,8 @@ repositories {
     maven { url = uri("http://repo.minebench.de/")}
     maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
     maven { url = uri("https://jitpack.io") }
+    maven { url = uri("https://repo.dmulloy2.net/nexus/repository/public/") }
+    maven { url = uri("http://repo.md-5.net/content/repositories/releases/") }
 }
 
 dependencies {
@@ -33,6 +35,7 @@ dependencies {
     compileOnly("org.spigotmc:spigot-api:$spigot_version")
     compileOnly("org.bukkit:bukkit:$bukkit_version")
     compileOnly("com.github.TechFortress:GriefPrevention:16.7.1")
+    compileOnly("LibsDisguises:LibsDisguises:10.0.12")
     compile("de.themoep:minedown:1.5-SNAPSHOT")
     compile("io.papermc:paperlib:1.0.2")
 }
@@ -52,7 +55,7 @@ bukkit {
     apiVersion = plugin_api_version
     author = plugin_author
     website = plugin_website
-    depend = listOf("GriefPrevention")
+    depend = listOf("GriefPrevention", "LibsDisguises")
     commands {
         register("blanktopia") {
             description = "Manages the Blanktopia plugin"
@@ -85,9 +88,14 @@ bukkit {
             permission = "blanktopia.enchant"
         }
         register("witem") {
-            description = "Makes the held item a custom item"
+            description = "Gives the player a custom item"
             usage = "/<command> <type>"
             permission = "blanktopia.item"
+        }
+        register("whead") {
+            description = "Gives the player a custom player head"
+            usage = "/<command> <name> <base64>"
+            permission = "blanktopia.head"
         }
         register("wkit") {
             description = "Gives user a kit"
