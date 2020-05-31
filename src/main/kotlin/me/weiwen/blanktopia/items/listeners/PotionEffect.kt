@@ -43,13 +43,13 @@ class PotionEffect(val plugin: Blanktopia) {
     fun addPotionEffects(player: Player, key: String, effects: Map<PotionEffectType, Int>) {
         potionEffectGroups.getOrPut(player.uniqueId, { mutableMapOf() })[key] = effects
         for ((type, level) in effects.entries) {
-player.addPotionEffect(
-            PotionEffect(
-                type,
-                619,
-                level,
-                true
-            )
+            player.addPotionEffect(
+                PotionEffect(
+                    type,
+                    619,
+                    level,
+                    true
+                )
             )
         }
     }

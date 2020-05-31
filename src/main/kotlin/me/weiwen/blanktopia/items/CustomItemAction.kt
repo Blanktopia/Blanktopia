@@ -84,22 +84,6 @@ fun flyInClaims(player: Player, canFly: Boolean) {
     }
 }
 
-fun addPotionEffect(player: Player, potionEffect: PotionEffect) {
-    player.persistentDataContainer.set(
-        NamespacedKey(Blanktopia.INSTANCE, "potion-effect-type"),
-        PersistentDataType.STRING,
-        "NIGHT_VISION"
-    )
-    player.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, 619, 0, true))
-}
-
-fun removePotionEffect(player: Player, potionEffectType: PotionEffectType, level: Int) {
-    player.persistentDataContainer.remove(
-        NamespacedKey(Blanktopia.INSTANCE, "potion-effect-type")
-    )
-    player.removePotionEffect(potionEffectType)
-}
-
 fun portableBeacon(player: Player) {
     val haste = player.getPotionEffect(PotionEffectType.FAST_DIGGING)
     if (haste != null && haste.amplifier == 2 && haste.duration >= 10800) return
