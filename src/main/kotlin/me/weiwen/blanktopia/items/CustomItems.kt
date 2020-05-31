@@ -5,6 +5,7 @@ import me.weiwen.blanktopia.Blanktopia
 import me.weiwen.blanktopia.Module
 import me.weiwen.blanktopia.items.listeners.FlyInClaims
 import me.weiwen.blanktopia.items.listeners.PotionEffect
+import me.weiwen.blanktopia.playerHeadFromUrl
 import org.bukkit.NamespacedKey
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -30,19 +31,26 @@ class CustomItems(private val plugin: Blanktopia) :
         plugin.server.pluginManager.registerEvents(this, plugin)
         plugin.server.pluginManager.registerEvents(FlyInClaims(plugin), plugin)
         potionEffect.enable()
-        val command = plugin.getCommand("witem")
-        command?.setExecutor { sender, _, _, args ->
-            if (sender is Player) {
-                sender.inventory.addItem(buildItem(args[0]))
-                sender.playSound(sender.location, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 1.0f)
-                true
-            } else {
-                false
-            }
+        val witemCommand = plugin.getCommand("witem")
+        witemCommand?.setExecutor { sender, _, _, args ->
+            if (sender !is Player) return@setExecutor false
+            if (args.size != 1) return@setExecutor false
+            sender.inventory.addItem(buildItem(args[0]))
+            sender.playSound(sender.location, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 1.0f)
+            true
         }
-        command?.setTabCompleter {
+        witemCommand?.setTabCompleter {
                 _, _, _, _ ->
             config.getKeys(false).toList()
+        }
+
+        val wheadCommand = plugin.getCommand("whead")
+        wheadCommand?.setExecutor { sender, _, _, args ->
+            if (sender !is Player) return@setExecutor false
+            if (args.size != 2) return@setExecutor false
+            sender.inventory.addItem(playerHeadFromUrl(args[0], args[1]))
+            sender.playSound(sender.location, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 1.0f)
+            true
         }
     }
 

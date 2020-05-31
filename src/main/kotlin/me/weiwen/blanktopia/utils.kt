@@ -13,6 +13,7 @@ import org.bukkit.*
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
+import java.util.*
 
 var ExperienceOrb.level: Double
     get() = if (experience < 352) {
@@ -118,5 +119,20 @@ fun locationsInRange(origin: Location, face: BlockFace, range: Int): MutableList
         }
     }
     return locations
+}
+
+fun playerHeadFromTexture(name: String, texture: String): ItemStack {
+    val skull = ItemStack(Material.PLAYER_HEAD)
+    val uuid = UUID(texture.hashCode().toLong(), texture.hashCode().toLong())
+    Bukkit.getUnsafe().modifyItemStack(skull,
+        "{SkullOwner:{Name:\"$name\",Id:\"$uuid\",Properties:{textures:[{Value:\"$texture\"}]}}}"
+        // TODO: change in 1.16 {UUID:[I;1498693494,1027158888,1898994005,860320107]}
+    )
+    return skull
+}
+
+fun playerHeadFromUrl(name: String, url: String): ItemStack {
+    val data = Base64.getEncoder().encode("{textures:{SKIN:{url:\"http://textures.minecraft.net/texture/$url\"}}}".toByteArray())
+    return playerHeadFromTexture(name, String(data))
 }
 
