@@ -27,13 +27,17 @@ class AnvilWatcher(val plugin: Blanktopia) : Listener {
         var canAnvil = false
 
         // Rename
-        if (!event.inventory.renameText.isNullOrBlank() && event.inventory.renameText != targetMeta.displayName) {
-            if (targetMeta is Repairable && target.amount != 1) {
-                targetMeta.repairCost += 1
+        if (!event.inventory.renameText.isNullOrBlank()) {
+            if (event.inventory.renameText!!.replace("§", "") != targetMeta.displayName.replace("§", "")) {
+                if (targetMeta is Repairable && target.amount != 1) {
+                    targetMeta.repairCost += 1
+                }
+                resultMeta.setDisplayName(event.inventory.renameText)
+                repairCost += 1
+                canAnvil = true
+            } else {
+                resultMeta.setDisplayName(targetMeta.displayName)
             }
-            resultMeta.setDisplayName(event.inventory.renameText)
-            repairCost += 1
-            canAnvil = true
         } else if (sacrifice == null) {
             return
         }
