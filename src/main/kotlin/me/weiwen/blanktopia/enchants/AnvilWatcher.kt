@@ -15,8 +15,8 @@ import kotlin.math.ceil
 class AnvilWatcher(val plugin: Blanktopia) : Listener {
     @EventHandler
     private fun onPrepareAnvil(event: PrepareAnvilEvent) {
-        val target = event.inventory.contents[0] ?: return
-        val sacrifice = event.inventory.contents[1]
+        val target = event.inventory.contents.getOrNull(0) ?: return
+        val sacrifice = event.inventory.contents.getOrNull(1)
 
         val result = target.clone()
         val resultMeta = result.itemMeta ?: Bukkit.getItemFactory().getItemMeta(result.type)!!
