@@ -48,7 +48,7 @@ class CustomItems(private val plugin: Blanktopia) :
         wheadCommand?.setExecutor { sender, _, _, args ->
             if (sender !is Player) return@setExecutor false
             if (args.size != 2) return@setExecutor false
-            sender.inventory.addItem(playerHeadFromUrl(args[0], args[1]))
+            sender.inventory.addItem(playerHeadFromUrl(args[0].replace("_", " "), args[1]))
             sender.playSound(sender.location, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 1.0f)
             true
         }
