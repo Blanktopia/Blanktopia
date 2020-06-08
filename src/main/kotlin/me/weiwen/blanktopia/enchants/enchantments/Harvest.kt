@@ -46,6 +46,8 @@ object Harvest : Listener {
 
             tool.damage(1)
 
+            if (blockData.age < blockData.maximumAge) return
+
             for (drop in event.block.getDrops(tool)) {
                 if (HARVESTABLE_ITEMS.contains(drop.type)) {
                     drop.amount -= 1
