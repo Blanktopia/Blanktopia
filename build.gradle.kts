@@ -56,6 +56,7 @@ bukkit {
     author = plugin_author
     website = plugin_website
     depend = listOf("GriefPrevention", "LibsDisguises")
+    loadBefore = listOf("GoldenCrates")
     commands {
         register("blanktopia") {
             description = "Manages the Blanktopia plugin"
