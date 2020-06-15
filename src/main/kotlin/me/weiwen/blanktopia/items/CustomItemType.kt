@@ -2,6 +2,7 @@ package me.weiwen.blanktopia.items
 
 import me.weiwen.blanktopia.Blanktopia
 import me.weiwen.blanktopia.enchants.enchant
+import me.weiwen.blanktopia.playerHeadFromUrl
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -18,6 +19,7 @@ import java.util.*
 class CustomItemType(val type: String, config: ConfigurationSection) {
     val material: Material = Material.matchMaterial(config.getString("material") ?: "STICK") ?: Material.STICK
     val name: String? = config.getString("name")
+    val head: String? = config.getString("head")
     val lore: List<String>? = config.getStringList("lore")
     val enchantments: MutableMap<Enchantment, Int> = mutableMapOf()
     val attributeModifiers: MutableList<Pair<Attribute, AttributeModifier>> = mutableListOf()
@@ -102,7 +104,11 @@ class CustomItemType(val type: String, config: ConfigurationSection) {
     }
 
     fun build(): ItemStack {
-        val item = ItemStack(material)
+        val item = if (head != null) {
+            playerHeadFromUrl(name ?: "Anonymous", head)
+        } else {
+            ItemStack(material)
+        }
         val meta = item.itemMeta ?: Bukkit.getItemFactory().getItemMeta(material)!!
         if (name != null) meta.setDisplayName(name)
         if (lore != null) meta.lore = lore
