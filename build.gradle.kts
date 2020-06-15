@@ -102,12 +102,18 @@ bukkit {
             usage = "/<command> <kit> [player]"
             permission = "blanktopia.kit"
         }
+        register("wserialize") {
+            description = "Serializes the player's held item and writes it to serialized.yml"
+            usage = "/<command>"
+            permission = "blanktopia.serialize"
+        }
     }
     permissions {
         register("blanktopia.admin") { }
         register("blanktopia.enchant") { }
         register("blanktopia.item") { }
         register("blanktopia.kit") { }
+        register("blanktopia.serialize") { }
         register("blanktopia.help") {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.TRUE
         }

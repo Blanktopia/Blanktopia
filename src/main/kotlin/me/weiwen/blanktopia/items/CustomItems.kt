@@ -8,6 +8,7 @@ import me.weiwen.blanktopia.items.listeners.PotionEffect
 import me.weiwen.blanktopia.playerHeadFromUrl
 import org.bukkit.NamespacedKey
 import org.bukkit.Sound
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -19,6 +20,7 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
+import java.io.File
 
 class CustomItems(private val plugin: Blanktopia) :
     Listener, Module {
@@ -49,6 +51,27 @@ class CustomItems(private val plugin: Blanktopia) :
             if (sender !is Player) return@setExecutor false
             if (args.size != 2) return@setExecutor false
             sender.inventory.addItem(playerHeadFromUrl(args[0].replace("_", " "), args[1]))
+            sender.playSound(sender.location, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 1.0f)
+            true
+        }
+
+        val wserializeCommand = plugin.getCommand("wserialize")
+        wserializeCommand?.setExecutor { sender, _, _, _ ->
+            if (sender !is Player) return@setExecutor false
+            val item = sender.inventory.itemInMainHand
+
+            val file = File(plugin.dataFolder, "serialized.yml")
+            if (!file.exists()) {
+                file.createNewFile()
+            }
+
+            val config = YamlConfiguration()
+            if (!config.isList("serialized")) {
+                config.set("serialized", listOf<Any>());
+            }
+            (config.getList("serialized") as? MutableList<Any>)?.add(item)
+
+            config.save(file)
             sender.playSound(sender.location, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 1.0f)
             true
         }
