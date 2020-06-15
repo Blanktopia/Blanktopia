@@ -5,25 +5,28 @@ import me.libraryaddict.disguise.disguisetypes.Disguise
 import me.libraryaddict.disguise.disguisetypes.DisguiseType
 import me.libraryaddict.disguise.disguisetypes.MobDisguise
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise
+import me.weiwen.blanktopia.*
+import net.md_5.bungee.api.ChatMessageType
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
+import org.bukkit.block.data.Ageable
+import org.bukkit.block.data.Directional
+import org.bukkit.block.data.Levelled
+import org.bukkit.block.data.Waterlogged
+import org.bukkit.block.data.type.*
 import org.bukkit.configuration.ConfigurationSection
+import org.bukkit.entity.EnderPearl
+import org.bukkit.entity.Entity
 import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
+import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
-import org.bukkit.Bukkit
-import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.event.block.BlockPlaceEvent
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.block.data.Ageable
-import org.bukkit.block.data.type.*
-import me.weiwen.blanktopia.*
-import org.bukkit.entity.Entity
 
 
 class CustomItemAction(config: ConfigurationSection) {
@@ -49,6 +52,7 @@ class CustomItemAction(config: ConfigurationSection) {
         }
     }
     private var undisguise: Boolean = config.getBoolean("undisguise")
+    private var infinity: Boolean = config.getBoolean("infinity")
 
     fun run(key: String, player: Player, item: ItemStack) {
         message?.let {
@@ -66,6 +70,7 @@ class CustomItemAction(config: ConfigurationSection) {
             disguise.startDisguise()
         }
         if (undisguise) DisguiseAPI.undisguiseToAll(player)
+        if (infinity) infinity(player, item)
     }
 
     fun run(key: String, player: Player, item: ItemStack, block: Block?, face: BlockFace) {
@@ -74,6 +79,7 @@ class CustomItemAction(config: ConfigurationSection) {
         if (buildersWandBuild) buildersWandBuild(player, block, face)
         if (paintBrushPick) paintBrushPick(player, item, block)
         if (paintBrushPaint) paintBrushPaint(player, item, block)
+        if (infinity) infinity(player, item, block, face)
     }
 
     fun run(key: String, player: Player, item: ItemStack, block: Block?) {
@@ -649,3 +655,130 @@ fun hammer(player: Player, item: ItemStack, block: Block, range: Int) {
     }
 }
 
+val EMPTY_BLOCKS = setOf(Material.AIR, Material.WATER, Material.LAVA, Material.GRASS, Material.TALL_GRASS, Material.FERN, Material.LARGE_FERN)
+
+fun infinity(player: Player, item: ItemStack) {
+    if (player.hasCooldown(item.type)) return
+    when (item.type) {
+        Material.ENDER_PEARL -> {
+            playSoundAt(Sound.ENTITY_ENDER_PEARL_THROW, player, SoundCategory.PLAYERS, 1.0f, 0.5f)
+            player.launchProjectile(EnderPearl::class.java)
+            player.setCooldown(Material.ENDER_PEARL, 20)
+        }
+        Material.BUCKET -> {
+            val target = player.rayTraceBlocks(5.0, FluidCollisionMode.SOURCE_ONLY)?.hitBlock ?: return
+            if (target.type == Material.WATER || target.type == Material.LAVA) {
+                target.type = Material.AIR
+            } else if (target.type == Material.CAULDRON) {
+                val data = target.blockData
+                (data as Levelled).level = 0
+                target.blockData = data
+            } else {
+                val data = target.blockData
+                if (data is Waterlogged && data.isWaterlogged) {
+                    data.isWaterlogged = false
+                    target.blockData = data
+                }
+            }
+        }
+        Material.WATER_BUCKET -> {
+            val result = player.rayTraceBlocks(5.0, FluidCollisionMode.SOURCE_ONLY) ?: return
+            val block = result.hitBlock ?: return
+            val face = result.hitBlockFace ?: return
+            val data = block.blockData
+            if (block.type == Material.WATER || block.type == Material.LAVA) {
+                block.type = Material.AIR
+            } else if (block.type == Material.CAULDRON) {
+                val data = block.blockData
+                (data as Levelled).level = 0
+                block.blockData = data
+            } else if (data is Waterlogged) {
+                data.isWaterlogged = !data.isWaterlogged
+                block.blockData = data
+            } else {
+                val target = block.getRelative(face)
+                if (!EMPTY_BLOCKS.contains(target.type)) return
+                val state = target.state
+                state.type = Material.WATER
+                val data = Bukkit.getServer().createBlockData(Material.WATER)
+                (data as? Levelled)?.level = 0
+                state.blockData = data
+                val buildEvent = BlockPlaceEvent(
+                    block,
+                    state,
+                    target,
+                    ItemStack(Material.AIR),
+                    player,
+                    true,
+                    EquipmentSlot.HAND
+                )
+                Bukkit.getPluginManager().callEvent(buildEvent)
+                if (buildEvent.isCancelled) return
+                state.update(true)
+                player.setCooldown(Material.WATER_BUCKET, 10)
+            }
+        }
+    }
+}
+
+fun infinity(player: Player, item: ItemStack, block: Block, face: BlockFace) {
+    if (player.hasCooldown(item.type)) return
+    if (block.type.isInteractable()) return
+    when (item.type) {
+        Material.TORCH -> {
+            val (block, target, face) = when (block.type) {
+                Material.GRASS, Material.TALL_GRASS, Material.FERN, Material.LARGE_FERN -> Triple(block.getRelative(BlockFace.DOWN), block, BlockFace.DOWN)
+                else -> Triple(block, block.getRelative(face), face)
+            }
+            if (!EMPTY_BLOCKS.contains(target.type)) return
+            val state = target.state
+            if (block.type.isSolid && face != BlockFace.DOWN) {
+                when (face) {
+                    BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH, BlockFace.NORTH -> {
+                        state.type = Material.WALL_TORCH
+                        val data = Bukkit.getServer().createBlockData(Material.WALL_TORCH)
+                        (data as? Directional)?.facing = face
+                        state.blockData = data
+                    }
+                    else -> {
+                        state.type = Material.TORCH
+                        val data = Bukkit.getServer().createBlockData(Material.TORCH)
+                        state.blockData = data
+                    }
+                }
+            } else {
+                var canPlace = false
+                for (tryFace in listOf(BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH, BlockFace.NORTH)) {
+                    if (block.getRelative(tryFace).type.isSolid) {
+                        state.type = Material.WALL_TORCH
+                        val data = Bukkit.getServer().createBlockData(Material.WALL_TORCH)
+                        (data as? Directional)?.facing = face
+                        state.blockData = data
+                        canPlace = true
+                        break
+                    }
+                }
+                if (block.getRelative(BlockFace.DOWN).type.isSolid) {
+                    state.type = Material.TORCH
+                    val data = Bukkit.getServer().createBlockData(Material.TORCH)
+                    state.blockData = data
+                    canPlace = true
+                }
+                if (!canPlace) return
+            }
+            val buildEvent = BlockPlaceEvent(
+                block,
+                state,
+                target,
+                ItemStack(Material.AIR),
+                player,
+                true,
+                EquipmentSlot.HAND
+            )
+            Bukkit.getPluginManager().callEvent(buildEvent)
+            if (buildEvent.isCancelled) return
+            state.update(true)
+            player.setCooldown(Material.TORCH, 10)
+        }
+    }
+}
