@@ -752,7 +752,7 @@ fun infinity(player: Player, item: ItemStack, block: Block, face: BlockFace) {
                     if (block.getRelative(tryFace).type.isSolid) {
                         state.type = Material.WALL_TORCH
                         val data = Bukkit.getServer().createBlockData(Material.WALL_TORCH)
-                        (data as? Directional)?.facing = face
+                        (data as? Directional)?.facing = tryFace
                         state.blockData = data
                         canPlace = true
                         break
