@@ -27,6 +27,7 @@ class CustomItems(private val plugin: Blanktopia) :
     private var config = plugin.config.getConfigurationSection("items")!!
     private lateinit var items: Map<String, CustomItemType>
     lateinit var potionEffect: PotionEffect
+    lateinit var flyInClaims: FlyInClaims
 
     override fun enable() {
         items = populateItems()
@@ -35,6 +36,9 @@ class CustomItems(private val plugin: Blanktopia) :
 
         potionEffect = PotionEffect(plugin)
         potionEffect.enable()
+
+        flyInClaims = FlyInClaims(plugin)
+
         val witemCommand = plugin.getCommand("witem")
         witemCommand?.setExecutor { sender, _, _, args ->
             if (sender !is Player) return@setExecutor false

@@ -11,8 +11,11 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.persistence.PersistentDataType
+import java.util.*
 
 class FlyInClaims(val plugin: Blanktopia) : Listener {
+    val canFlyPlayers: MutableSet<UUID> = mutableSetOf()
+
     @EventHandler
     fun onPlayerMove(event: PlayerMoveEvent) {
         checkCanFly(event.player, event.to, event.from)
@@ -27,8 +30,16 @@ class FlyInClaims(val plugin: Blanktopia) : Listener {
         if (to == null) return
         if (to.blockX == from.blockX && to.blockZ == from.blockZ) return
         if (player.gameMode == GameMode.CREATIVE || player.gameMode == GameMode.SPECTATOR) return
-        if (player.persistentDataContainer.get(NamespacedKey(plugin, "fly-in-claims"), PersistentDataType.BYTE) == 1.toByte()) {
+        if (canFlyPlayers.contains(player.uniqueId)) {
             player.allowFlight = isInTrustedClaim(player, to)
         }
+    }
+
+    public fun setCanFly(player: Player) {
+        canFlyPlayers.add(player.uniqueId)
+    }
+
+    public fun setCannotFly(player: Player) {
+        canFlyPlayers.remove(player.uniqueId)
     }
 }

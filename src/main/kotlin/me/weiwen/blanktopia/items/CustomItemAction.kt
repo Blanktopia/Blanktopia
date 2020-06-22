@@ -95,15 +95,9 @@ class CustomItemAction(config: ConfigurationSection) {
 
 fun flyInClaims(player: Player, canFly: Boolean) {
     if (canFly) {
-        player.persistentDataContainer.set(
-            NamespacedKey(Blanktopia.INSTANCE, "fly-in-claims"),
-            PersistentDataType.BYTE,
-            1
-        )
+        Blanktopia.INSTANCE.customItems.flyInClaims.setCanFly(player)
     } else {
-        player.persistentDataContainer.remove(
-            NamespacedKey(Blanktopia.INSTANCE, "fly-in-claims")
-        )
+        Blanktopia.INSTANCE.customItems.flyInClaims.setCannotFly(player)
         player.allowFlight = false
     }
 }
