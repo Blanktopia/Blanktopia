@@ -691,17 +691,17 @@ fun infinity(player: Player, item: ItemStack) {
                 block.blockData = data
             } else {
                 val target = block.getRelative(face)
-                if (!EMPTY_BLOCKS.contains(target.type)) return
+                if (target.type == null || !EMPTY_BLOCKS.contains(target.type)) return
                 val state = target.state
                 state.type = Material.WATER
                 val data = Bukkit.getServer().createBlockData(Material.WATER)
                 (data as? Levelled)?.level = 0
                 state.blockData = data
                 val buildEvent = BlockPlaceEvent(
-                    block,
-                    state,
                     target,
-                    ItemStack(Material.AIR),
+                    state,
+                    block,
+                    item,
                     player,
                     true,
                     EquipmentSlot.HAND
@@ -724,7 +724,7 @@ fun infinity(player: Player, item: ItemStack, block: Block, face: BlockFace) {
                 Material.GRASS, Material.TALL_GRASS, Material.FERN, Material.LARGE_FERN -> Triple(block.getRelative(BlockFace.DOWN), block, BlockFace.DOWN)
                 else -> Triple(block, block.getRelative(face), face)
             }
-            if (!EMPTY_BLOCKS.contains(target.type)) return
+            if (target.type == null || !EMPTY_BLOCKS.contains(target.type)) return
             val state = target.state
             if (block.type.isSolid && face != BlockFace.DOWN) {
                 when (face) {
@@ -761,10 +761,10 @@ fun infinity(player: Player, item: ItemStack, block: Block, face: BlockFace) {
                 if (!canPlace) return
             }
             val buildEvent = BlockPlaceEvent(
-                block,
-                state,
                 target,
-                ItemStack(Material.AIR),
+                state,
+                block,
+                item,
                 player,
                 true,
                 EquipmentSlot.HAND
