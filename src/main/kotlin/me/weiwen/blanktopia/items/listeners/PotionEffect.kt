@@ -23,18 +23,23 @@ class PotionEffect(val plugin: Blanktopia) {
     }
 
     private fun applyToAllPlayers() {
-        for (player in plugin.server.onlinePlayers) {
-            val playerPotionEffectGroups = potionEffectGroups[player.uniqueId] ?: continue
-            for (potionEffects in playerPotionEffectGroups.values) {
-                for ((type, level) in potionEffects.entries) {
-                    player.addPotionEffect(
-                        PotionEffect(
-                            type,
-                            619,
-                            level,
-                            true
+        for (world in plugin.server.worlds) {
+            if (world.name.startsWith("DXL_Game_")) {
+                continue
+            }
+            for (player in world.players) {
+                val playerPotionEffectGroups = potionEffectGroups[player.uniqueId] ?: continue
+                for (potionEffects in playerPotionEffectGroups.values) {
+                    for ((type, level) in potionEffects.entries) {
+                        player.addPotionEffect(
+                            PotionEffect(
+                                type,
+                                619,
+                                level,
+                                true
+                            )
                         )
-                    )
+                    }
                 }
             }
         }
