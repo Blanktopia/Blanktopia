@@ -112,36 +112,98 @@ class CustomItems(private val plugin: Blanktopia) :
         return items
     }
 
+    public fun getCustomItem(item: ItemStack): CustomItemType? {
+        val data = item.itemMeta?.persistentDataContainer ?: return null
+        val type = data.get(NamespacedKey(plugin, "type"), PersistentDataType.STRING) ?: return null
+        return items[type]
+    }
+
     @EventHandler
     fun onPlayerInteract(event: PlayerInteractEvent) {
         val item = event.item ?: return
-        val data = item.itemMeta?.persistentDataContainer ?: return
-        val type = data.get(NamespacedKey(plugin, "type"), PersistentDataType.STRING) ?: return
-        val customItem = items[type] ?: return
-        when (event.action) {
-            Action.LEFT_CLICK_AIR -> customItem.leftClickAir?.let { it.run(type, event.player, item); event.isCancelled = true }
-            Action.LEFT_CLICK_BLOCK -> customItem.leftClickBlock?.let { it.run(type, event.player, item, event.clickedBlock, event.blockFace); event.isCancelled = true }
-            Action.RIGHT_CLICK_AIR -> customItem.rightClickAir?.let { it.run(type, event.player, item); event.isCancelled = true }
-            Action.RIGHT_CLICK_BLOCK -> customItem.rightClickBlock?.let { it.run(type, event.player, item, event.clickedBlock, event.blockFace); event.isCancelled = true }
-            else -> return
+        val customItem = getCustomItem(item) ?: return
+        val player = event.player
+        if (player.isSneaking) {
+            when (event.action) {
+                Action.LEFT_CLICK_AIR -> customItem.shiftLeftClickAir?.let {
+                    it.run(customItem.type, player, item); event.isCancelled = true
+                }
+                Action.LEFT_CLICK_BLOCK -> customItem.shiftLeftClickBlock?.let {
+                    it.run(
+                        customItem.type,
+                        player,
+                        item,
+                        event.clickedBlock,
+                        event.blockFace
+                    ); event.isCancelled = true
+                }
+                Action.RIGHT_CLICK_AIR -> customItem.shiftRightClickAir?.let {
+                    it.run(
+                        customItem.type,
+                        player,
+                        item
+                    ); event.isCancelled = true
+                }
+                Action.RIGHT_CLICK_BLOCK -> customItem.shiftRightClickBlock?.let {
+                    it.run(
+                        customItem.type,
+                        player,
+                        item,
+                        event.clickedBlock,
+                        event.blockFace
+                    ); event.isCancelled = true
+                }
+                else -> return
+            }
+        } else {
+            when (event.action) {
+                Action.LEFT_CLICK_AIR -> customItem.leftClickAir?.let {
+                    it.run(customItem.type, player, item); event.isCancelled = true
+                }
+                Action.LEFT_CLICK_BLOCK -> customItem.leftClickBlock?.let {
+                    it.run(
+                        customItem.type,
+                        player,
+                        item,
+                        event.clickedBlock,
+                        event.blockFace
+                    ); event.isCancelled = true
+                }
+                Action.RIGHT_CLICK_AIR -> customItem.rightClickAir?.let {
+                    it.run(
+                        customItem.type,
+                        player,
+                        item
+                    ); event.isCancelled = true
+                }
+                Action.RIGHT_CLICK_BLOCK -> customItem.rightClickBlock?.let {
+                    it.run(
+                        customItem.type,
+                        player,
+                        item,
+                        event.clickedBlock,
+                        event.blockFace
+                    ); event.isCancelled = true
+                }
+                else -> return
+            }
         }
     }
 
     @EventHandler
     fun onPlayerInteractEntity(event: PlayerInteractEntityEvent) {
         val item = if (event.hand == EquipmentSlot.HAND) event.player.inventory.itemInMainHand else if (event.hand === EquipmentSlot.OFF_HAND) event.player.inventory.itemInOffHand else return
-        val data = item.itemMeta?.persistentDataContainer ?: return
-        val type = data.get(NamespacedKey(plugin, "type"), PersistentDataType.STRING) ?: return
-        val customItem = items[type] ?: return
-        customItem.rightClickEntity?.let { it.run(type, event.player, item, event.rightClicked); event.isCancelled = true }
+        val customItem = getCustomItem(item) ?: return
+        customItem.rightClickEntity?.let { it.run(customItem.type, event.player, item, event.rightClicked); event.isCancelled = true }
     }
 
     @EventHandler
     fun onPrepareItemCraft(event: PrepareItemCraftEvent) {
         for (item in event.inventory.matrix) {
-            val data = item?.itemMeta?.persistentDataContainer ?: continue
-            if (data.get(NamespacedKey(plugin, "type"), PersistentDataType.STRING) != null) {
+            if (item == null) continue
+            if (getCustomItem(item) != null) {
                 event.inventory.result = null
+                return
             }
         }
     }
@@ -151,27 +213,21 @@ class CustomItems(private val plugin: Blanktopia) :
         if (event.newItem == event.oldItem) return
 
         event.oldItem?.let {
-            val data = it.itemMeta?.persistentDataContainer ?: return@let
-            val type = data.get(NamespacedKey(plugin, "type"), PersistentDataType.STRING) ?: return@let
-            val item = items[type] ?: return@let
-            item.unequipArmor?.run(type, event.player, it)
+            val customItem = getCustomItem(it) ?: return@let
+            customItem.unequipArmor?.run(customItem.type, event.player, it)
         }
 
         event.newItem?.let {
-            val data = it.itemMeta?.persistentDataContainer ?: return@let
-            val type = data.get(NamespacedKey(plugin, "type"), PersistentDataType.STRING) ?: return@let
-            val item = items[type] ?: return@let
-            item.equipArmor?.run(type, event.player, it)
+            val customItem = getCustomItem(it) ?: return@let
+            customItem.equipArmor?.run(customItem.type, event.player, it)
         }
     }
 
     @EventHandler
     fun onBlockBreak(event: BlockBreakEvent) {
         val item = event.player.inventory.itemInMainHand
-        val data = item.itemMeta?.persistentDataContainer ?: return
-        val type = data.get(NamespacedKey(plugin, "type"), PersistentDataType.STRING) ?: return
-        val customItem = items[type] ?: return
-        customItem.breakBlock?.run(type, event.player, item, event.block)
+        val customItem = getCustomItem(item) ?: return
+        customItem.breakBlock?.run(customItem.type, event.player, item, event.block)
     }
 }
 
