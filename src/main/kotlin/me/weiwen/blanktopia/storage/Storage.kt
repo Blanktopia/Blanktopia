@@ -15,7 +15,7 @@ class Storage(private val plugin: Blanktopia) : Module {
     private val playerDataFolder = File(plugin.dataFolder, PATH)
 
     override fun enable() {
-        plugin.server.scheduler.runTaskTimerAsynchronously(plugin, ::save, 6000, 6000)
+        plugin.server.scheduler.runTaskTimerAsynchronously(plugin, ::save, 9577, 18077)
         try {
             if (!playerDataFolder.exists()) {
                 playerDataFolder.mkdirs()
