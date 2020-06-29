@@ -54,7 +54,8 @@ bukkit {
     apiVersion = plugin_api_version
     author = plugin_author
     website = plugin_website
-    depend = listOf("GriefPrevention", "LibsDisguises")
+    depend = listOf("GriefPrevention")
+    softDepend = listOf("LibsDisguises")
     loadBefore = listOf("GoldenCrates")
     commands {
         register("blanktopia") {

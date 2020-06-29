@@ -45,10 +45,14 @@ class CustomItemAction(config: ConfigurationSection) {
     private var removePotionEffects: Boolean = config.getBoolean("remove-potion-effects")
     private var hammer: Int = config.getInt("hammer")
     private var disguise: Disguise? = config.getConfigurationSection("disguise")?.let {
-        when (it.getString("kind")) {
-            "mob" -> MobDisguise(DisguiseType.valueOf(it.getString("type")!!), !it.getBoolean("baby"))
-            "player" -> PlayerDisguise(it.getString("name")!!)
-            else -> null
+        if (Blanktopia.INSTANCE.server.pluginManager.getPlugin("LibsDisguises") != null) {
+            when (it.getString("kind")) {
+                "mob" -> MobDisguise(DisguiseType.valueOf(it.getString("type")!!), !it.getBoolean("baby"))
+                "player" -> PlayerDisguise(it.getString("name")!!)
+                else -> null
+            }
+        } else {
+            null
         }
     }
     private var undisguise: Boolean = config.getBoolean("undisguise")
