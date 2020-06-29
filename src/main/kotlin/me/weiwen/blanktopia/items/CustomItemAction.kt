@@ -11,10 +11,7 @@ import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
-import org.bukkit.block.data.Ageable
-import org.bukkit.block.data.Directional
-import org.bukkit.block.data.Levelled
-import org.bukkit.block.data.Waterlogged
+import org.bukkit.block.data.*
 import org.bukkit.block.data.type.*
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.EnderPearl
@@ -57,6 +54,10 @@ class CustomItemAction(config: ConfigurationSection) {
     }
     private var undisguise: Boolean = config.getBoolean("undisguise")
     private var infinity: Boolean = config.getBoolean("infinity")
+    private var rotate: Boolean = config.getBoolean("rotate")
+    private var flip: Boolean = config.getBoolean("flip")
+    private var multitool: List<Material>? = config.getList("multitool")?.map { Material.valueOf(it as String) }
+    private var randomBlock: Boolean = config.getBoolean("random-block")
 
     fun run(key: String, player: Player, item: ItemStack) {
         message?.let {
@@ -75,6 +76,7 @@ class CustomItemAction(config: ConfigurationSection) {
         }
         if (undisguise) DisguiseAPI.undisguiseToAll(player)
         if (infinity) infinity(player, item)
+        multitool?.let { multitool(player, item, it) }
     }
 
     fun run(key: String, player: Player, item: ItemStack, block: Block?, face: BlockFace) {
@@ -84,6 +86,9 @@ class CustomItemAction(config: ConfigurationSection) {
         if (paintBrushPick) paintBrushPick(player, item, block)
         if (paintBrushPaint) paintBrushPaint(player, item, block)
         if (infinity) infinity(player, item, block, face)
+        if (rotate) rotate(player, item, block, face)
+        if (flip) flip(player, item, block, face)
+        if (randomBlock) randomBlock(player, item, block, face)
     }
 
     fun run(key: String, player: Player, item: ItemStack, block: Block?) {
@@ -125,7 +130,7 @@ fun portableBeacon(player: Player) {
     }
 }
 
-val BUILDERS_WAND_BLACKLIST = setOf(
+val PARTIAL_BLOCKS = setOf(
     Material.CHEST,
     Material.TRAPPED_CHEST,
     Material.WHITE_BED,
@@ -156,7 +161,8 @@ val BUILDERS_WAND_BLACKLIST = setOf(
     Material.BIRCH_DOOR,
     Material.JUNGLE_DOOR,
     Material.ACACIA_DOOR,
-    Material.DARK_OAK_DOOR
+    Material.DARK_OAK_DOOR,
+    Material.END_PORTAL_FRAME
 )
 fun buildersWandLocations(block: Block, face: BlockFace): MutableList<Pair<Block, Location>> {
     val material = block.type
@@ -171,7 +177,7 @@ fun buildersWandLocations(block: Block, face: BlockFace): MutableList<Pair<Block
 }
 
 fun buildersWandBuild(player: Player, block: Block, face: BlockFace) {
-    if (BUILDERS_WAND_BLACKLIST.contains(block.type)) return
+    if (PARTIAL_BLOCKS.contains(block.type)) return
     val locations = buildersWandLocations(block, face)
     var canBuild = false
     for ((base, location) in locations) {
@@ -618,21 +624,21 @@ fun paintBrushPaint(
         else -> null
     }
 
-    if (block.type in WOOL) {
+    if (block.type in WOOL && WOOL_MAP[colour] != null) {
         block.type = WOOL_MAP[colour]!!
-    } else if (block.type in STAINED_GLASS) {
+    } else if (block.type in STAINED_GLASS && STAINED_GLASS_MAP[colour] != null) {
         block.type = STAINED_GLASS_MAP[colour]!!
-    } else if (block.type in STAINED_GLASS_PANE) {
+    } else if (block.type in STAINED_GLASS_PANE && STAINED_GLASS_PANE_MAP[colour] != null) {
         block.type = STAINED_GLASS_PANE_MAP[colour]!!
-    } else if (block.type in TERRACOTTA) {
+    } else if (block.type in TERRACOTTA && TERRACOTTA_MAP[colour] != null) {
         block.type = TERRACOTTA_MAP[colour]!!
-    } else if (block.type in GLAZED_TERRACOTTA) {
+    } else if (block.type in GLAZED_TERRACOTTA && GLAZED_TERRACOTTA_MAP[colour] != null) {
         block.type = GLAZED_TERRACOTTA_MAP[colour]!!
-    } else if (block.type in CONCRETE) {
+    } else if (block.type in CONCRETE && CONCRETE_MAP[colour] != null) {
         block.type = CONCRETE_MAP[colour]!!
-    } else if (block.type in CONCRETE_POWDER) {
+    } else if (block.type in CONCRETE_POWDER && CONCRETE_POWDER_MAP[colour] != null) {
         block.type = CONCRETE_POWDER_MAP[colour]!!
-    } else if (block.type in CARPET) {
+    } else if (block.type in CARPET && CARPET_MAP[colour] != null) {
         block.type = CARPET_MAP[colour]!!
     } else {
         return
@@ -653,7 +659,7 @@ fun hammer(player: Player, item: ItemStack, block: Block, range: Int) {
     }
 }
 
-val EMPTY_BLOCKS = setOf(Material.AIR, Material.WATER, Material.LAVA, Material.GRASS, Material.TALL_GRASS, Material.FERN, Material.LARGE_FERN)
+val EMPTY_BLOCKS = setOf(Material.CAVE_AIR, Material.AIR, Material.WATER, Material.LAVA, Material.GRASS, Material.TALL_GRASS, Material.FERN, Material.LARGE_FERN)
 
 fun infinity(player: Player, item: ItemStack) {
     if (player.hasCooldown(item.type)) return
@@ -728,7 +734,7 @@ fun infinity(player: Player, item: ItemStack, block: Block, face: BlockFace) {
                 Material.GRASS, Material.TALL_GRASS, Material.FERN, Material.LARGE_FERN -> Triple(block.getRelative(BlockFace.DOWN), block, BlockFace.DOWN)
                 else -> Triple(block, block.getRelative(face), face)
             }
-            if (target.type == null || !EMPTY_BLOCKS.contains(target.type)) return
+            if (!EMPTY_BLOCKS.contains(target.type)) return
             val state = target.state
             if (block.type.isSolid && face != BlockFace.DOWN) {
                 when (face) {
@@ -779,4 +785,112 @@ fun infinity(player: Player, item: ItemStack, block: Block, face: BlockFace) {
             player.setCooldown(Material.TORCH, 10)
         }
     }
+}
+
+val SIGN_ROTATIONS = listOf(BlockFace.NORTH, BlockFace.NORTH_NORTH_EAST, BlockFace.NORTH_EAST, BlockFace.EAST_NORTH_EAST,
+                            BlockFace.EAST, BlockFace.EAST_SOUTH_EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH_SOUTH_EAST,
+                            BlockFace.SOUTH, BlockFace.SOUTH_SOUTH_WEST, BlockFace.SOUTH_WEST, BlockFace.WEST_SOUTH_WEST,
+                            BlockFace.WEST, BlockFace.WEST_NORTH_WEST, BlockFace.NORTH_WEST, BlockFace.NORTH_NORTH_WEST)
+
+fun flip(player: Player, item: ItemStack, block: Block, face: BlockFace) {
+    if (!canBuild(player, block.location)) return
+    if (PARTIAL_BLOCKS.contains(block.type)) return
+    val data = block.blockData
+    when (data) {
+        is Bisected -> {
+            data.half = if (data.half == Bisected.Half.BOTTOM) Bisected.Half.TOP else Bisected.Half.BOTTOM
+        }
+        is Slab -> {
+            if (data.type == Slab.Type.DOUBLE) return
+            data.type = if (data.type == Slab.Type.BOTTOM) Slab.Type.TOP else Slab.Type.BOTTOM
+        }
+        else -> return
+    }
+    block.setBlockData(data, false)
+    playSoundAt(Sound.BLOCK_GRINDSTONE_USE, block, SoundCategory.PLAYERS, 1.0f, 2.0f)
+}
+
+fun rotate(player: Player, item: ItemStack, block: Block, face: BlockFace) {
+    if (!canBuild(player, block.location)) return
+    if (PARTIAL_BLOCKS.contains(block.type)) return
+    val data = block.blockData
+    when (data) {
+        is Directional -> {
+            val faces = BlockFace.values()
+            var index = faces.indexOf(data.facing) + 1
+            while (!data.faces.contains(faces[index % faces.size]))  {
+                index++
+            }
+            data.facing = faces[index % faces.size]
+        }
+        is MultipleFacing -> {
+            if (data.allowedFaces.contains(face)) {
+                data.setFace(face, !data.hasFace(face))
+            }
+        }
+        is Orientable -> {
+            val axes = Axis.values()
+            var index = axes.indexOf(data.axis) + 1
+            while (!data.axes.contains(axes[index % axes.size]))  {
+                index++
+            }
+            data.axis = axes[index % axes.size]
+        }
+        is Rotatable -> {
+            val index = SIGN_ROTATIONS.indexOf(data.rotation) + 1
+            data.rotation = SIGN_ROTATIONS[index % SIGN_ROTATIONS.size]
+        }
+        is Rail -> {
+            val shapes = Rail.Shape.values()
+            var index = shapes.indexOf(data.shape) + 1
+            while (!data.shapes.contains(shapes[index % shapes.size]))  {
+                index++
+            }
+            data.shape = shapes[index % shapes.size]
+        }
+        else -> return
+    }
+    block.setBlockData(data, false)
+    playSoundAt(Sound.BLOCK_GRINDSTONE_USE, block, SoundCategory.PLAYERS, 1.0f, 2.0f)
+}
+
+fun multitool(player: Player, item: ItemStack, materials: List<Material>) {
+    val index = materials.indexOf(item.type)
+    val material = materials[(index + 1) % materials.size]
+    item.type = material
+    playSoundAt(Sound.ITEM_ARMOR_EQUIP_DIAMOND, player, SoundCategory.PLAYERS, 1.0f, 1.0f)
+}
+
+fun randomBlock(player: Player, item: ItemStack, block: Block, face: BlockFace) {
+    val target = block.getRelative(face)
+    if (!EMPTY_BLOCKS.contains(target.type)) return
+    for (slot in (0..8).toMutableList().shuffled()) {
+        val item = player.inventory.getItem(slot) ?: continue
+        if (!item.type.isBlock) continue
+
+        val state = target.state
+        state.type = item.type
+        val data = Bukkit.getServer().createBlockData(item.type)
+        state.blockData = data
+        val cost = item.clone()
+        cost.amount = 1
+        val buildEvent = BlockPlaceEvent(
+            target,
+            state,
+            block,
+            cost,
+            player,
+            true,
+            EquipmentSlot.HAND
+        )
+        Bukkit.getPluginManager().callEvent(buildEvent)
+        if (buildEvent.isCancelled) {
+            continue
+        }
+        if (player.gameMode != GameMode.CREATIVE) player.inventory.removeItem(cost)
+        state.update(true)
+        target.world.playSound(target.location, target.soundGroup.placeSound, 1.0f, 1.0f)
+        return
+    }
+    player.playSound(block.location, Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 1.0f, 1.0f)
 }
