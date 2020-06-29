@@ -33,7 +33,6 @@ dependencies {
 
     compileOnly("com.destroystokyo.paper:paper-api:$paper_version")
     compileOnly("org.spigotmc:spigot-api:$spigot_version")
-    compileOnly("org.bukkit:bukkit:$bukkit_version")
     compileOnly("com.github.TechFortress:GriefPrevention:16.7.1")
     compileOnly("LibsDisguises:LibsDisguises:10.0.12")
     compile("de.themoep:minedown:1.5-SNAPSHOT")

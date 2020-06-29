@@ -58,6 +58,7 @@ fun Material.getEnchantability(): Int {
         in IRON_TOOLS -> 14
         in GOLDEN_TOOLS -> 22
         in DIAMOND_TOOLS -> 10
+        in NETHERITE_TOOLS -> 15
         Material.BOOK -> 1
         Material.TURTLE_HELMET -> 9
         else -> 1
@@ -95,34 +96,44 @@ val DIAMOND_ARMOR = setOf(
     Material.DIAMOND_LEGGINGS,
     Material.DIAMOND_BOOTS
     )
+val NETHERITE_ARMOR = setOf(
+    Material.NETHERITE_HELMET,
+    Material.NETHERITE_CHESTPLATE,
+    Material.NETHERITE_LEGGINGS,
+    Material.NETHERITE_BOOTS
+)
 val HELMET = setOf(
     Material.LEATHER_HELMET,
     Material.CHAINMAIL_HELMET,
     Material.IRON_HELMET,
     Material.GOLDEN_HELMET,
     Material.DIAMOND_HELMET,
-    Material.TURTLE_HELMET
+    Material.TURTLE_HELMET,
+    Material.NETHERITE_HELMET
 )
 val CHESTPLATE = setOf(
     Material.LEATHER_CHESTPLATE,
     Material.CHAINMAIL_CHESTPLATE,
     Material.IRON_CHESTPLATE,
     Material.GOLDEN_CHESTPLATE,
-    Material.DIAMOND_CHESTPLATE
+    Material.DIAMOND_CHESTPLATE,
+    Material.NETHERITE_CHESTPLATE
 )
 val LEGGINGS = setOf(
     Material.LEATHER_LEGGINGS,
     Material.CHAINMAIL_LEGGINGS,
     Material.IRON_LEGGINGS,
     Material.GOLDEN_LEGGINGS,
-    Material.DIAMOND_LEGGINGS
+    Material.DIAMOND_LEGGINGS,
+    Material.NETHERITE_LEGGINGS
 )
 val BOOTS = setOf(
     Material.LEATHER_BOOTS,
     Material.CHAINMAIL_BOOTS,
     Material.IRON_BOOTS,
     Material.GOLDEN_BOOTS,
-    Material.DIAMOND_BOOTS
+    Material.DIAMOND_BOOTS,
+    Material.NETHERITE_BOOTS
 )
 val WOODEN_TOOLS = setOf(
     Material.WOODEN_SHOVEL,
@@ -159,40 +170,52 @@ val DIAMOND_TOOLS = setOf(
     Material.DIAMOND_HOE,
     Material.DIAMOND_SWORD
 )
+val NETHERITE_TOOLS = setOf(
+    Material.NETHERITE_SHOVEL,
+    Material.NETHERITE_AXE,
+    Material.NETHERITE_PICKAXE,
+    Material.NETHERITE_HOE,
+    Material.NETHERITE_SWORD
+)
 val SWORDS = setOf(
     Material.WOODEN_SWORD,
     Material.STONE_SWORD,
     Material.IRON_SWORD,
     Material.GOLDEN_SWORD,
-    Material.DIAMOND_SWORD
+    Material.DIAMOND_SWORD,
+    Material.NETHERITE_SWORD
 )
 val AXES = setOf(
     Material.WOODEN_AXE,
     Material.STONE_AXE,
     Material.IRON_AXE,
     Material.GOLDEN_AXE,
-    Material.DIAMOND_AXE
+    Material.DIAMOND_AXE,
+    Material.NETHERITE_AXE
 )
 val PICKAXES = setOf(
     Material.WOODEN_PICKAXE,
     Material.STONE_PICKAXE,
     Material.IRON_PICKAXE,
     Material.GOLDEN_PICKAXE,
-    Material.DIAMOND_PICKAXE
+    Material.DIAMOND_PICKAXE,
+    Material.NETHERITE_PICKAXE
 )
 val SHOVELS = setOf(
     Material.WOODEN_SHOVEL,
     Material.STONE_SHOVEL,
     Material.IRON_SHOVEL,
     Material.GOLDEN_SHOVEL,
-    Material.DIAMOND_SHOVEL
+    Material.DIAMOND_SHOVEL,
+    Material.NETHERITE_SHOVEL
 )
 val HOES = setOf(
     Material.WOODEN_HOE,
     Material.STONE_HOE,
     Material.IRON_HOE,
     Material.GOLDEN_HOE,
-    Material.DIAMOND_HOE
+    Material.DIAMOND_HOE,
+    Material.NETHERITE_HOE
 )
 val BOOKS = setOf(Material.BOOK)
 val ELYTRA = setOf(Material.ELYTRA)

@@ -3,12 +3,8 @@ package me.weiwen.blanktopia.enchants.enchantments
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent
 import me.weiwen.blanktopia.Blanktopia
 import me.weiwen.blanktopia.enchants.*
-import org.bukkit.NamespacedKey
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.persistence.PersistentDataType
-import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
 val NIGHT_VISION = CustomEnchantment(
@@ -26,7 +22,22 @@ val NIGHT_VISION = CustomEnchantment(
 )
 
 object NightVision : Listener {
-    init {}
+    lateinit var plugin: Blanktopia
+
+    fun enable(plugin: Blanktopia) {
+        this.plugin = plugin
+
+        for (player in plugin.server.onlinePlayers) {
+            for (item in player.inventory.armorContents) {
+                if (item == null) continue
+                if (item.enchantments.containsKey(NIGHT_VISION)) {
+                    NightVision.plugin.customItems.potionEffect.addPotionEffects(player, "night_vision", mapOf(
+                        Pair(PotionEffectType.NIGHT_VISION, 0)
+                    ))
+                }
+            }
+        }
+    }
 
     @EventHandler
     fun onPlayerArmorChange(event: PlayerArmorChangeEvent) {
@@ -37,11 +48,11 @@ object NightVision : Listener {
             if (player.world.name.startsWith("DXL_Game_")) {
                 return
             }
-            Blanktopia.INSTANCE.customItems.potionEffect.addPotionEffects(player, "night_vision", mapOf(
+            plugin.customItems.potionEffect.addPotionEffects(player, "night_vision", mapOf(
                 Pair(PotionEffectType.NIGHT_VISION, 0)
             ))
         } else if (oldItem != null && oldItem.containsEnchantment(NIGHT_VISION)) {
-            Blanktopia.INSTANCE.customItems.potionEffect.removePotionEffects(player, "night_vision")
+            plugin.customItems.potionEffect.removePotionEffects(player, "night_vision")
         }
     }
 }

@@ -32,12 +32,20 @@ class CustomItems(private val plugin: Blanktopia) :
     override fun enable() {
         items = populateItems()
         plugin.server.pluginManager.registerEvents(this, plugin)
-        plugin.server.pluginManager.registerEvents(FlyInClaims(plugin), plugin)
 
         potionEffect = PotionEffect(plugin)
         potionEffect.enable()
 
         flyInClaims = FlyInClaims(plugin)
+        plugin.server.pluginManager.registerEvents(flyInClaims, plugin)
+
+        for (player in plugin.server.onlinePlayers) {
+            for (item in player.inventory.armorContents) {
+                if (item == null) continue
+                val customItem = plugin.customItems.getCustomItem(item) ?: continue
+                customItem.equipArmor?.run(customItem.type, player, item)
+            }
+        }
 
         val witemCommand = plugin.getCommand("witem")
         witemCommand?.setExecutor { sender, _, _, args ->

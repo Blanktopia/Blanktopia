@@ -85,7 +85,6 @@ object Smelt : Listener {
             Material.KELP_PLANT -> Pair(ItemStack(Material.DRIED_KELP, amount), 0.0)
             Material.IRON_ORE -> Pair(ItemStack(Material.IRON_INGOT, amount), 0.035)
             Material.GOLD_ORE -> Pair(ItemStack(Material.GOLD_INGOT, amount), 0.5)
-            // TODO: Ancient Debris
             Material.SAND -> Pair(ItemStack(Material.GLASS, amount), 0.0)
             Material.COBBLESTONE -> Pair(ItemStack(Material.STONE, amount), 0.00)
             Material.STONE -> Pair(ItemStack(Material.SMOOTH_STONE, amount), 0.0)

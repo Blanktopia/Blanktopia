@@ -53,9 +53,9 @@ class Blanktopia : JavaPlugin() {
         modules.add(SinglePlayerSleep(this))
         modules.add(EnderDragon(this, storage))
         modules.add(ShulkerRespawn(this))
-        modules.add(CustomEnchants(this))
         customItems = CustomItems(this)
         modules.add(customItems)
+        modules.add(CustomEnchants(this))
         modules.add(Books(this, customItems))
         modules.add(Kits(this, customItems))
         for (module in modules) {

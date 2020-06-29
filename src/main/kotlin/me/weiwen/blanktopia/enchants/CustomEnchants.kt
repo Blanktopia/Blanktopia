@@ -32,6 +32,8 @@ class CustomEnchants(private val plugin: Blanktopia) :
     Listener, Module {
 
     override fun enable() {
+        NightVision.enable(plugin)
+
         plugin.server.pluginManager.registerEvents(this, plugin)
         plugin.server.pluginManager.registerEvents(EnchantingTableWatcher, plugin)
         plugin.server.pluginManager.registerEvents(AnvilWatcher(plugin), plugin)
