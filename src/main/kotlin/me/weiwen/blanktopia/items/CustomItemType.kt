@@ -30,6 +30,11 @@ class CustomItemType(val type: String, config: ConfigurationSection) {
     var leftClickAir: CustomItemAction? = null
     var rightClickAir: CustomItemAction? = null
     var rightClickEntity: CustomItemAction? = null
+    var shiftLeftClickBlock: CustomItemAction? = null
+    var shiftRightClickBlock: CustomItemAction? = null
+    var shiftLeftClickAir: CustomItemAction? = null
+    var shiftRightClickAir: CustomItemAction? = null
+    var shiftRightClickEntity: CustomItemAction? = null
     var breakBlock: CustomItemAction? = null
     var equipArmor: CustomItemAction? = null
     var unequipArmor: CustomItemAction? = null
@@ -70,26 +75,60 @@ class CustomItemType(val type: String, config: ConfigurationSection) {
             actions.getConfigurationSection("left-click")?.let {
                 leftClickBlock = CustomItemAction(it)
                 leftClickAir = leftClickBlock
+                shiftLeftClickBlock = CustomItemAction(it)
+                shiftLeftClickAir = shiftLeftClickBlock
             }
             actions.getConfigurationSection("right-click")?.let {
                 rightClickBlock = CustomItemAction(it)
                 rightClickAir = rightClickBlock
                 rightClickEntity = rightClickBlock
+                shiftRightClickBlock = CustomItemAction(it)
+                shiftRightClickAir = shiftRightClickBlock
+                shiftRightClickEntity = shiftRightClickBlock
             }
             actions.getConfigurationSection("left-click-block")?.let {
                 leftClickBlock = CustomItemAction(it)
+                shiftLeftClickBlock = CustomItemAction(it)
             }
             actions.getConfigurationSection("left-click-air")?.let {
                 leftClickAir = CustomItemAction(it)
+                shiftLeftClickAir = CustomItemAction(it)
             }
             actions.getConfigurationSection("right-click-block")?.let {
                 rightClickBlock = CustomItemAction(it)
+                shiftRightClickBlock = CustomItemAction(it)
             }
             actions.getConfigurationSection("right-click-air")?.let {
                 rightClickAir = CustomItemAction(it)
+                shiftRightClickAir = CustomItemAction(it)
             }
             actions.getConfigurationSection("right-click-entity")?.let {
                 rightClickEntity = CustomItemAction(it)
+                shiftRightClickEntity = CustomItemAction(it)
+            }
+            actions.getConfigurationSection("shift-left-click")?.let {
+                shiftLeftClickBlock = CustomItemAction(it)
+                shiftLeftClickAir = shiftLeftClickBlock
+            }
+            actions.getConfigurationSection("shift-right-click")?.let {
+                shiftRightClickBlock = CustomItemAction(it)
+                shiftRightClickAir = shiftRightClickBlock
+                shiftRightClickEntity = shiftRightClickBlock
+            }
+            actions.getConfigurationSection("shift-left-click-block")?.let {
+                shiftLeftClickBlock = CustomItemAction(it)
+            }
+            actions.getConfigurationSection("shift-left-click-air")?.let {
+                shiftLeftClickAir = CustomItemAction(it)
+            }
+            actions.getConfigurationSection("shift-right-click-block")?.let {
+                shiftRightClickBlock = CustomItemAction(it)
+            }
+            actions.getConfigurationSection("shift-right-click-air")?.let {
+                shiftRightClickAir = CustomItemAction(it)
+            }
+            actions.getConfigurationSection("shift-right-click-entity")?.let {
+                shiftRightClickEntity = CustomItemAction(it)
             }
             actions.getConfigurationSection("break-block")?.let {
                 breakBlock = CustomItemAction(it)
