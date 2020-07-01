@@ -664,14 +664,14 @@ object Beheading : Listener {
                         0.05,
                         playerHeadFromUrl(
                             "Piglin",
-                            "7eabaecc5fae5a8a49c8863ff4831aaa284198f1a2398890c765e0a8de18da8c"
+                            "5081a1239fffe135cbfa4a98a6aa6cc5b0787ad0790f56a16bf07f86374606c5"
                         )
                     )
                     is Strider -> Pair(
                         0.1,
                         playerHeadFromUrl(
                             "Strider",
-                            "e67e18602e03035ad68967ce090235d8996663fb9ea47578d3a7ebbc42a5ccf9"
+                            "18a9adf780ec7dd4625c9c0779052e6a15a451866623511e4c82e9655714b3c1"
                         )
                     )
                     is Zoglin -> Pair(

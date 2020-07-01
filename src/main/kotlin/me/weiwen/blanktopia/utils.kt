@@ -125,7 +125,7 @@ fun playerHeadFromTexture(name: String, texture: String): ItemStack {
     val skull = ItemStack(Material.PLAYER_HEAD)
     val uuid = texture.hashCode()
     Bukkit.getUnsafe().modifyItemStack(skull,
-        "{SkullOwner:{Name:\"$name\",Id:[I;0,$uuid,0,$uuid],Properties:{textures:[{Value:\"$texture\"}]}}}"
+        "{SkullOwner:{Name:\"$name\",Id:[I;-1,$uuid,-1,$uuid],Properties:{textures:[{Value:\"$texture\"}]}}}"
     )
     return skull
 }
