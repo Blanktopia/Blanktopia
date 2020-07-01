@@ -123,10 +123,9 @@ fun locationsInRange(origin: Location, face: BlockFace, range: Int): MutableList
 
 fun playerHeadFromTexture(name: String, texture: String): ItemStack {
     val skull = ItemStack(Material.PLAYER_HEAD)
-    val uuid = UUID(texture.hashCode().toLong(), texture.hashCode().toLong())
+    val uuid = texture.hashCode()
     Bukkit.getUnsafe().modifyItemStack(skull,
-        "{SkullOwner:{Name:\"$name\",Id:\"$uuid\",Properties:{textures:[{Value:\"$texture\"}]}}}"
-        // TODO: change in 1.16 {UUID:[I;1498693494,1027158888,1898994005,860320107]}
+        "{SkullOwner:{Name:\"$name\",Id:[I;0,$uuid,0,$uuid],Properties:{textures:[{Value:\"$texture\"}]}}}"
     )
     return skull
 }
