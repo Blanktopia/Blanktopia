@@ -32,7 +32,7 @@ class EnderDragon(val plugin: Blanktopia, val storage: Storage) : Module, Listen
                 val enderDragonBattle = world.enderDragonBattle ?: return@thenAccept
                 if (enderDragonBattle.hasBeenPreviouslyKilled()
                     && enderDragonBattle.enderDragon == null) {
-                    val loc = enderDragonBattle.endPortalLocation
+                    val loc = enderDragonBattle.endPortalLocation ?: return@thenAccept
                     world.spawnEntity(loc.clone().add(3.5, 1.0, 0.5), EntityType.ENDER_CRYSTAL)
                     world.spawnEntity(loc.clone().add(-2.5, 1.0, 0.5), EntityType.ENDER_CRYSTAL)
                     world.spawnEntity(loc.clone().add(0.5, 1.0, 3.5), EntityType.ENDER_CRYSTAL)
