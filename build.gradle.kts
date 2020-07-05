@@ -35,7 +35,7 @@ dependencies {
     compileOnly("org.spigotmc:spigot-api:$spigot_version")
     compileOnly("com.github.TechFortress:GriefPrevention:16.7.1")
     compileOnly("LibsDisguises:LibsDisguises:10.0.12")
-    compile("de.themoep:minedown:1.5-SNAPSHOT")
+    compile("de.themoep:minedown:1.6.1-SNAPSHOT")
     compile("io.papermc:paperlib:1.0.2")
 }
 
