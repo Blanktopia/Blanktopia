@@ -8,51 +8,36 @@ import org.bukkit.entity.Player
 import java.io.File
 import java.util.*
 
-private const val PATH = "playerData"
-
 class Storage(private val plugin: Blanktopia) : Module {
-    private var playerConfigs = mutableMapOf<UUID, FileConfiguration>()
-    private val playerDataFolder = File(plugin.dataFolder, PATH)
+    var storage: IStorage? = null
 
     override fun enable() {
         plugin.server.scheduler.runTaskTimerAsynchronously(plugin, ::save, 9577, 18077)
-        try {
-            if (!playerDataFolder.exists()) {
-                playerDataFolder.mkdirs()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        reload()
     }
 
     override fun disable() {
-        save()
+        storage?.disable()
     }
 
     override fun reload() {
-        save()
-        playerConfigs.clear()
-    }
-
-    fun player(player: Player): FileConfiguration {
-        val uuid = player.uniqueId
-        if (playerConfigs[uuid] != null) return playerConfigs[uuid]!!
-
-        val config = YamlConfiguration.loadConfiguration(File(playerDataFolder, "$uuid.yml"))
-        playerConfigs[uuid] = config
-        return config
+        storage?.save()
+        val database = plugin.config.getString("database", "flatfile")
+        storage = if (database == "mysql") {
+            val hostname = plugin.config.getString("mysql.hostname", "localhost")!!
+            val port = plugin.config.getInt("mysql.port", 3306)
+            val username = plugin.config.getString("mysql.username", "root")!!
+            val password = plugin.config.getString("mysql.password", "")!!
+            val database = plugin.config.getString("mysql.database", "blanktopia")!!
+            val useSSL = plugin.config.getBoolean("mysql.use-ssl")
+            MySQLStorage(hostname, port, username, password, database, useSSL)
+        } else {
+            FlatFileStorage(plugin.dataFolder)
+        }
+        storage?.enable()
     }
 
     fun save() {
-        plugin.logger.info("Saving player data.")
-        for ((uuid, config) in playerConfigs.entries) {
-            try {
-                val file = File(playerDataFolder, "$uuid.yml")
-                config.save(file)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-        playerConfigs.clear()
+        storage?.save()
     }
 }

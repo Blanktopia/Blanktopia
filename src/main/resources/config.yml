@@ -1,3 +1,13 @@
+database: mysql
+
+mysql:
+  hostname: localhost
+  port: 3306
+  username: root
+  password:
+  database: blanktopia
+  use-ssl: false
+
 max-shulkers-per-chunk: 1
 shulker-spawn-chance: 0.1
 

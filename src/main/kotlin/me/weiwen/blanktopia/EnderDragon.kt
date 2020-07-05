@@ -26,22 +26,26 @@ class EnderDragon(val plugin: Blanktopia, val storage: Storage) : Module, Listen
         if (event.cause != PlayerTeleportEvent.TeleportCause.END_PORTAL) return
         val world = event.to?.world ?: return
         val player = event.player
-        val config = storage.player(player)
-        if (!config.getBoolean("has-spawned-dragon")) {
-            PaperLib.getChunkAtAsync(world, 0, 0, false).thenAccept {
-                val enderDragonBattle = world.enderDragonBattle ?: return@thenAccept
-                if (enderDragonBattle.hasBeenPreviouslyKilled()
-                    && enderDragonBattle.enderDragon == null) {
-                    val loc = enderDragonBattle.endPortalLocation ?: return@thenAccept
-                    world.spawnEntity(loc.clone().add(3.5, 1.0, 0.5), EntityType.ENDER_CRYSTAL)
-                    world.spawnEntity(loc.clone().add(-2.5, 1.0, 0.5), EntityType.ENDER_CRYSTAL)
-                    world.spawnEntity(loc.clone().add(0.5, 1.0, 3.5), EntityType.ENDER_CRYSTAL)
-                    world.spawnEntity(loc.clone().add(0.5, 1.0, -2.5), EntityType.ENDER_CRYSTAL)
-                    enderDragonBattle.initiateRespawn()
+        storage.storage?.loadPlayer(player.uniqueId) {
+            data ->
+            if (!data.hasSpawnedDragon) {
+                PaperLib.getChunkAtAsync(world, 0, 0, false).thenAccept {
+                    val enderDragonBattle = world.enderDragonBattle ?: return@thenAccept
+                    if (enderDragonBattle.hasBeenPreviouslyKilled()
+                        && enderDragonBattle.enderDragon == null
+                    ) {
+                        val loc = enderDragonBattle.endPortalLocation ?: return@thenAccept
+                        world.spawnEntity(loc.clone().add(3.5, 1.0, 0.5), EntityType.ENDER_CRYSTAL)
+                        world.spawnEntity(loc.clone().add(-2.5, 1.0, 0.5), EntityType.ENDER_CRYSTAL)
+                        world.spawnEntity(loc.clone().add(0.5, 1.0, 3.5), EntityType.ENDER_CRYSTAL)
+                        world.spawnEntity(loc.clone().add(0.5, 1.0, -2.5), EntityType.ENDER_CRYSTAL)
+                        enderDragonBattle.initiateRespawn()
+                    }
                 }
             }
+            data.hasSpawnedDragon = true
+            storage.storage?.savePlayer(player.uniqueId, data)
         }
-        config.set("has-spawned-dragon", true)
     }
 
     @EventHandler

@@ -19,24 +19,27 @@ version = plugin_version
 
 repositories {
     jcenter()
+    mavenCentral()
     maven { url = uri("https://papermc.io/repo/repository/maven-public/") }
-    maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
     maven { url = uri("http://repo.minebench.de/")}
     maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
-    maven { url = uri("https://jitpack.io") }
     maven { url = uri("https://repo.dmulloy2.net/nexus/repository/public/") }
     maven { url = uri("http://repo.md-5.net/content/repositories/releases/") }
+    maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
-    compile(kotlin("stdlib-jdk8", kotlin_version))
+    implementation(kotlin("stdlib-jdk8", kotlin_version))
 
     compileOnly("com.destroystokyo.paper:paper-api:$paper_version")
-    compileOnly("org.spigotmc:spigot-api:$spigot_version")
     compileOnly("com.github.TechFortress:GriefPrevention:16.7.1")
     compileOnly("LibsDisguises:LibsDisguises:10.0.12")
-    compile("de.themoep:minedown:1.6.1-SNAPSHOT")
-    compile("io.papermc:paperlib:1.0.2")
+
+    implementation("com.zaxxer:HikariCP:3.4.5")
+    implementation("org.mariadb.jdbc:mariadb-java-client:2.6.0")
+
+    implementation("de.themoep:minedown:1.6.1-SNAPSHOT")
+    implementation("io.papermc:paperlib:1.0.2")
 }
 
 val plugin_main: String by project
