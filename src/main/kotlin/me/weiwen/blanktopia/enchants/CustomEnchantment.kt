@@ -80,7 +80,6 @@ fun ItemStack.enchant(enchantment: Enchantment, level: Int) {
     }
     if (enchantment is CustomEnchantment) {
         val enchantmentLore = StringBuilder()
-        enchantmentLore.append(ChatColor.RESET)
         enchantmentLore.append(ChatColor.GRAY)
         enchantmentLore.append(enchantment.name)
         if (enchantment.maxLevel != 1) {
@@ -90,7 +89,8 @@ fun ItemStack.enchant(enchantment: Enchantment, level: Int) {
         val lore = meta.lore ?: ArrayList<String>()
         var found = false
         for (i in lore.indices) {
-            if (lore[i].startsWith(ChatColor.RESET.toString() + ChatColor.GRAY + enchantment.name)) {
+            if (lore[i].startsWith("${ChatColor.RESET}${ChatColor.GRAY}${enchantment.name}")
+                    || lore[i].startsWith("${ChatColor.GRAY}${enchantment.name}")) {
                 lore[i] = enchantmentLore.toString()
                 found = true
                 break
@@ -114,8 +114,9 @@ fun ItemStack.disenchant(enchantment: Enchantment) {
     if (enchantment is CustomEnchantment) {
         val lore = meta.lore ?: return
         for (i in lore.indices) {
-            if (lore[i].startsWith(ChatColor.RESET.toString() + ChatColor.GRAY + enchantment.name)) {
-                lore.removeAt(i)
+            if (lore[i].startsWith("${ChatColor.RESET}${ChatColor.GRAY}${enchantment.name}")
+                || lore[i].startsWith("${ChatColor.GRAY}${enchantment.name}")) {
+                    lore.removeAt(i)
                 break
             }
         }
