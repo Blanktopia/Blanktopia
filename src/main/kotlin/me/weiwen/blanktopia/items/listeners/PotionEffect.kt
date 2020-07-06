@@ -1,9 +1,8 @@
 package me.weiwen.blanktopia.items.listeners
 
 import me.weiwen.blanktopia.Blanktopia
-import org.bukkit.NamespacedKey
+import me.weiwen.blanktopia.enchants.enchantments.NightVision
 import org.bukkit.entity.Player
-import org.bukkit.persistence.PersistentDataType
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitTask
@@ -16,6 +15,8 @@ class PotionEffect(val plugin: Blanktopia) {
 
     fun enable() {
         task = plugin.server.scheduler.runTaskTimer(plugin, ::applyToAllPlayers as (() -> Unit), 100, 100)
+
+        NightVision.enable(plugin)
     }
 
     fun disable() {

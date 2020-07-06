@@ -3,7 +3,6 @@ package me.weiwen.blanktopia.enchants
 import me.weiwen.blanktopia.Blanktopia
 import me.weiwen.blanktopia.Module
 import me.weiwen.blanktopia.enchants.enchantments.*
-import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
@@ -32,8 +31,6 @@ class CustomEnchants(private val plugin: Blanktopia) :
     Listener, Module {
 
     override fun enable() {
-        NightVision.enable(plugin)
-
         plugin.server.pluginManager.registerEvents(this, plugin)
         plugin.server.pluginManager.registerEvents(EnchantingTableWatcher, plugin)
         plugin.server.pluginManager.registerEvents(AnvilWatcher(plugin), plugin)
