@@ -1,10 +1,9 @@
-val kotlin_version: String by settings
-val plugin_yml_version: String by settings
-val shadow_version: String by settings
-
-val plugin_name: String by settings
-
-rootProject.name = plugin_name
+rootProject.name = "Blanktopia"
+include("BlanktopiaCore")
+include("Blanktopia")
+include("BlanktopiaTweaks")
+include("BlanktopiaShop")
+include("BlanktopiaPortals")
 
 pluginManagement {
     repositories {
@@ -15,13 +14,13 @@ pluginManagement {
             val id = requested.id.id
 
             if (id.startsWith("org.jetbrains.kotlin"))
-                useVersion(kotlin_version)
+                useVersion("1.3.72")
 
             if(id.startsWith("net.minecrell.plugin-yml.bukkit"))
-                useVersion(plugin_yml_version)
+                useVersion("0.3.0")
 
             if(id.startsWith("com.github.johnrengelman.shadow"))
-                useVersion(shadow_version)
+                useVersion("5.2.0")
         }
     }
 }

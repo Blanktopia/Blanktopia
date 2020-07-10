@@ -1,0 +1,16 @@
+use-crafting-table-and-ender-chest-from-inventory: true
+
+disable-crop-trampling: true
+
+pet-teleport-on-chunk-unload: false
+
+single-player-sleep: true
+
+ender-dragon-spawns-on-first-portal: true
+
+ender-dragon-drops-elytra: true
+
+shulkers-respawn: true
+max-shulkers-per-chunk: 1
+shulker-spawn-chance: 0.1
+
