@@ -135,6 +135,26 @@ fun portableBeacon(player: Player) {
     }
 }
 
+val BLACKLISTED_BLOCKS = setOf(
+    Material.SHULKER_BOX,
+    Material.WHITE_SHULKER_BOX,
+    Material.ORANGE_SHULKER_BOX,
+    Material.MAGENTA_SHULKER_BOX,
+    Material.LIGHT_BLUE_SHULKER_BOX,
+    Material.YELLOW_SHULKER_BOX,
+    Material.LIME_SHULKER_BOX,
+    Material.PINK_SHULKER_BOX,
+    Material.GRAY_SHULKER_BOX,
+    Material.LIGHT_GRAY_SHULKER_BOX,
+    Material.CYAN_SHULKER_BOX,
+    Material.PURPLE_SHULKER_BOX,
+    Material.BLUE_SHULKER_BOX,
+    Material.BROWN_SHULKER_BOX,
+    Material.GREEN_SHULKER_BOX,
+    Material.RED_SHULKER_BOX,
+    Material.BLACK_SHULKER_BOX,
+)
+
 val PARTIAL_BLOCKS = setOf(
     Material.CHEST,
     Material.TRAPPED_CHEST,
@@ -167,7 +187,7 @@ val PARTIAL_BLOCKS = setOf(
     Material.JUNGLE_DOOR,
     Material.ACACIA_DOOR,
     Material.DARK_OAK_DOOR,
-    Material.END_PORTAL_FRAME
+    Material.END_PORTAL_FRAME,
 )
 fun buildersWandLocations(block: Block, face: BlockFace): MutableList<Pair<Block, Location>> {
     val material = block.type
@@ -183,6 +203,7 @@ fun buildersWandLocations(block: Block, face: BlockFace): MutableList<Pair<Block
 
 fun buildersWandBuild(player: Player, block: Block, face: BlockFace) {
     if (PARTIAL_BLOCKS.contains(block.type)) return
+    if (BLACKLISTED_BLOCKS.contains(block.type)) return
     val locations = buildersWandLocations(block, face)
     var canBuild = false
     for ((base, location) in locations) {
@@ -876,6 +897,7 @@ fun multitool(player: Player, item: ItemStack, materials: List<Material>) {
 fun randomBlock(player: Player, item: ItemStack, block: Block, face: BlockFace) {
     val target = block.getRelative(face)
     if (!EMPTY_BLOCKS.contains(target.type)) return
+    if (BLACKLISTED_BLOCKS.contains(block.type)) return
     for (slot in (0..8).toMutableList().shuffled()) {
         val item = player.inventory.getItem(slot) ?: continue
         if (!item.type.isBlock) continue
