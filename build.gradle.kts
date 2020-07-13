@@ -38,9 +38,7 @@ subprojects {
     val api by configurations
 
     dependencies {
-        implementation(kotlin("stdlib-jdk8", "1.3.72"))
-
-        api("com.destroystokyo.paper:paper-api:1.16.1-R0.1-SNAPSHOT")
+        compileOnly("com.destroystokyo.paper:paper-api:1.16.1-R0.1-SNAPSHOT")
     }
 
     tasks.withType<KotlinCompile> {

@@ -1,8 +1,9 @@
 dependencies {
+    api(kotlin("stdlib-jdk8", "1.3.72"))
+    api("io.papermc:paperlib:1.0.2")
+
     implementation("com.zaxxer:HikariCP:3.4.5")
     implementation("org.mariadb.jdbc:mariadb-java-client:2.6.0")
-
-    api("io.papermc:paperlib:1.0.2")
 
     compileOnly("com.github.TechFortress:GriefPrevention:16.7.1")
 }
