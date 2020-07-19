@@ -713,7 +713,7 @@ fun infinity(player: Player, item: ItemStack) {
         }
         Material.WATER_BUCKET -> {
             if (player.world.environment == World.Environment.NETHER) return
-            val result = player.rayTraceBlocks(5.0, FluidCollisionMode.SOURCE_ONLY) ?: return
+            val result = player.rayTraceBlocks(5.0, FluidCollisionMode.NEVER) ?: return
             val block = result.hitBlock ?: return
             val face = result.hitBlockFace ?: return
             val data = block.blockData
