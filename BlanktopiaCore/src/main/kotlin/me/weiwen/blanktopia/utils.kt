@@ -33,6 +33,10 @@ var ExperienceOrb.level: Double
         }).toInt()
     }
 
+fun ExperienceOrb.setExperience(experience: Double) {
+    this.experience = experience.toInt() + if (Random.nextDouble() < experience % 1) { 1 } else { 0 }
+}
+
 fun Int.toRomanNumerals(): String {
     val symbols =
         arrayOf("M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I")

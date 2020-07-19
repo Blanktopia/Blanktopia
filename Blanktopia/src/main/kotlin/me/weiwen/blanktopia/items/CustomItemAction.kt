@@ -25,6 +25,7 @@ import org.bukkit.potion.PotionEffectType
 
 
 class CustomItemAction(config: ConfigurationSection) {
+    private var actionBar: String? = config.getString("actionBar")
     private var message: String? = config.getString("message")
     private var playerCommand: String? = config.getString("player-command")
     private var consoleCommand: String? = config.getString("console-command")
@@ -58,11 +59,18 @@ class CustomItemAction(config: ConfigurationSection) {
     private var toggleItemFrameVisibility: Boolean = config.getBoolean("toggle-item-frame-visibility")
     private var multitool: List<Material>? = config.getList("multitool")?.map { Material.valueOf(it as String) }
     private var randomBlock: Boolean = config.getBoolean("random-block")
+    private var experienceBoost: Pair<Double, Double>? = config.getConfigurationSection("experience-boost")?.let {
+        Pair(it.getDouble("multiplier"), it.getDouble("seconds"))
+    }
 
     fun run(key: String, player: Player, item: ItemStack) {
-        message?.let {
+        actionBar?.let {
             val message = TextComponent(*TextComponent.fromLegacyText(it))
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message)
+        }
+        message?.let {
+            val message = TextComponent(*TextComponent.fromLegacyText(it))
+            player.spigot().sendMessage(message)
         }
         playerCommand?.let { player.performCommand(it) }
         consoleCommand?.let {
@@ -81,6 +89,7 @@ class CustomItemAction(config: ConfigurationSection) {
         if (undisguise) DisguiseAPI.undisguiseToAll(player)
         if (infinity) infinity(player, item)
         multitool?.let { multitool(player, item, it) }
+        experienceBoost?.let { experienceBoost(player, item, it.first, it.second) }
     }
 
     fun run(key: String, player: Player, item: ItemStack, block: Block?, face: BlockFace) {
@@ -152,7 +161,7 @@ val BLACKLISTED_BLOCKS = setOf(
     Material.BROWN_SHULKER_BOX,
     Material.GREEN_SHULKER_BOX,
     Material.RED_SHULKER_BOX,
-    Material.BLACK_SHULKER_BOX,
+    Material.BLACK_SHULKER_BOX
 )
 
 val PARTIAL_BLOCKS = setOf(
@@ -187,7 +196,7 @@ val PARTIAL_BLOCKS = setOf(
     Material.JUNGLE_DOOR,
     Material.ACACIA_DOOR,
     Material.DARK_OAK_DOOR,
-    Material.END_PORTAL_FRAME,
+    Material.END_PORTAL_FRAME
 )
 fun buildersWandLocations(block: Block, face: BlockFace): MutableList<Pair<Block, Location>> {
     val material = block.type
@@ -927,4 +936,8 @@ fun randomBlock(player: Player, item: ItemStack, block: Block, face: BlockFace) 
         return
     }
     player.playSoundTo(Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, SoundCategory.PLAYERS, 1.0f, 1.0f)
+}
+
+fun experienceBoost(player: Player, item: ItemStack, multiplier: Double, seconds: Double) {
+    player.addExperienceBoost(multiplier, seconds)
 }
