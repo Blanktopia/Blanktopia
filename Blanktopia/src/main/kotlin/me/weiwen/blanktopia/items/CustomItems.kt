@@ -120,7 +120,8 @@ class CustomItems(private val plugin: Blanktopia) :
         if (player.isSneaking) {
             when (event.action) {
                 Action.LEFT_CLICK_AIR -> customItem.shiftLeftClickAir?.let {
-                    it.run(customItem.type, player, item); event.isCancelled = true
+                    it.run(customItem.type, player, item)
+                    event.isCancelled = true
                 }
                 Action.LEFT_CLICK_BLOCK -> customItem.shiftLeftClickBlock?.let {
                     it.run(
@@ -129,14 +130,16 @@ class CustomItems(private val plugin: Blanktopia) :
                         item,
                         event.clickedBlock,
                         event.blockFace
-                    ); event.isCancelled = true
+                    )
+                    event.isCancelled = true
                 }
                 Action.RIGHT_CLICK_AIR -> customItem.shiftRightClickAir?.let {
                     it.run(
                         customItem.type,
                         player,
                         item
-                    ); event.isCancelled = true
+                    )
+                    event.isCancelled = true
                 }
                 Action.RIGHT_CLICK_BLOCK -> customItem.shiftRightClickBlock?.let {
                     it.run(
@@ -145,14 +148,16 @@ class CustomItems(private val plugin: Blanktopia) :
                         item,
                         event.clickedBlock,
                         event.blockFace
-                    ); event.isCancelled = true
+                    )
+                    event.isCancelled = true
                 }
                 else -> return
             }
         } else {
             when (event.action) {
                 Action.LEFT_CLICK_AIR -> customItem.leftClickAir?.let {
-                    it.run(customItem.type, player, item); event.isCancelled = true
+                    it.run(customItem.type, player, item)
+                    event.isCancelled = true
                 }
                 Action.LEFT_CLICK_BLOCK -> customItem.leftClickBlock?.let {
                     it.run(
@@ -161,14 +166,16 @@ class CustomItems(private val plugin: Blanktopia) :
                         item,
                         event.clickedBlock,
                         event.blockFace
-                    ); event.isCancelled = true
+                    )
+                    event.isCancelled = true
                 }
                 Action.RIGHT_CLICK_AIR -> customItem.rightClickAir?.let {
                     it.run(
                         customItem.type,
                         player,
                         item
-                    ); event.isCancelled = true
+                    )
+                    event.isCancelled = true
                 }
                 Action.RIGHT_CLICK_BLOCK -> customItem.rightClickBlock?.let {
                     it.run(
@@ -177,7 +184,8 @@ class CustomItems(private val plugin: Blanktopia) :
                         item,
                         event.clickedBlock,
                         event.blockFace
-                    ); event.isCancelled = true
+                    )
+                    event.isCancelled = true
                 }
                 else -> return
             }
@@ -188,7 +196,10 @@ class CustomItems(private val plugin: Blanktopia) :
     fun onPlayerInteractEntity(event: PlayerInteractEntityEvent) {
         val item = if (event.hand == EquipmentSlot.HAND) event.player.inventory.itemInMainHand else if (event.hand === EquipmentSlot.OFF_HAND) event.player.inventory.itemInOffHand else return
         val customItem = getCustomItem(item) ?: return
-        customItem.rightClickEntity?.let { it.run(customItem.type, event.player, item, event.rightClicked); event.isCancelled = true }
+        customItem.rightClickEntity?.let {
+            it.run(customItem.type, event.player, item, event.rightClicked)
+            event.isCancelled = true
+        }
     }
 
     @EventHandler
