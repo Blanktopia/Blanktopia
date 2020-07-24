@@ -39,7 +39,7 @@ class BlanktopiaTweaks : JavaPlugin() {
         if (config.getBoolean("disable-crop-trampling")) {
             modules.add(CropTrampling(this))
         }
-        if (config.getBoolean("pet-teleport-on-chunk-unload")) {
+        if (config.getBoolean("pet-teleport-together")) {
             modules.add(PetTeleport(this))
         }
         if (config.getBoolean("single-player-sleep")) {

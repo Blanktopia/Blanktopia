@@ -2,7 +2,7 @@ use-crafting-table-and-ender-chest-from-inventory: true
 
 disable-crop-trampling: true
 
-pet-teleport-on-chunk-unload: false
+pet-teleport-together: false
 
 single-player-sleep: true
 
