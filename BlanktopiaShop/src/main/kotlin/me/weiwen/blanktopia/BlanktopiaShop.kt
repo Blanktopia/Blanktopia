@@ -12,10 +12,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.SignChangeEvent
-import org.bukkit.event.inventory.ClickType
-import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryDragEvent
-import org.bukkit.event.inventory.InventoryOpenEvent
+import org.bukkit.event.inventory.*
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.BlockInventoryHolder
 import org.bukkit.inventory.ItemStack
@@ -198,9 +195,9 @@ class BlanktopiaShop : JavaPlugin(), Listener {
         val chest = block.state as? Container ?: return
         val container = chest.persistentDataContainer
         val cost = container.get(NamespacedKey(this, "cost"), PersistentDataType.STRING) ?: return
-        val uuid = container.get(NamespacedKey(this, "owner"), PersistentDataType.STRING)
+        val uuid = container.get(NamespacedKey(this, "owner"), PersistentDataType.STRING) ?: return
         val player = event.player as? Player ?: return
-        if (uuid != null && uuid != "" && UUID.fromString(uuid) == player.uniqueId) {
+        if (uuid != "" && UUID.fromString(uuid) == player.uniqueId) {
             player.sendMessage("${ChatColor.GOLD}Editing your own shop.")
         } else if (player.hasContainerTrust(block.location)) {
             player.sendMessage("${ChatColor.GOLD}Editing someone else's shop.")
@@ -210,12 +207,13 @@ class BlanktopiaShop : JavaPlugin(), Listener {
 
     @EventHandler
     fun onInventoryDrag(event: InventoryDragEvent) {
+        if (event.inventory.type == InventoryType.PLAYER) return
         val block = (event.inventory.holder as? BlockInventoryHolder)?.block ?: return
         val chest = block.state as? Container ?: return
         val container = chest.persistentDataContainer
-        val uuid = container.get(NamespacedKey(this, "owner"), PersistentDataType.STRING)
+        val uuid = container.get(NamespacedKey(this, "owner"), PersistentDataType.STRING) ?: return
         val player = event.whoClicked as? Player ?: return
-        if ((uuid != null && uuid != "" && UUID.fromString(uuid) == player.uniqueId) || player.hasContainerTrust(block.location)) {
+        if ((uuid != "" && UUID.fromString(uuid) == player.uniqueId) || player.hasContainerTrust(block.location)) {
             return
         }
         event.isCancelled = true
@@ -223,12 +221,13 @@ class BlanktopiaShop : JavaPlugin(), Listener {
 
     @EventHandler
     fun onInventoryClick(event: InventoryClickEvent) {
+        if (event.clickedInventory?.type == InventoryType.PLAYER) return
         val block = (event.inventory.holder as? BlockInventoryHolder)?.block ?: return
         val chest = block.state as? Container ?: return
         val container = chest.persistentDataContainer
-        val uuid = container.get(NamespacedKey(this, "owner"), PersistentDataType.STRING)
+        val uuid = container.get(NamespacedKey(this, "owner"), PersistentDataType.STRING) ?: return
         val player = event.whoClicked as? Player ?: return
-        if ((uuid != null && uuid != "" && UUID.fromString(uuid) == player.uniqueId) || player.hasContainerTrust(block.location)) {
+        if ((uuid != "" && UUID.fromString(uuid) == player.uniqueId) || player.hasContainerTrust(block.location)) {
             return
         }
         event.isCancelled = true
