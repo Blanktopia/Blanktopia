@@ -4,6 +4,7 @@ import me.ryanhamshire.GriefPrevention.GriefPrevention
 import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
+import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Entity
 import org.bukkit.entity.ExperienceOrb
@@ -12,6 +13,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
 import org.bukkit.util.Vector
 import java.util.*
+import java.util.logging.Level
 import kotlin.math.sqrt
 import kotlin.random.Random
 
@@ -23,7 +25,7 @@ var ExperienceOrb.level: Double
     } else {
         (sqrt(72 * experience - 54215.0) + 325) / 18
     }
-    set(level: Double) {
+    set(level) {
         experience = (if (level < 16) {
             level * level + 6 * level
         } else if (level < 31) {
@@ -95,23 +97,6 @@ fun Player.playSoundTo(sound: Sound, category: SoundCategory, volume: Float, pit
     this.playSound(location.clone().add(0.0, height/2, 0.0), sound, category, volume, pitch)
 }
 
-fun locationsInRange(origin: Location, face: BlockFace, range: Int): MutableList<Location> {
-    val (xOffset, yOffset) = if (face.modX != 0) {
-        Pair(Vector(0, 1, 0), Vector(0, 0, 1))
-    } else if (face.modY != 0) {
-        Pair(Vector(1, 0, 0), Vector(0, 0, 1))
-    } else {
-        Pair(Vector(1, 0, 0), Vector(0, 1, 0))
-    }
-    val locations: MutableList<Location> = mutableListOf()
-    for (x in -range .. range) {
-        for (y in -range .. range) {
-            locations.add(origin.clone().add(xOffset.clone().multiply(x)).add(yOffset.clone().multiply(y)))
-        }
-    }
-    return locations
-}
-
 fun playerHeadFromTexture(name: String, texture: String): ItemStack {
     val skull = ItemStack(Material.PLAYER_HEAD)
     val uuid = texture.hashCode()
@@ -126,14 +111,81 @@ fun playerHeadFromUrl(name: String, url: String): ItemStack {
 }
 
 
-fun isInOwnClaim(player: Player, location: Location): Boolean {
+fun Player.isInOwnClaim(location: Location): Boolean {
     val claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null) ?: return false
-    return claim.ownerID == player.uniqueId
+    return claim.ownerID == uniqueId
 }
-fun isInTrustedClaim(player: Player, location: Location): Boolean {
+
+fun Player.hasAccessTrust(location: Location): Boolean {
     val claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null) ?: return false
-    return claim.allowContainers(player) == null
+    return claim.allowAccess(this) == null
 }
-fun canBuild(player: Player, location: Location): Boolean {
-    return GriefPrevention.instance.allowBuild(player, location) == null
+
+fun Player.hasContainerTrust(location: Location): Boolean {
+    val claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null) ?: return false
+    return claim.allowContainers(this) == null
+}
+fun Player.hasBuildTrust(location: Location): Boolean {
+    return GriefPrevention.instance.allowBuild(this, location) == null
+}
+
+fun ConfigurationSection.getIntOrError(path: String): Int {
+    val value = getInt(path)
+    if (!contains(path)) {
+        BlanktopiaCore.INSTANCE.logger.log(Level.SEVERE, "Expected int at key '$path'")
+    }
+    return value
+}
+
+fun ConfigurationSection.getLongOrError(path: String): Long {
+    val value = getLong(path)
+    if (!contains(path)) {
+        BlanktopiaCore.INSTANCE.logger.log(Level.SEVERE, "Expected int at key '$path'")
+    }
+    return value
+}
+
+fun ConfigurationSection.getDoubleOrError(path: String): Double {
+    val value = getDouble(path)
+    if (!contains(path)) {
+        BlanktopiaCore.INSTANCE.logger.log(Level.SEVERE, "Expected double at key '$path'")
+    }
+    return value
+}
+
+fun ConfigurationSection.getStringOrError(path: String): String {
+    val value = getString(path)
+    if (value == null) {
+        BlanktopiaCore.INSTANCE.logger.log(Level.SEVERE, "Expected string at key '$path'")
+        return ""
+    }
+    return value
+}
+
+fun ConfigurationSection.getConfigurationSectionOrError(path: String): ConfigurationSection? {
+    val value = getConfigurationSection(path)
+    if (value == null) {
+        BlanktopiaCore.INSTANCE.logger.log(Level.SEVERE, "Expected configuration section at key '$path'")
+        return null
+    }
+    return value
+}
+
+fun ConfigurationSection.getListOrError(path: String): List<*>? {
+    val value = getList(path)
+    if (value == null) {
+        BlanktopiaCore.INSTANCE.logger.log(Level.SEVERE, "Expected list at key '$path'")
+        return null
+    }
+    return value
+}
+
+fun ConfigurationSection.getConfigurationSectionList(path: String): List<ConfigurationSection> {
+    val value = getConfigurationSection(path)
+    BlanktopiaCore.INSTANCE.logger.log(Level.INFO, "${getKeys(true)}")
+    if (value == null) {
+        BlanktopiaCore.INSTANCE.logger.log(Level.SEVERE, "Expected list of maps at key '$path'")
+        return listOf()
+    }
+    return getKeys(false).mapNotNull { getConfigurationSection(it) }
 }

@@ -8,6 +8,7 @@ class BlanktopiaCore: JavaPlugin() {
     lateinit var storage: Storage
     lateinit var permanentPotionEffect: PermanentPotionEffect
     lateinit var experienceBoost: ExperienceBoost
+    lateinit var flyInClaims: FlyInClaims
 
     companion object {
         lateinit var INSTANCE: BlanktopiaCore
@@ -27,11 +28,15 @@ class BlanktopiaCore: JavaPlugin() {
         permanentPotionEffect.enable()
         experienceBoost = ExperienceBoost(this)
         experienceBoost.enable()
+        flyInClaims = FlyInClaims(this)
+        flyInClaims.enable()
     }
 
     override fun onDisable() {
-        storage.disable()
+        flyInClaims.disable()
+        experienceBoost.disable()
         permanentPotionEffect.disable()
+        storage.disable()
     }
 
     private fun createConfig() {

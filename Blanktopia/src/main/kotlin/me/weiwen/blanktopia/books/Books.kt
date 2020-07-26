@@ -4,7 +4,6 @@ import de.themoep.minedown.MineDown
 import me.weiwen.blanktopia.Blanktopia
 import me.weiwen.blanktopia.Module
 import me.weiwen.blanktopia.Trie
-import me.weiwen.blanktopia.items.CustomItems
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.configuration.ConfigurationSection
@@ -13,7 +12,7 @@ import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BookMeta
 
-class Books(val plugin: Blanktopia, val customItems: CustomItems) : Listener, Module {
+class Books(val plugin: Blanktopia) : Listener, Module {
     private lateinit var books: Map<String, ItemStack>
     private lateinit var bookTitles: Trie<Char, String>
 

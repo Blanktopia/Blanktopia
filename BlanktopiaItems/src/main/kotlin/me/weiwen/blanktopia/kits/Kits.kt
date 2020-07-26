@@ -14,8 +14,9 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.plugin.java.JavaPlugin
 
-class Kits(val plugin: Blanktopia, val customItems: CustomItems) : Listener, Module {
+class Kits(val plugin: JavaPlugin, val customItems: CustomItems) : Listener, Module {
     private var kits = mapOf<String, List<ItemStack>>()
 
     override fun enable() {

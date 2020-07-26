@@ -1,8 +1,5 @@
 dependencies {
     compileOnly(project(":BlanktopiaCore"))
-
-    implementation("de.themoep:minedown:1.6.1-SNAPSHOT")
-
     compileOnly("LibsDisguises:LibsDisguises:10.0.15")
 }
 

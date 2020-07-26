@@ -1,0 +1,516 @@
+kits:
+  starter:
+    - custom-item: guidebook
+    - material: wooden_sword
+      enchantments:
+        soulbound: 1
+        unbreaking: 2
+    - material: wooden_pickaxe
+      enchantments:
+        soulbound: 1
+        unbreaking: 2
+    - material: wooden_axe
+      enchantments:
+        soulbound: 1
+        unbreaking: 2
+    - material: wooden_shovel
+      enchantments:
+        soulbound: 1
+        unbreaking: 2
+    - material: shield
+      enchantments:
+        soulbound: 1
+        unbreaking: 2
+    - material: bread
+      amount: 16
+      enchantments:
+        soulbound: 1
+
+items:
+  guidebook:
+    material: KNOWLEDGE_BOOK
+    name: Beginner's Guide
+    enchantments:
+      soulbound: 1
+    triggers:
+      - trigger: right-click
+        actions:
+          - action: player-command
+            command: help
+
+  disguise-skeleton:
+    material: SKELETON_SKULL
+    name: '§6Skeleton Disguise§c ☻'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§fDisguises you as a §bSkeleton§f.'
+      - ''
+      - '§8-------------------------'
+      - '§6BUILDER''s Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+    triggers:
+      - trigger: equip-armor
+        actions:
+          - action: disguise
+            kind: mob
+            type: SKELETON
+            baby: false
+      - trigger: unequip-armor
+        actions:
+          - action: undisguise
+      - trigger: right-click-block
+        actions: []
+
+
+  # Builder's Crate
+
+  hummingbird:
+    material: ELYTRA
+    name: '§dHummingbird§5 ⭐'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§fAllows you to hover in claims'
+      - '§fyou are §b/trusted§f in.'
+      - ''
+      - '§8-------------------------'
+      - '§6BUILDER''s Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+    unbreakable: true
+    triggers:
+      - trigger: equip-armor
+        actions:
+          - action: action-bar
+            message: "§6You feel like a hummingbird."
+          - action: fly-in-claims
+            can-fly: true
+      - trigger: unequip-armor
+        actions:
+          - action: fly-in-claims
+            can-fly: false
+
+  builders-wand:
+    material: BLAZE_ROD
+    name: '§dBuilder''s Wand§5 ⭐'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§bRight-click§f on a block'
+      - '§fto place blocks in a §b3x3§f'
+      - '§farea. Requires the block to'
+      - '§fbe in your inventory.'
+      - ''
+      - '§8-------------------------'
+      - '§6BUILDER''s Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+    triggers:
+      - trigger: right-click-block
+        actions:
+          - action: builders-wand
+            range: 1
+
+  paint-brush:
+    material: WHEAT
+    name: '§dPaint Brush§5 ⭐'
+    lore:
+      - '§7Paint: NONE'
+      - '§8-------------------------'
+      - ''
+      - '§bLeft-click§f to pick a colour.'
+      - '§bRight-click§f to paint a block.'
+      - ''
+      - '§fWorks on:'
+      - '§8- §fGlass'
+      - '§8- §fWool'
+      - '§8- §fTerracotta'
+      - '§8- §fConcrete'
+      - ''
+      - '§8-------------------------'
+      - '§6BUILDER''s Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+    triggers:
+      - trigger: left-click-block
+        actions:
+          - action: paint-brush-pick
+      - trigger: right-click-block
+        actions:
+          - action: paint-brush-paint
+      - trigger: right-click-entity
+        actions: []
+
+  # Engineer's Crate
+
+  wrench:
+    material: BONE
+    name: '§r§x§a§4§6§b§f§fWrench ☲'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§bRight-click§f to rotate a block'
+      - '§for turn an item frame'
+      - '§finvisible.'
+      - ''
+      - '§8-------------------------'
+      - '§6MINER''s Crate Item'
+    enchantments:
+      final: 1
+      soulbound: 1
+    triggers:
+      - trigger: right-click-block
+        conditions:
+          - condition: not
+            not:
+              condition: is-sneaking
+        actions:
+          - action: rotate
+      - trigger: right-click-block
+        conditions:
+          - condition: is-sneaking
+        actions:
+          - action: rotate
+            is-reversed: true
+      - trigger: right-click-entity
+        actions:
+          - action: toggle-item-frame-visibility
+
+  multitool:
+    material: NETHERITE_PICKAXE
+    name: Multitool
+    triggers:
+      - trigger: right-click
+        condition: is-sneaking
+        actions:
+          - action: cycle-tool
+            materials:
+              - NETHERITE_PICKAXE
+              - NETHERITE_AXE
+              - NETHERITE_SHOVEL
+              - NETHERITE_HOE
+
+  randomizer:
+    material: POPPED_CHORUS_FRUIT
+    name: Randomizer
+    enchantments:
+      final: 1
+      soulbound: 1
+    triggers:
+      - trigger: right-click-block
+        actions:
+          - action: place-random-block
+
+  trashcan:
+    material: COAL_BLOCK
+    name: Trashcan
+    enchantments:
+      final: 1
+      soulbound: 1
+    triggers:
+      - trigger: right-click
+        actions:
+          - action: sudo-command
+            command: disposal
+
+  condenser:
+    material: NETHER_STAR
+    name: Condenser
+    enchantments:
+      final: 1
+      soulbound: 1
+    triggers:
+      - trigger: right-click
+        actions:
+          - action: sudo-command
+            command: condense
+
+  # Miner's Crate
+
+  ras-protection:
+    material: GOLDEN_CHESTPLATE
+    name: '§6Ra''s Protection§c ☲'
+    lore:
+      - '§7Fire Resistance'
+      - '§8-------------------------'
+      - ''
+      - '§fGrants immunity to fire and lava.'
+      - ''
+      - '§8-------------------------'
+      - '§6MINER''s Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+      blast_protection: 4
+    unbreakable: true
+    attribute-modifiers:
+      - uuid: fb096a4d-ad65-4520-9dc0-1107e34c8124
+        name: Armor modifier
+        attribute: GENERIC_ARMOR
+        amount: 8.0
+        operation: ADD_NUMBER
+        slot: CHEST
+      - uuid: 549077a2-e23e-4c6e-9235-f20b66b6a08b
+        name: Armor toughness
+        attribute: GENERIC_ARMOR_TOUGHNESS
+        amount: 2.0
+        operation: ADD_NUMBER
+        slot: CHEST
+    triggers:
+      - trigger: equip-armor
+        actions:
+          - action: add-potion-effects
+            key: ras-protection
+            effects:
+              fire_resistance: 0
+      - trigger: unequip-armor
+        actions:
+          - action: remove-potion-effects
+            key: ras-protection
+
+  wrecking-ball:
+    material: IRON_PICKAXE
+    name: '§6Wrecking Ball§c ⛏'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§fBreaks blocks in a §b3x3§f area.'
+      - ''
+      - '§8-------------------------'
+      - '§6MINER''s Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+    unbreakable: true
+    triggers:
+      - trigger: break-block
+        actions:
+          - action: hammer
+            range: 1
+
+  excavator:
+    material: IRON_SHOVEL
+    name: '§6Excavator§c ⛏'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§fBreaks blocks in a §b3x3§f area.'
+      - ''
+      - '§8-------------------------'
+      - '§6MINER''s Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+    unbreakable: true
+    triggers:
+      - trigger: break-block
+        actions:
+          - action: hammer
+            range: 1
+
+  disguise-zombie:
+    material: ZOMBIE_HEAD
+    name: '§6Zombie Disguise§c ☻'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§fDisguises you as a §bZombie§f.'
+      - ''
+      - '§8-------------------------'
+      - '§6MINER''s Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+    triggers:
+      - trigger: equip-armor
+        actions:
+          - action: disguise
+            kind: mob
+            type: ZOMBIE
+            baby: false
+      - trigger: unequip-armor
+        actions:
+          - action: undisguise
+      - trigger: right-click-block
+        actions: []
+
+  disguise-creeper:
+    material: CREEPER_HEAD
+    name: '§6Creeper Disguise§c ☻'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§fDisguises you as a §bCreeper§f.'
+      - ''
+      - '§8-------------------------'
+      - '§6MINER''s Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+    triggers:
+      - trigger: equip-armor
+        actions:
+          - action: disguise
+            kind: mob
+            type: CREEPER
+            baby: false
+      - trigger: unequip-armor
+        actions:
+          - action: undisguise
+      - trigger: right-click-block
+        actions: []
+
+  # Infinity Crate
+
+  lumos:
+    material: TORCH
+    name: '§fLumos§e ☀'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§fNever be afraid of the dark'
+      - '§fagain!'
+      - ''
+      - '§8-------------------------'
+      - '§6INFINITY Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+      infinity: 1
+    triggers:
+      - trigger: right-click-block
+        conditions:
+          - condition: item-cooldown
+        actions:
+          - action: place-block
+            material: torch
+          - action: cooldown
+            ticks: 10
+
+  subspace-bubble:
+    material: ENDER_PEARL
+    name: '§5Subspace Bubble§d ⏺'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§fTeleport wherever you want!'
+      - ''
+      - '§8-------------------------'
+      - '§6INFINITY Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+      infinity: 1
+    triggers:
+      - trigger: right-click
+        actions:
+          - action: throw-ender-pearl
+          - action: cooldown
+            ticks: 20
+
+  nile-water:
+    material: WATER_BUCKET
+    name: '§9Nile Water§1 ≈'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§fBig bucket!'
+      - ''
+      - '§8-------------------------'
+      - '§6INFINITY Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+      infinity: 1
+    triggers:
+      - trigger: right-click
+        actions:
+          - action: water-bucket
+
+  recurve-bow:
+    material: BOW
+    name: '§6Recurve Bow'
+    lore:
+      - '§8-------------------------'
+      - '§6INFINITY Crate Item'
+    enchantments:
+      infinity: 1
+      mending: 1
+
+  doraemons-pocket:
+    material: ENDER_CHEST
+    name: '§9Doraemon''s Pocket'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§bRight-click§f from your'
+      - '§finventory to access your'
+      - '§fender chest.'
+      - ''
+      - '§8-------------------------'
+      - '§6INFINITY Crate Item'
+    enchantments:
+      soulbound: 1
+    triggers:
+      - trigger: right-click-block
+        actions: []
+
+  disguise-enderman:
+    material: PLAYER_HEAD
+    head: '7a59bb0a7a32965b3d90d8eafa899d1835f424509eadd4e6b709ada50b9cf'
+    name: '§6Enderman Disguise§c ☻'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§fDisguises you as a §bEnderman§f.'
+      - ''
+      - '§8-------------------------'
+      - '§6INFINITY Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+    triggers:
+      - trigger: equip-armor
+        actions:
+          - action: disguise
+            kind: mob
+            type: ENDERMAN
+            baby: false
+      - trigger: unequip-armor
+        actions:
+          - action: undisguise
+      - trigger: right-click-block
+        actions: []
+
+  disguise-pig:
+    material: PLAYER_HEAD
+    head: '621668ef7cb79dd9c22ce3d1f3f4cb6e2559893b6df4a469514e667c16aa4'
+    name: '§6Pig Disguise§c ☻'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§fDisguises you as a §bPig§f.'
+      - ''
+      - '§8-------------------------'
+      - '§6INFINITY Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+    triggers:
+      - trigger: equip-armor
+        actions:
+          - action: disguise
+            kind: mob
+            type: PIG
+            baby: false
+      - trigger: unequip-armor
+        actions:
+          - action: undisguise
+      - trigger: right-click-block
+        actions: []

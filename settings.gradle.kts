@@ -1,6 +1,7 @@
 rootProject.name = "Blanktopia"
 include("BlanktopiaCore")
 include("Blanktopia")
+include("BlanktopiaItems")
 include("BlanktopiaTweaks")
 include("BlanktopiaShop")
 include("BlanktopiaPortals")

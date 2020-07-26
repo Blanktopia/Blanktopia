@@ -67,7 +67,7 @@ class BlanktopiaPortals : JavaPlugin(), Listener {
         if (block.type != Material.BEACON) return
         if (event.action != Action.RIGHT_CLICK_BLOCK) return
         if (!player.hasPermission("blanktopia.portals.create")) return
-        if (!canBuild(player, block.location)) return
+        if (!player.hasBuildTrust(block.location)) return
         event.isCancelled = true
         val state = block.state as? Beacon ?: return
         val beacon = state.persistentDataContainer

@@ -1,7 +1,5 @@
-package me.weiwen.blanktopia.items.listeners
+package me.weiwen.blanktopia
 
-import me.weiwen.blanktopia.Blanktopia
-import me.weiwen.blanktopia.isInTrustedClaim
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -11,8 +9,21 @@ import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerTeleportEvent
 import java.util.*
 
-class FlyInClaims(val plugin: Blanktopia) : Listener {
+class FlyInClaims(val plugin: BlanktopiaCore) : Listener, Module {
     val canFlyPlayers: MutableSet<UUID> = mutableSetOf()
+
+    companion object {
+        lateinit var INSTANCE: FlyInClaims
+    }
+
+    override fun enable() {
+        INSTANCE = this
+        plugin.server.pluginManager.registerEvents(this, plugin)
+    }
+
+    override fun disable() {}
+
+    override fun reload() {}
 
     @EventHandler
     fun onPlayerMove(event: PlayerMoveEvent) {
@@ -28,16 +39,18 @@ class FlyInClaims(val plugin: Blanktopia) : Listener {
         if (to == null) return
         if (to.blockX == from.blockX && to.blockZ == from.blockZ) return
         if (player.gameMode == GameMode.CREATIVE || player.gameMode == GameMode.SPECTATOR) return
-        if (canFlyPlayers.contains(player.uniqueId)) {
-            player.allowFlight = isInTrustedClaim(player, to)
+        if (player.canFlyInClaims) {
+            player.allowFlight = player.hasAccessTrust(to)
         }
     }
-
-    public fun setCanFly(player: Player) {
-        canFlyPlayers.add(player.uniqueId)
-    }
-
-    public fun setCannotFly(player: Player) {
-        canFlyPlayers.remove(player.uniqueId)
-    }
 }
+
+var Player.canFlyInClaims: Boolean
+    get() = FlyInClaims.INSTANCE.canFlyPlayers.contains(uniqueId)
+    set(canFly) {
+        if (canFly) {
+            FlyInClaims.INSTANCE.canFlyPlayers.add(uniqueId)
+        } else {
+            FlyInClaims.INSTANCE.canFlyPlayers.remove(uniqueId)
+        }
+    }

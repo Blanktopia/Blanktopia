@@ -2,8 +2,6 @@ package me.weiwen.blanktopia
 
 import me.weiwen.blanktopia.books.Books
 import me.weiwen.blanktopia.enchants.CustomEnchants
-import me.weiwen.blanktopia.items.CustomItems
-import me.weiwen.blanktopia.kits.Kits
 import me.weiwen.blanktopia.storage.Storage
 import org.bukkit.ChatColor
 import org.bukkit.plugin.java.JavaPlugin
@@ -14,7 +12,6 @@ class Blanktopia : JavaPlugin() {
     lateinit var storage: Storage
 
     var modules = mutableListOf<Module>()
-    lateinit var customItems: CustomItems
 
     companion object {
         lateinit var INSTANCE: Blanktopia
@@ -47,10 +44,7 @@ class Blanktopia : JavaPlugin() {
             }
         }
         modules.add(CustomEnchants(this))
-        customItems = CustomItems(this)
-        modules.add(customItems)
-        modules.add(Books(this, customItems))
-        modules.add(Kits(this, customItems))
+        modules.add(Books(this))
         for (module in modules) {
             module.enable()
         }
