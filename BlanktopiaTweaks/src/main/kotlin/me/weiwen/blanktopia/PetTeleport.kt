@@ -23,7 +23,7 @@ class PetTeleport(val plugin: JavaPlugin) : Module, Listener {
 
         val player = event.player
         val leashedEntities = player.world.getNearbyLivingEntities(player.location, 5.0).filter {
-            it.leashHolder == player
+            it.isLeashed && it.leashHolder == player
         }
         val vehicle = player.vehicle
 
