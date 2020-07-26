@@ -1,7 +1,5 @@
 dependencies {
     compileOnly(project(":BlanktopiaCore"))
-
-    implementation("io.papermc:paperlib:1.0.2")
 }
 
 bukkit {
