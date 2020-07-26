@@ -390,7 +390,7 @@ items:
         actions:
           - action: place-block
             material: torch
-          - action: cooldown
+          - action: item-cooldown
             ticks: 10
 
   subspace-bubble:
@@ -411,7 +411,7 @@ items:
       - trigger: right-click
         actions:
           - action: throw-ender-pearl
-          - action: cooldown
+          - action: item-cooldown
             ticks: 20
 
   nile-water:
