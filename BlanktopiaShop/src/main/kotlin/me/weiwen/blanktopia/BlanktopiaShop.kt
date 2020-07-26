@@ -207,7 +207,6 @@ class BlanktopiaShop : JavaPlugin(), Listener {
 
     @EventHandler
     fun onInventoryDrag(event: InventoryDragEvent) {
-        if (event.inventory.type == InventoryType.PLAYER) return
         val block = (event.inventory.holder as? BlockInventoryHolder)?.block ?: return
         val chest = block.state as? Container ?: return
         val container = chest.persistentDataContainer
@@ -221,7 +220,6 @@ class BlanktopiaShop : JavaPlugin(), Listener {
 
     @EventHandler
     fun onInventoryClick(event: InventoryClickEvent) {
-        if (event.clickedInventory?.type == InventoryType.PLAYER) return
         val block = (event.inventory.holder as? BlockInventoryHolder)?.block ?: return
         val chest = block.state as? Container ?: return
         val container = chest.persistentDataContainer
