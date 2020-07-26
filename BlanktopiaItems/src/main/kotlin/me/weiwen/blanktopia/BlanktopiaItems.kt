@@ -43,19 +43,6 @@ class BlanktopiaItems : JavaPlugin() {
             }
         }
 
-        val witemCommand = getCommand("witem")
-        witemCommand?.setExecutor { sender, _, _, args ->
-            if (sender !is Player) return@setExecutor false
-            if (args.size != 1) return@setExecutor false
-            sender.inventory.addItem(customItems.buildItem(args[0]))
-            sender.playSound(sender.location, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 1.0f)
-            true
-        }
-        witemCommand?.setTabCompleter {
-                _, _, _, _ ->
-            config.getConfigurationSection("items")?.getKeys(false)?.toList() ?: listOf()
-        }
-
         val wheadCommand = getCommand("whead")
         wheadCommand?.setExecutor { sender, _, _, args ->
             if (sender !is Player) return@setExecutor false

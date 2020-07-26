@@ -45,33 +45,10 @@ bukkit {
             usage = "/<command> <enchant> [level]"
             permission = "blanktopia.enchant"
         }
-        register("witem") {
-            description = "Gives the player a custom item"
-            usage = "/<command> <type>"
-            permission = "blanktopia.item"
-        }
-        register("whead") {
-            description = "Gives the player a custom player head"
-            usage = "/<command> <name> <base64>"
-            permission = "blanktopia.head"
-        }
-        register("wkit") {
-            description = "Gives user a kit"
-            usage = "/<command> <kit> [player]"
-            permission = "blanktopia.kit"
-        }
-        register("wserialize") {
-            description = "Serializes the player's held item and writes it to serialized.yml"
-            usage = "/<command>"
-            permission = "blanktopia.serialize"
-        }
     }
     permissions {
         register("blanktopia.admin") { }
         register("blanktopia.enchant") { }
-        register("blanktopia.item") { }
-        register("blanktopia.kit") { }
-        register("blanktopia.serialize") { }
         register("blanktopia.help") {
             default = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default.TRUE
         }

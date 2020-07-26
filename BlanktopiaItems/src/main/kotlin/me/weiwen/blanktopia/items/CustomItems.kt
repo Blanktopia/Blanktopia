@@ -7,6 +7,8 @@ import me.weiwen.blanktopia.Blanktopia
 import me.weiwen.blanktopia.Module
 import me.weiwen.blanktopia.triggers.TriggerType
 import org.bukkit.NamespacedKey
+import org.bukkit.Sound
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
@@ -28,6 +30,20 @@ class CustomItems(private val plugin: JavaPlugin) :
     override fun enable() {
         items = populateItems()
         plugin.server.pluginManager.registerEvents(this, plugin)
+
+        val witemCommand = plugin.getCommand("witem")
+        witemCommand?.setExecutor { sender, _, _, args ->
+            val name = args[0] ?: return@setExecutor false
+            val player = if (args[1] != null) plugin.server.getPlayer(args[1]) else sender as? Player
+            if (player == null) return@setExecutor false
+            player.inventory.addItem(buildItem(name))
+            player.playSound(player.location, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 1.0f)
+            true
+        }
+        witemCommand?.setTabCompleter {
+                _, _, _, _ ->
+            config.getConfigurationSection("items")?.getKeys(false)?.toList() ?: listOf()
+        }
 
         for (player in plugin.server.onlinePlayers) {
             for (item in player.inventory.armorContents) {

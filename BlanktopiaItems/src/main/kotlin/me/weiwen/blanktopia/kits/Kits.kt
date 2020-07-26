@@ -7,6 +7,7 @@ import me.weiwen.blanktopia.items.CustomItems
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
+import org.bukkit.Sound
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
@@ -29,6 +30,7 @@ class Kits(val plugin: JavaPlugin, val customItems: CustomItems) : Listener, Mod
             val player = if (args[1] != null) plugin.server.getPlayer(args[1]) else sender as? Player
             if (player == null) return@setExecutor false
             giveKit(player, name)
+            player.playSound(player.location, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 1.0f)
             true
         }
     }
