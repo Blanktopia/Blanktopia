@@ -1,5 +1,6 @@
 package me.weiwen.blanktopia
 
+import com.earth2me.essentials.Essentials
 import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.block.Container
@@ -29,12 +30,12 @@ val SIGN_TYPES = setOf(
     Material.DARK_OAK_WALL_SIGN,
     Material.JUNGLE_WALL_SIGN,
     Material.OAK_WALL_SIGN,
-    Material.SPRUCE_WALL_SIGN
+    Material.SPRUCE_WALL_SIGN,
+    Material.CRIMSON_WALL_SIGN,
+    Material.WARPED_WALL_SIGN
 )
 
 val CONTAINER_TYPES = setOf(
-    Material.CHEST,
-    Material.TRAPPED_CHEST,
     Material.BARREL
 )
 
@@ -78,7 +79,7 @@ class BlanktopiaShop : JavaPlugin(), Listener {
         if (event.getLine(0) != "[Shop]") return
         event.isCancelled = true
         val player = event.player
-        if (!player.hasPermission("ww.shop.create")) {
+        if (!player.hasPermission("blanktopia.shop.create")) {
             player.sendMessage("${ChatColor.RED}You don't have permission to set up shops!")
             event.block.breakNaturally()
             return
@@ -87,49 +88,47 @@ class BlanktopiaShop : JavaPlugin(), Listener {
         val description = event.getLine(1) ?: ""
         val price = event.getLine(2)
         if (price == null) {
-            player.sendMessage("${ChatColor.RED}Put the price in the second line. e.g. \"2 diamonds\"")
+            player.sendMessage("${ChatColor.RED}Put the price in the third line. e.g. \"2 diamonds\"")
             event.block.breakNaturally()
             return
         }
-        val splitPrice = price.split(' ', limit = 2)
-        if (splitPrice.size != 2) {
-            player.sendMessage("${ChatColor.RED}Put the price in the second line. e.g. \"2 diamonds\"")
+        val item = parseItem(price)
+        if (item == null) {
+            player.sendMessage("${ChatColor.RED}Put the price in the third line. e.g. \"2 diamonds\"")
             event.block.breakNaturally()
             return
         }
-        val amount = splitPrice[0].toIntOrNull()
-        val item = parseItem(splitPrice[1], amount != 1)
-        if (amount == null || item == null) {
-            player.sendMessage("${ChatColor.RED}Put the price in the second line. e.g. \"2 diamonds\"")
-            event.block.breakNaturally()
-            return
-        }
-        val (material, name) = item
+        val (amount, material, name) = item
 
         var owner = event.getLine(3)
         if (owner.isNullOrEmpty()) owner = player.name
-        if (owner != player.name && !player.hasPermission("ww.shop.create.others")) {
+        if (owner != player.name && !player.hasPermission("blanktopia.shop.create.others")) {
             player.sendMessage("${ChatColor.RED}Leave the last line blank.")
             event.isCancelled = true
             event.block.breakNaturally()
             return
         }
-        val uuid = server.getPlayer(owner)?.uniqueId?.toString() ?: ""
+        val uuid = if (owner == "admin") {
+            owner = ""
+            ""
+        } else {
+            server.getPlayer(owner)?.uniqueId?.toString() ?: player.uniqueId.toString()
+        }
 
         val chest = getBlockBehindSign(event.block) ?: return
         val state = chest.state as? Container ?: return
         val container = state.persistentDataContainer
-        container.set(NamespacedKey(this, "player"), PersistentDataType.STRING, uuid)
+        container.set(NamespacedKey(this, "owner"), PersistentDataType.STRING, uuid)
         container.set(NamespacedKey(this, "amount"), PersistentDataType.INTEGER, amount)
         container.set(NamespacedKey(this, "item"), PersistentDataType.STRING, material.toString())
-        container.set(NamespacedKey(this, "itemName"), PersistentDataType.STRING, name)
+        container.set(NamespacedKey(this, "cost"), PersistentDataType.STRING, name)
         state.update()
 
         val sign = event.block.state as? Sign ?: return
-        sign.setLine(0, "${ChatColor.LIGHT_PURPLE}[Shop]")
-        sign.setLine(1, "${ChatColor.GOLD}${description}")
-        sign.setLine(2, "${ChatColor.GOLD}${amount} ${name}")
-        sign.setLine(3, "${ChatColor.DARK_PURPLE}${player.name}")
+        sign.setLine(0, "${ChatColor.DARK_PURPLE}[Shop]")
+        sign.setLine(1, "${ChatColor.GOLD}${ChatColor.BOLD}${description}")
+        sign.setLine(2, "${ChatColor.GOLD}${name}")
+        sign.setLine(3, "${ChatColor.DARK_PURPLE}${owner}")
         sign.isEditable = false
         sign.update()
     }
@@ -140,14 +139,15 @@ class BlanktopiaShop : JavaPlugin(), Listener {
         val chest = getBlockBehindSign(event.block) ?: return
         val state = chest.state as? Container ?: return
         val container = state.persistentDataContainer
-        val uuid = container.get(NamespacedKey(this, "player"), PersistentDataType.STRING)
-        if (uuid != null && UUID.fromString(uuid) != event.player.uniqueId && !event.player.hasPermission("ww.shop.break")) {
+        val uuid = container.get(NamespacedKey(this, "owner"), PersistentDataType.STRING)
+        if (uuid != null && uuid != "" && UUID.fromString(uuid) != event.player.uniqueId && !event.player.hasPermission("blanktopia.shop.break")) {
             event.player.sendMessage("${ChatColor.RED}You don't have permission to break other players' shops!")
             event.isCancelled = true
             return
         }
-        container.remove(NamespacedKey(this, "player"))
+        container.remove(NamespacedKey(this, "owner"))
         container.remove(NamespacedKey(this, "amount"))
+        container.remove(NamespacedKey(this, "cost"))
         container.remove(NamespacedKey(this, "item"))
         state.update()
     }
@@ -163,23 +163,44 @@ class BlanktopiaShop : JavaPlugin(), Listener {
         if (!CONTAINER_TYPES.contains(chest.type)) return
         val state = chest.state as? Container ?: return
         val container = state.persistentDataContainer
-        if (container.get(NamespacedKey(this, "item"), PersistentDataType.STRING) == null) return
+        if (container.get(NamespacedKey(this, "item"), PersistentDataType.STRING) == null) {
+            val sign = block.state as? Sign ?: return
+            if (sign.getLine(0) == "${ChatColor.DARK_PURPLE}[Shop]") {
+                // Migrate Skript shop
+                val price = sign.getLine(2).substring(2)
+                val (amount, material, name) = parseItem(price) ?: return
+                val owner = sign.getLine(3).substring(2)
+                val uuid = server.getOfflinePlayer(owner)?.uniqueId?.toString() ?: ""
+                container.set(NamespacedKey(this, "owner"), PersistentDataType.STRING, uuid)
+                container.set(NamespacedKey(this, "amount"), PersistentDataType.INTEGER, amount)
+                container.set(NamespacedKey(this, "item"), PersistentDataType.STRING, material.toString())
+                container.set(NamespacedKey(this, "cost"), PersistentDataType.STRING, name)
+                state.update()
+            }
+            return
+        }
+
+        if (!player.hasPermission("blanktopia.shop.buy")) {
+            player.sendMessage("${ChatColor.RED}You don't have permission to buy from shops!")
+            return
+        }
         player.openInventory(state.inventory)
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     fun onInventoryOpen(event: InventoryOpenEvent) {
         val block = (event.inventory.holder as? BlockInventoryHolder)?.block ?: return
         val chest = block.state as? Container ?: return
         val container = chest.persistentDataContainer
-        val amount = container.get(NamespacedKey(this, "amount"), PersistentDataType.INTEGER) ?: return
-        val item = container.get(NamespacedKey(this, "itemName"), PersistentDataType.STRING) ?: return
-        val uuid = container.get(NamespacedKey(this, "player"), PersistentDataType.STRING)
-        if (uuid != null && UUID.fromString(uuid) == event.player.uniqueId) {
-            event.player.sendMessage("${ChatColor.GOLD}Editing your own shop.")
-        } else {
-            event.player.sendMessage("${ChatColor.GOLD}Each stack costs ${amount} ${item}.")
+        val cost = container.get(NamespacedKey(this, "cost"), PersistentDataType.STRING) ?: return
+        val uuid = container.get(NamespacedKey(this, "owner"), PersistentDataType.STRING)
+        val player = event.player as? Player ?: return
+        if (uuid != null && uuid != "" && UUID.fromString(uuid) == player.uniqueId) {
+            player.sendMessage("${ChatColor.GOLD}Editing your own shop.")
+        } else if (player.hasContainerTrust(block.location)) {
+            player.sendMessage("${ChatColor.GOLD}Editing someone else's shop.")
         }
+        event.player.sendMessage("${ChatColor.GOLD}Each stack costs ${cost}.")
     }
 
     @EventHandler
@@ -187,8 +208,9 @@ class BlanktopiaShop : JavaPlugin(), Listener {
         val block = (event.inventory.holder as? BlockInventoryHolder)?.block ?: return
         val chest = block.state as? Container ?: return
         val container = chest.persistentDataContainer
-        val uuid = container.get(NamespacedKey(this, "player"), PersistentDataType.STRING) ?: return
-        if (uuid != null && UUID.fromString(uuid) == event.whoClicked.uniqueId) {
+        val uuid = container.get(NamespacedKey(this, "owner"), PersistentDataType.STRING)
+        val player = event.whoClicked as? Player ?: return
+        if ((uuid != null && uuid != "" && UUID.fromString(uuid) == player.uniqueId) || player.hasContainerTrust(block.location)) {
             return
         }
         event.isCancelled = true
@@ -199,8 +221,9 @@ class BlanktopiaShop : JavaPlugin(), Listener {
         val block = (event.inventory.holder as? BlockInventoryHolder)?.block ?: return
         val chest = block.state as? Container ?: return
         val container = chest.persistentDataContainer
-        val uuid = container.get(NamespacedKey(this, "player"), PersistentDataType.STRING)
-        if (uuid != null && UUID.fromString(uuid) == event.whoClicked.uniqueId) {
+        val uuid = container.get(NamespacedKey(this, "owner"), PersistentDataType.STRING)
+        val player = event.whoClicked as? Player ?: return
+        if ((uuid != null && uuid != "" && UUID.fromString(uuid) == player.uniqueId) || player.hasContainerTrust(block.location)) {
             return
         }
         event.isCancelled = true
@@ -214,16 +237,21 @@ class BlanktopiaShop : JavaPlugin(), Listener {
         val clickedItem = event.inventory.getItem(event.slot) ?: return
         if (clickedItem.type == material) return
 
-        val player = event.whoClicked as? Player ?: return
-        if (player.inventory.containsAtLeast(cost, amount)) {
-            val emptySlot = player.inventory.firstEmpty()
-            player.inventory.removeItem(cost)
-            event.inventory.setItem(event.slot, cost)
-            player.inventory.setItem(emptySlot, clickedItem)
-            player.playSoundAt(Sound.BLOCK_NOTE_BLOCK_BELL, SoundCategory.PLAYERS, 1.0f, 0.81f)
-            logPurchase(player, UUID.fromString(uuid), block.location, clickedItem, cost)
-        } else {
+        if (!player.inventory.containsAtLeast(cost, amount)) {
             player.playSoundTo(Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, SoundCategory.PLAYERS, 1.0f, 1.0f)
+        } else {
+            val emptySlot = player.inventory.firstEmpty()
+            if (emptySlot == -1) {
+                player.playSoundTo(Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, SoundCategory.PLAYERS, 1.0f, 1.0f)
+            } else {
+                player.inventory.removeItem(cost)
+                if (uuid != "") {
+                    event.inventory.setItem(event.slot, cost)
+                    logPurchase(player, UUID.fromString(uuid), block.location, clickedItem, cost)
+                }
+                player.inventory.setItem(emptySlot, clickedItem)
+                player.playSoundAt(Sound.BLOCK_NOTE_BLOCK_BELL, SoundCategory.PLAYERS, 1.0f, 0.81f)
+            }
         }
     }
 
@@ -233,12 +261,22 @@ class BlanktopiaShop : JavaPlugin(), Listener {
         return block.getRelative(data.facing.oppositeFace)
     }
 
+
     fun logPurchase(player: Player, uuid: UUID, location: Location, clickedItem: ItemStack, cost: ItemStack) {
         val owner = Bukkit.getServer().getOfflinePlayer(uuid)
-        if (player.isOnline) {
-            player.sendMessage("${ChatColor.GOLD}${player.displayName} has bought ${clickedItem} for ${cost}.")
+        val boughtItem = toString(clickedItem)
+        val price = toString(cost)
+        player.sendMessage("${ChatColor.GOLD}You have bought ${boughtItem}${ChatColor.GOLD} for ${price}.${ChatColor.GOLD}")
+
+        val essentials = server.pluginManager.getPlugin("Essentials") as? Essentials ?: return
+        val user = essentials.getUser(owner.uniqueId)
+        if (!owner.isOnline || user.isAfk) {
+            user.addMail("${ChatColor.GOLD}${player.displayName} has bought ${boughtItem}${ChatColor.GOLD} for ${price}.${ChatColor.GOLD}")
         } else {
-            // send mail
+            owner.player?.let {
+                it.sendMessage("${ChatColor.GOLD}${player.displayName} has bought ${boughtItem}${ChatColor.GOLD} for ${price}.${ChatColor.GOLD}")
+                it.playSoundTo(Sound.BLOCK_NOTE_BLOCK_BELL, SoundCategory.PLAYERS, 1.0f, 0.81f)
+            }
         }
     }
 }
