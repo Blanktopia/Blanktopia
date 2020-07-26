@@ -4,6 +4,7 @@ import io.papermc.lib.PaperLib
 import org.bukkit.*
 import org.bukkit.block.Beacon
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
@@ -35,7 +36,7 @@ class BlanktopiaPortals : JavaPlugin(), Listener {
         logger.info("BlanktopiaPortals is disabled")
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     fun onPlayerMove(event: PlayerMoveEvent) {
         if (event.to.blockX == event.from.blockX && event.to.blockZ == event.from.blockZ && event.to.blockY == event.from.blockY) {
             return
@@ -58,7 +59,7 @@ class BlanktopiaPortals : JavaPlugin(), Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     fun onPlayerInteract(event: PlayerInteractEvent) {
         val block = event.clickedBlock ?: return
         val player = event.player
@@ -117,7 +118,7 @@ class BlanktopiaPortals : JavaPlugin(), Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     fun onBlockBreak(event: BlockBreakEvent) {
         if (event.block.type != Material.BEACON) return
         val state = event.block.state as? Beacon ?: return
