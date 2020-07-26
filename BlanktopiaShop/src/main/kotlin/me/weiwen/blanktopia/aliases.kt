@@ -11,8 +11,13 @@ data class Item(val amount: Int, val material: Material, val name: String)
 fun parseItem(str: String): Item? {
     if (Bukkit.getPluginManager().getPlugin("Skript") != null) {
         val itemType = Aliases.parseItemType(str) ?: return null
-        val itemData = itemType.types[0]
-        return Item(itemType.amount, itemType.material, itemType.toString(ch.njol.skript.localization.Language.F_INDEFINITE_ARTICLE))
+        val item = ItemType(itemType.material)
+        item.amount = itemType.amount
+        var name = item.toString(ch.njol.skript.localization.Language.F_INDEFINITE_ARTICLE)
+        if (name.first() !in '0'..'9') {
+            name = "1 $name"
+        }
+        return Item(item.amount, item.material, name)
     } else {
         val splitPrice = str.split(' ', limit = 2)
         if (splitPrice.size != 2) return null
