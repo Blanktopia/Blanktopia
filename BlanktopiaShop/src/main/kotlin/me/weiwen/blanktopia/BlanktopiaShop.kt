@@ -176,6 +176,11 @@ class BlanktopiaShop : JavaPlugin(), Listener {
                 container.set(NamespacedKey(this, "item"), PersistentDataType.STRING, material.toString())
                 container.set(NamespacedKey(this, "cost"), PersistentDataType.STRING, name)
                 state.update()
+                if (!player.hasPermission("blanktopia.shop.buy")) {
+                    player.sendMessage("${ChatColor.RED}You don't have permission to buy from shops!")
+                    return
+                }
+                player.openInventory(state.inventory)
             }
             return
         }
