@@ -83,7 +83,7 @@ class CustomItems(private val plugin: JavaPlugin) :
         return items[type]
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     fun onPlayerInteract(event: PlayerInteractEvent) {
         val item = event.item ?: return
         val customItem = getCustomItem(item) ?: return
@@ -119,7 +119,7 @@ class CustomItems(private val plugin: JavaPlugin) :
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     fun onPlayerInteractEntity(event: PlayerInteractEntityEvent) {
         val item = if (event.hand == EquipmentSlot.HAND) event.player.inventory.itemInMainHand else if (event.hand === EquipmentSlot.OFF_HAND) event.player.inventory.itemInOffHand else return
         val customItem = getCustomItem(item) ?: return
