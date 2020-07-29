@@ -1,8 +1,10 @@
 package me.weiwen.blanktopia.items
 
-import me.weiwen.blanktopia.*
-import me.weiwen.blanktopia.actions.Action
+import me.weiwen.blanktopia.Blanktopia
+import me.weiwen.blanktopia.Node
 import me.weiwen.blanktopia.enchants.enchant
+import me.weiwen.blanktopia.getStringOrError
+import me.weiwen.blanktopia.playerHeadFromUrl
 import me.weiwen.blanktopia.triggers.Trigger
 import me.weiwen.blanktopia.triggers.TriggerType
 import me.weiwen.blanktopia.triggers.parseTriggers
@@ -90,6 +92,9 @@ class CustomItem(val type: String, config: ConfigurationSection) {
         meta.persistentDataContainer.set(NamespacedKey(Blanktopia.INSTANCE, "type"), PersistentDataType.STRING, type)
         for ((attribute, attributeModifier) in  attributeModifiers) {
             meta.addAttributeModifier(attribute, attributeModifier)
+        }
+        for (flag in flags) {
+            meta.addItemFlags(flag)
         }
         item.itemMeta = meta
         for ((enchant, level) in enchantments) {
