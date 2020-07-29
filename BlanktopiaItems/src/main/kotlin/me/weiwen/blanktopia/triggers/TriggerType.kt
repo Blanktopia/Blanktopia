@@ -16,6 +16,8 @@ enum class TriggerType {
     EQUIP_ARMOR,
     UNEQUIP_ARMOR,
 
+    CONSUME,
+
     BREAK_BLOCK,
     PLACE_BLOCK,
     DROP,
@@ -40,5 +42,19 @@ enum class TriggerType {
     NUMBER_KEY_8_INVENTORY,
     NUMBER_KEY_9_INVENTORY,
     CREATIVE_INVENTORY,
-    SWAP_OFFHAND_INVENTORY
+    SWAP_OFFHAND_INVENTORY,
+
+    MOVE,
+    JUMP,
+    TOGGLE_SNEAK,
+    TOGGLE_SPRINT,
+    TOGGLE_FLIGHT
 }
+
+val EQUIPPED_TRIGGERS = setOf(
+    TriggerType.MOVE,
+    TriggerType.JUMP,
+    TriggerType.TOGGLE_SNEAK,
+    TriggerType.TOGGLE_SPRINT,
+    TriggerType.TOGGLE_FLIGHT
+)

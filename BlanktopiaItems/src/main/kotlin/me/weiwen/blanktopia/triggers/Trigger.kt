@@ -71,6 +71,8 @@ fun parseTriggerTypes(type: String): Set<TriggerType> {
         "equip-armor" -> setOf(TriggerType.EQUIP_ARMOR)
         "unequip-armor" -> setOf(TriggerType.UNEQUIP_ARMOR)
 
+        "consume" -> setOf(TriggerType.CONSUME)
+
         "break-block" -> setOf(TriggerType.BREAK_BLOCK)
         "place-block" -> setOf(TriggerType.PLACE_BLOCK)
 
@@ -102,6 +104,14 @@ fun parseTriggerTypes(type: String): Set<TriggerType> {
         "number-key-7-inventory" -> setOf(TriggerType.NUMBER_KEY_7_INVENTORY)
         "number-key-8-inventory" -> setOf(TriggerType.NUMBER_KEY_8_INVENTORY)
         "number-key-9-inventory" -> setOf(TriggerType.NUMBER_KEY_9_INVENTORY)
+
+        // These triggers will register when armor is equiped and unregistered when removed
+        "move" -> setOf(TriggerType.MOVE)
+        "jump" -> setOf(TriggerType.JUMP)
+        "toggle-sneak" -> setOf(TriggerType.TOGGLE_SNEAK)
+        "toggle-sprint" -> setOf(TriggerType.TOGGLE_SPRINT)
+        "toggle-flight" -> setOf(TriggerType.TOGGLE_FLIGHT)
+
         
         else -> {
             BlanktopiaItems.INSTANCE.logger.log(Level.WARNING, "Unrecognized trigger '$type' when parsing custom item")

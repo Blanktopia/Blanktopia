@@ -1,10 +1,12 @@
 package me.weiwen.blanktopia.items
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent
+import com.destroystokyo.paper.event.player.PlayerJumpEvent
 import me.weiwen.blanktopia.Blanktopia
 import me.weiwen.blanktopia.Module
+import me.weiwen.blanktopia.triggers.EQUIPPED_TRIGGERS
+import me.weiwen.blanktopia.triggers.Trigger
 import me.weiwen.blanktopia.triggers.TriggerType
-import net.minecraft.server.v1_16_R1.Items.it
 import org.bukkit.NamespacedKey
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -18,18 +20,21 @@ import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.FurnaceBurnEvent
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.PrepareItemCraftEvent
-import org.bukkit.event.player.PlayerDropItemEvent
-import org.bukkit.event.player.PlayerInteractEntityEvent
-import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.event.player.*
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.*
 
 class CustomItems(private val plugin: JavaPlugin) :
     Listener, Module {
     private var config = plugin.config.getConfigurationSection("items")!!
     private lateinit var items: Map<String, CustomItem>
+
+    private val equippedItems: MutableMap<UUID,
+            MutableMap<TriggerType,
+                    MutableMap<PlayerArmorChangeEvent.SlotType, Pair<ItemStack, List<Trigger>>>>> = mutableMapOf()
 
     override fun enable() {
         items = populateItems()
@@ -128,11 +133,7 @@ class CustomItems(private val plugin: JavaPlugin) :
         val item = if (event.hand == EquipmentSlot.HAND) event.player.inventory.itemInMainHand else if (event.hand === EquipmentSlot.OFF_HAND) event.player.inventory.itemInOffHand else return
         val customItem = getCustomItem(item) ?: return
         customItem.triggers[TriggerType.RIGHT_CLICK_ENTITY]?.forEach {
-            it.run(
-                event.player,
-                item,
-                event.rightClicked
-            )
+            if (it.test(event.player, item)) it.run(event.player, item, event.rightClicked)
             event.isCancelled = true
         }
     }
@@ -143,11 +144,7 @@ class CustomItems(private val plugin: JavaPlugin) :
         val item = player.inventory.itemInMainHand
         val customItem = getCustomItem(item) ?: return
         customItem.triggers[TriggerType.DAMAGE_ENTITY]?.forEach {
-            it.run(
-                player,
-                item,
-                event.entity
-            )
+            if (it.test(player, item)) it.run(player, item, event.entity)
             event.isCancelled = true
         }
     }
@@ -185,10 +182,7 @@ class CustomItems(private val plugin: JavaPlugin) :
             ClickType.UNKNOWN -> null
         } ?: return
         customItem.triggers[trigger]?.forEach {
-            it.run(
-                player,
-                item
-            )
+            if (it.test(player, item)) it.run(player, item)
             event.isCancelled = true
         }
     }
@@ -198,10 +192,17 @@ class CustomItems(private val plugin: JavaPlugin) :
         val item = event.itemDrop.itemStack
         val customItem = getCustomItem(item) ?: return
         customItem.triggers[TriggerType.DROP]?.forEach {
-            it.run(
-                event.player,
-                item
-            )
+            if (it.test(event.player, item)) it.run(event.player, item)
+            event.isCancelled = true
+        }
+    }
+
+    @EventHandler
+    fun onPlayerItemConsume(event: PlayerItemConsumeEvent) {
+        val item = event.item
+        val customItem = getCustomItem(item) ?: return
+        customItem.triggers[TriggerType.CONSUME]?.forEach {
+            if (it.test(event.player, item)) it.run(event.player, item)
             event.isCancelled = true
         }
     }
@@ -232,7 +233,15 @@ class CustomItems(private val plugin: JavaPlugin) :
         event.oldItem?.let { item ->
             val customItem = getCustomItem(item) ?: return@let
             customItem.triggers[TriggerType.UNEQUIP_ARMOR]?.forEach {
-                it.run(event.player, item)
+                if (it.test(event.player, item)) it.run(event.player, item)
+            }
+            customItem.triggers.forEach { triggerType, triggers ->
+                if (triggerType in EQUIPPED_TRIGGERS) {
+                    equippedItems
+                        .getOrPut(event.player.uniqueId, { mutableMapOf() })
+                        .getOrPut(triggerType, { mutableMapOf() })[event.slotType] = Pair(item, triggers)
+
+                }
             }
         }
 
@@ -240,6 +249,14 @@ class CustomItems(private val plugin: JavaPlugin) :
             val customItem = getCustomItem(item) ?: return@let
             customItem.triggers[TriggerType.EQUIP_ARMOR]?.forEach {
                 it.run(event.player, item)
+            }
+            customItem.triggers.forEach { triggerType, triggers ->
+                if (triggerType in EQUIPPED_TRIGGERS) {
+                    equippedItems
+                        .getOrPut(event.player.uniqueId, { mutableMapOf() })
+                        .getOrPut(triggerType, { mutableMapOf() })
+                        .remove(event.slotType)
+                }
             }
         }
     }
@@ -249,11 +266,7 @@ class CustomItems(private val plugin: JavaPlugin) :
         val item = event.player.inventory.itemInMainHand
         val customItem = getCustomItem(item) ?: return
         customItem.triggers[TriggerType.BREAK_BLOCK]?.forEach {
-            it.run(
-                event.player,
-                item,
-                event.block
-            )
+            it.run(event.player, item, event.block)
             event.isCancelled = true
         }
     }
@@ -263,12 +276,60 @@ class CustomItems(private val plugin: JavaPlugin) :
         val item = event.player.inventory.itemInMainHand
         val customItem = getCustomItem(item) ?: return
         customItem.triggers[TriggerType.PLACE_BLOCK]?.forEach {
-            it.run(
-                event.player,
-                item,
-                event.block
-            )
+            it.run(event.player, item, event.block)
             event.isCancelled = true
         }
     }
+
+    @EventHandler(ignoreCancelled = true)
+    fun onPlayerMove(event: PlayerMoveEvent) {
+        equippedItems[event.player.uniqueId]?.get(TriggerType.MOVE)?.values?.forEach { (item, triggers) ->
+            triggers.forEach {
+                if (it.test(event.player, item)) it.run(event.player, item)
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    fun onPlayerJump(event: PlayerJumpEvent) {
+        equippedItems[event.player.uniqueId]?.get(TriggerType.JUMP)?.values?.forEach { (item, triggers) ->
+            triggers.forEach {
+                if (it.test(event.player, item)) it.run(event.player, item)
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    fun onPlayerToggleSneak(event: PlayerToggleSneakEvent) {
+        equippedItems[event.player.uniqueId]?.get(TriggerType.TOGGLE_SNEAK)?.values?.forEach { (item, triggers) ->
+            triggers.forEach {
+                if (it.test(event.player, item)) it.run(event.player, item)
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    fun onPlayerToggleSprint(event: PlayerToggleSprintEvent) {
+        equippedItems[event.player.uniqueId]?.get(TriggerType.TOGGLE_SPRINT)?.values?.forEach { (item, triggers) ->
+            triggers.forEach {
+                if (it.test(event.player, item)) it.run(event.player, item)
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    fun onPlayerToggleFlight(event: PlayerToggleFlightEvent) {
+        equippedItems[event.player.uniqueId]?.get(TriggerType.TOGGLE_FLIGHT)?.values?.forEach { (item, triggers) ->
+            triggers.forEach {
+                if (it.test(event.player, item)) it.run(event.player, item)
+            }
+        }
+    }
+
+    @EventHandler
+    fun onPlayerQuit(event: PlayerQuitEvent) {
+        // Cleanup
+        equippedItems.remove(event.player.uniqueId)
+    }
+
 }
