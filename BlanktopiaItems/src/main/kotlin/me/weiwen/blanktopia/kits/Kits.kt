@@ -74,7 +74,7 @@ class Kits(val plugin: JavaPlugin, val customItems: CustomItems) : Listener, Mod
                             val enchant =
                                 Enchantment.getByKey(NamespacedKey.minecraft(enchantName)) ?: Enchantment.getByKey(
                                     NamespacedKey(
-                                        plugin,
+                                        Blanktopia.INSTANCE,
                                         enchantName
                                     )
                                 )
