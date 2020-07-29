@@ -20,6 +20,7 @@ import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 import java.util.*
+import java.util.logging.Level
 
 val SIGN_TYPES = setOf(
     Material.ACACIA_WALL_SIGN,
@@ -73,7 +74,7 @@ class BlanktopiaShop : JavaPlugin(), Listener {
 
     @EventHandler(ignoreCancelled = true)
     fun onSignChange(event: SignChangeEvent) {
-        if (event.getLine(0) != "[Shop]") return
+        if (event.getLine(0)?.toLowerCase() != "[shop]") return
         event.isCancelled = true
         val player = event.player
         if (!player.hasPermission("blanktopia.shop.create")) {
@@ -230,30 +231,35 @@ class BlanktopiaShop : JavaPlugin(), Listener {
         }
         event.isCancelled = true
         if (event.click != ClickType.LEFT) return
+        val inventory = event.clickedInventory ?: return
+        if (inventory.type == InventoryType.PLAYER) return
 
         val amount = container.get(NamespacedKey(this, "amount"), PersistentDataType.INTEGER) ?: return
         val item = container.get(NamespacedKey(this, "item"), PersistentDataType.STRING) ?: return
         val material = Material.getMaterial(item) ?: return
         val cost = ItemStack(material, amount)
 
-        val clickedItem = event.inventory.getItem(event.slot) ?: return
-        if (clickedItem.type == material) return
+        val clickedItem = inventory.getItem(event.slot) ?: return
+        if (clickedItem.type == material || clickedItem.type == Material.AIR) return
 
         if (!player.inventory.containsAtLeast(cost, amount)) {
             player.playSoundTo(Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, SoundCategory.PLAYERS, 1.0f, 1.0f)
-        } else {
-            val emptySlot = player.inventory.firstEmpty()
-            if (emptySlot == -1) {
-                player.playSoundTo(Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, SoundCategory.PLAYERS, 1.0f, 1.0f)
-            } else {
-                player.inventory.removeItem(cost)
-                if (uuid != "") {
-                    event.inventory.setItem(event.slot, cost)
-                    logPurchase(player, UUID.fromString(uuid), block.location, clickedItem, cost)
-                }
-                player.inventory.setItem(emptySlot, clickedItem)
-                player.playSoundAt(Sound.BLOCK_NOTE_BLOCK_BELL, SoundCategory.PLAYERS, 1.0f, 0.81f)
-            }
+            return
+        }
+
+        val emptySlot = player.inventory.firstEmpty()
+        if (emptySlot == -1) {
+            player.playSoundTo(Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, SoundCategory.PLAYERS, 1.0f, 1.0f)
+            return
+        }
+
+        player.inventory.removeItem(cost)
+        player.inventory.setItem(emptySlot, clickedItem)
+        player.playSoundAt(Sound.BLOCK_NOTE_BLOCK_BELL, SoundCategory.PLAYERS, 1.0f, 0.81f)
+        if (uuid != "") {
+            inventory.setItem(event.slot, cost)
+            val price = container.get(NamespacedKey(this, "cost"), PersistentDataType.STRING) ?: toString(cost)
+            logPurchase(player, UUID.fromString(uuid), clickedItem, price)
         }
     }
 
@@ -264,19 +270,19 @@ class BlanktopiaShop : JavaPlugin(), Listener {
     }
 
 
-    fun logPurchase(player: Player, uuid: UUID, location: Location, clickedItem: ItemStack, cost: ItemStack) {
+    private fun logPurchase(player: Player, uuid: UUID, clickedItem: ItemStack, price: String) {
         val owner = Bukkit.getServer().getOfflinePlayer(uuid)
         val boughtItem = toString(clickedItem)
-        val price = toString(cost)
         player.sendMessage("${ChatColor.GOLD}You have bought ${boughtItem}${ChatColor.GOLD} for ${price}.${ChatColor.GOLD}")
 
         val essentials = server.pluginManager.getPlugin("Essentials") as? Essentials ?: return
-        val user = essentials.getUser(owner.uniqueId)
+        val user = essentials.getUser(owner.uniqueId) ?: return
+        logger.log(Level.INFO, "${ChatColor.GOLD}${player.displayName}${ChatColor.GOLD} has bought ${boughtItem}${ChatColor.GOLD} from ${owner.name} for ${price}${ChatColor.GOLD}.")
         if (!owner.isOnline || user.isAfk) {
-            user.addMail("${ChatColor.GOLD}${player.displayName} has bought ${boughtItem}${ChatColor.GOLD} for ${price}.${ChatColor.GOLD}")
+            user.addMail("${ChatColor.GOLD}${player.displayName}${ChatColor.GOLD} has bought ${boughtItem}${ChatColor.GOLD} for ${price}${ChatColor.GOLD}.")
         } else {
             owner.player?.let {
-                it.sendMessage("${ChatColor.GOLD}${player.displayName} has bought ${boughtItem}${ChatColor.GOLD} for ${price}.${ChatColor.GOLD}")
+                it.sendMessage("${ChatColor.GOLD}${player.displayName}${ChatColor.GOLD} has bought ${boughtItem}${ChatColor.GOLD} for ${price}.${ChatColor.GOLD}.")
                 it.playSoundTo(Sound.BLOCK_NOTE_BLOCK_BELL, SoundCategory.PLAYERS, 1.0f, 0.81f)
             }
         }
