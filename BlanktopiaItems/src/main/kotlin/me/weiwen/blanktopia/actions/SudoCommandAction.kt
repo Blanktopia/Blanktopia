@@ -2,7 +2,6 @@ package me.weiwen.blanktopia.actions
 
 import me.weiwen.blanktopia.BlanktopiaItems
 import org.bukkit.entity.Player
-import org.bukkit.permissions.PermissionAttachment
 
 class SudoCommandAction(private val command: String) : Action {
     override fun run(player: Player) {

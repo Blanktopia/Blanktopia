@@ -3,7 +3,6 @@ package me.weiwen.blanktopia
 import me.ryanhamshire.GriefPrevention.GriefPrevention
 import org.bukkit.*
 import org.bukkit.block.Block
-import org.bukkit.block.BlockFace
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Entity
@@ -11,7 +10,6 @@ import org.bukkit.entity.ExperienceOrb
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
-import org.bukkit.util.Vector
 import java.util.*
 import java.util.logging.Level
 import kotlin.math.sqrt
@@ -125,7 +123,13 @@ fun Player.hasContainerTrust(location: Location): Boolean {
     val claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null) ?: return false
     return claim.allowContainers(this) == null
 }
-fun Player.hasBuildTrust(location: Location): Boolean {
+
+fun Player.hasBuildTrust(location: Location, material: Material): Boolean {
+    val claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null) ?: return false
+    return claim.allowBuild(this, material) == null
+}
+
+fun Player.canBuildAt(location: Location): Boolean {
     return GriefPrevention.instance.allowBuild(this, location) == null
 }
 

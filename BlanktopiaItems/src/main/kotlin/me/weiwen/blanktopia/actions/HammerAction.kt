@@ -1,6 +1,6 @@
 package me.weiwen.blanktopia.actions
 
-import me.weiwen.blanktopia.hasBuildTrust
+import me.weiwen.blanktopia.canBuildAt
 import me.weiwen.blanktopia.canMineBlock
 import org.bukkit.Location
 import org.bukkit.block.Block
@@ -15,7 +15,7 @@ class HammerAction(val range: Int) : Action {
         if (!canMineBlock(block, item)) return
         val hardness = block.type.hardness
         for (location in locationsInRange(block.location, face, range)) {
-            if (!player.hasBuildTrust(location)) continue
+            if (!player.canBuildAt(location)) continue
             val other = location.block
             if (other.type.hardness > hardness) continue
             if (!canMineBlock(other, item)) continue

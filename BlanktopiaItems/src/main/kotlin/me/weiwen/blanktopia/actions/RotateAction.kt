@@ -1,7 +1,7 @@
 package me.weiwen.blanktopia.actions
 
 import me.weiwen.blanktopia.PARTIAL_BLOCKS
-import me.weiwen.blanktopia.hasBuildTrust
+import me.weiwen.blanktopia.canBuildAt
 import me.weiwen.blanktopia.playSoundAt
 import org.bukkit.Axis
 import org.bukkit.Sound
@@ -20,7 +20,7 @@ val SIGN_ROTATIONS = listOf(BlockFace.NORTH, BlockFace.NORTH_NORTH_EAST, BlockFa
 
 class RotateAction(private val reversed: Boolean) : Action {
     override fun run(player: Player, item: ItemStack, block: Block, face: BlockFace) {
-        if (!player.hasBuildTrust(block.location)) return
+        if (!player.canBuildAt(block.location)) return
         if (PARTIAL_BLOCKS.contains(block.type)) return
         val rotated = if (reversed) backward(block, face) else forward(block, face)
         if (rotated) {

@@ -1,10 +1,9 @@
 package me.weiwen.blanktopia
 
-import org.bukkit.entity.*
+import org.bukkit.entity.LivingEntity
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerTeleportEvent
-import org.bukkit.event.world.ChunkUnloadEvent
 import org.bukkit.plugin.java.JavaPlugin
 
 class PetTeleport(val plugin: JavaPlugin) : Module, Listener {

@@ -1,7 +1,6 @@
 package me.weiwen.blanktopia.actions
 
 import me.weiwen.blanktopia.playSoundAt
-import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.SoundCategory
 import org.bukkit.entity.EnderPearl

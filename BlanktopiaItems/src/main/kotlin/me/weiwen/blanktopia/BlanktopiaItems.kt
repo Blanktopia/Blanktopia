@@ -1,11 +1,8 @@
 package me.weiwen.blanktopia
 
-import me.weiwen.blanktopia.books.Books
-import me.weiwen.blanktopia.enchants.CustomEnchants
 import me.weiwen.blanktopia.enchants.enchantments.NightVision.plugin
 import me.weiwen.blanktopia.items.CustomItems
 import me.weiwen.blanktopia.kits.Kits
-import me.weiwen.blanktopia.storage.Storage
 import org.bukkit.ChatColor
 import org.bukkit.Sound
 import org.bukkit.configuration.file.YamlConfiguration

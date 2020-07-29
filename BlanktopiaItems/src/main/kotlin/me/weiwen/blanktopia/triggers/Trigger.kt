@@ -1,13 +1,14 @@
 package me.weiwen.blanktopia.triggers
 
-import me.weiwen.blanktopia.*
+import me.weiwen.blanktopia.BlanktopiaItems
+import me.weiwen.blanktopia.Node
 import me.weiwen.blanktopia.actions.Action
 import me.weiwen.blanktopia.actions.parseActions
 import me.weiwen.blanktopia.conditions.Condition
 import me.weiwen.blanktopia.conditions.parseConditions
+import me.weiwen.blanktopia.tryGet
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
-import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack

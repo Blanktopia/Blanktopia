@@ -1,7 +1,5 @@
 package me.weiwen.blanktopia.items
 
-import com.comphenix.protocol.PacketType.Play.Client.BLOCK_PLACE
-import com.comphenix.protocol.PacketType.Play.Server.BLOCK_BREAK
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent
 import me.weiwen.blanktopia.Blanktopia
 import me.weiwen.blanktopia.Module

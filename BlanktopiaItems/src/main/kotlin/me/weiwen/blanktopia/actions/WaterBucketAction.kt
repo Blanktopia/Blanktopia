@@ -1,6 +1,7 @@
 package me.weiwen.blanktopia.actions
 
 import me.weiwen.blanktopia.EMPTY_BLOCKS
+import me.weiwen.blanktopia.canBuildAt
 import org.bukkit.Bukkit
 import org.bukkit.FluidCollisionMode
 import org.bukkit.Material
@@ -8,8 +9,6 @@ import org.bukkit.World
 import org.bukkit.block.data.Levelled
 import org.bukkit.block.data.Waterlogged
 import org.bukkit.entity.Player
-import org.bukkit.event.block.BlockPlaceEvent
-import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 
 class WaterBucketAction() : Action {

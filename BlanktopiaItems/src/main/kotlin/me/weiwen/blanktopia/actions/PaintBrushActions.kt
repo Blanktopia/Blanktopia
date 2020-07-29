@@ -1,7 +1,7 @@
 package me.weiwen.blanktopia.actions
 
 import me.weiwen.blanktopia.Blanktopia
-import me.weiwen.blanktopia.hasBuildTrust
+import me.weiwen.blanktopia.canBuildAt
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.DyeColor
@@ -57,7 +57,7 @@ class PaintBrushPaintAction : Action {
     override fun run(player: Player, item: ItemStack, block: Block) {
         val data = item.itemMeta?.persistentDataContainer ?: return
         val paint = data.get(NamespacedKey(Blanktopia.INSTANCE, "paint"), PersistentDataType.STRING)
-        if (!player.hasBuildTrust(block.location)) return
+        if (!player.canBuildAt(block.location)) return
         val colour = when (paint) {
             "WHITE" -> DyeColor.WHITE
             "ORANGE" -> DyeColor.ORANGE
