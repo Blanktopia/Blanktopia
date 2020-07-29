@@ -14,38 +14,39 @@ import org.bukkit.inventory.ItemStack
 class WaterBucketAction() : Action {
     override fun run(player: Player, item: ItemStack) {
         if (player.world.environment == World.Environment.NETHER) return
-        val result = player.rayTraceBlocks(5.0, FluidCollisionMode.NEVER) ?: return
+
+        val result = player.rayTraceBlocks(5.0, FluidCollisionMode.SOURCE_ONLY) ?: return
         val block = result.hitBlock ?: return
-        val face = result.hitBlockFace ?: return
-        val data = block.blockData
+        if (!player.canBuildAt(block.location)) return
+        val state = block.state
+        val data = state.blockData
+
         if (block.type == Material.WATER || block.type == Material.LAVA) {
-            block.type = Material.AIR
+            state.type = Material.AIR
+            state.update(true)
+            return
         } else if (block.type == Material.CAULDRON) {
-            val data = block.blockData
-            (data as Levelled).level = 0
-            block.blockData = data
+            if (data is Levelled) {
+                data.level = if (data.level == 0) { 3 } else { 0 }
+            }
+            state.blockData = data
+            state.update(true)
+            return
         } else if (data is Waterlogged) {
             data.isWaterlogged = !data.isWaterlogged
-            block.blockData = data
+            state.blockData = data
+            state.update()
+            return
         } else {
+            val face = result.hitBlockFace ?: return
             val target = block.getRelative(face)
-            if (target.type == null || !EMPTY_BLOCKS.contains(target.type)) return
+            if (!player.canBuildAt(target.location)) return
+            if (!EMPTY_BLOCKS.contains(target.type)) return
             val state = target.state
             state.type = Material.WATER
             val data = Bukkit.getServer().createBlockData(Material.WATER)
             (data as? Levelled)?.level = 0
             state.blockData = data
-            val buildEvent = BlockPlaceEvent(
-                target,
-                state,
-                block,
-                item,
-                player,
-                true,
-                EquipmentSlot.HAND
-            )
-            Bukkit.getPluginManager().callEvent(buildEvent)
-            if (buildEvent.isCancelled) return
             state.update(true)
         }
     }
