@@ -65,8 +65,7 @@ fun parseTriggerTypes(type: String): Set<TriggerType> {
         "middle-click" -> setOf(TriggerType.MIDDLE_CLICK_AIR, TriggerType.MIDDLE_CLICK_BLOCK)
         "middle-click-air" -> setOf(TriggerType.MIDDLE_CLICK_AIR)
         "middle-click-block" -> setOf(TriggerType.MIDDLE_CLICK_BLOCK)
-        "middle-click-entity" -> setOf(TriggerType.MIDDLE_CLICK_ENTITY)
-        
+
         "damage-entity" -> setOf(TriggerType.DAMAGE_ENTITY)
 
         "equip-armor" -> setOf(TriggerType.EQUIP_ARMOR)
@@ -76,7 +75,6 @@ fun parseTriggerTypes(type: String): Set<TriggerType> {
         "place-block" -> setOf(TriggerType.PLACE_BLOCK)
 
         "drop" -> setOf(TriggerType.DROP)
-        "craft" -> setOf(TriggerType.CRAFT)
 
         "click-inventory" -> setOf(
                 TriggerType.RIGHT_CLICK_INVENTORY,

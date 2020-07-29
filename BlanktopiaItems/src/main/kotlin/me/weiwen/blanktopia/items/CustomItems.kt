@@ -4,6 +4,7 @@ import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent
 import me.weiwen.blanktopia.Blanktopia
 import me.weiwen.blanktopia.Module
 import me.weiwen.blanktopia.triggers.TriggerType
+import net.minecraft.server.v1_16_R1.Items.it
 import org.bukkit.NamespacedKey
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -12,7 +13,12 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.inventory.ClickType
+import org.bukkit.event.inventory.FurnaceBurnEvent
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.PrepareItemCraftEvent
+import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
@@ -131,6 +137,75 @@ class CustomItems(private val plugin: JavaPlugin) :
         }
     }
 
+    @EventHandler
+    fun onEntityDamageByPlayer(event: EntityDamageByEntityEvent) {
+        val player = event.damager as? Player ?: return
+        val item = player.inventory.itemInMainHand
+        val customItem = getCustomItem(item) ?: return
+        customItem.triggers[TriggerType.DAMAGE_ENTITY]?.forEach {
+            it.run(
+                player,
+                item,
+                event.entity
+            )
+            event.isCancelled = true
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    fun onInventoryClick(event: InventoryClickEvent) {
+        val item = event.inventory.getItem(event.slot) ?: return
+        val customItem = getCustomItem(item) ?: return
+        val player = event.whoClicked as? Player ?: return
+        val trigger = when (event.click) {
+            ClickType.RIGHT -> TriggerType.RIGHT_CLICK_INVENTORY
+            ClickType.LEFT -> TriggerType.LEFT_CLICK_INVENTORY
+            ClickType.MIDDLE -> TriggerType.MIDDLE_CLICK_INVENTORY
+            ClickType.SHIFT_RIGHT -> TriggerType.SHIFT_RIGHT_CLICK_INVENTORY
+            ClickType.SHIFT_LEFT -> TriggerType.SHIFT_LEFT_CLICK_INVENTORY
+            ClickType.DOUBLE_CLICK -> TriggerType.DOUBLE_CLICK_INVENTORY
+            ClickType.DROP -> TriggerType.DROP_INVENTORY
+            ClickType.CONTROL_DROP -> TriggerType.CONTROL_DROP_INVENTORY
+            ClickType.WINDOW_BORDER_LEFT -> TriggerType.LEFT_BORDER_INVENTORY
+            ClickType.WINDOW_BORDER_RIGHT -> TriggerType.RIGHT_BORDER_INVENTORY
+            ClickType.NUMBER_KEY -> when (event.hotbarButton) {
+                0 -> TriggerType.NUMBER_KEY_1_INVENTORY
+                1 -> TriggerType.NUMBER_KEY_2_INVENTORY
+                2 -> TriggerType.NUMBER_KEY_3_INVENTORY
+                3 -> TriggerType.NUMBER_KEY_4_INVENTORY
+                4 -> TriggerType.NUMBER_KEY_5_INVENTORY
+                5 -> TriggerType.NUMBER_KEY_6_INVENTORY
+                6 -> TriggerType.NUMBER_KEY_7_INVENTORY
+                7 -> TriggerType.NUMBER_KEY_8_INVENTORY
+                8 -> TriggerType.NUMBER_KEY_9_INVENTORY
+                else -> TriggerType.NUMBER_KEY_1_INVENTORY
+            }
+            ClickType.CREATIVE -> TriggerType.CREATIVE_INVENTORY
+            ClickType.SWAP_OFFHAND -> TriggerType.SWAP_OFFHAND_INVENTORY
+            ClickType.UNKNOWN -> null
+        } ?: return
+        customItem.triggers[trigger]?.forEach {
+            it.run(
+                player,
+                item
+            )
+            event.isCancelled = true
+        }
+    }
+
+    @EventHandler
+    fun onPlayerDropItem(event: PlayerDropItemEvent) {
+        val item = event.itemDrop.itemStack
+        val customItem = getCustomItem(item) ?: return
+        customItem.triggers[TriggerType.DROP]?.forEach {
+            it.run(
+                event.player,
+                item
+            )
+            event.isCancelled = true
+        }
+    }
+
     @EventHandler(ignoreCancelled = true)
     fun onPrepareItemCraft(event: PrepareItemCraftEvent) {
         for (item in event.inventory.matrix) {
@@ -139,6 +214,14 @@ class CustomItems(private val plugin: JavaPlugin) :
                 event.inventory.result = null
                 return
             }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    fun onFurnaceBurn(event: FurnaceBurnEvent) {
+        if (getCustomItem(event.fuel) != null) {
+            event.isCancelled = true
+            return
         }
     }
 

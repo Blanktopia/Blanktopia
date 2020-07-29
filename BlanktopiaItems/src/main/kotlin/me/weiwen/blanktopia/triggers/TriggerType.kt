@@ -10,7 +10,6 @@ enum class TriggerType {
 
     MIDDLE_CLICK_AIR,
     MIDDLE_CLICK_BLOCK,
-    MIDDLE_CLICK_ENTITY,
 
     DAMAGE_ENTITY,
 
@@ -20,7 +19,6 @@ enum class TriggerType {
     BREAK_BLOCK,
     PLACE_BLOCK,
     DROP,
-    CRAFT,
 
     RIGHT_CLICK_INVENTORY,
     LEFT_CLICK_INVENTORY,
@@ -41,4 +39,6 @@ enum class TriggerType {
     NUMBER_KEY_7_INVENTORY,
     NUMBER_KEY_8_INVENTORY,
     NUMBER_KEY_9_INVENTORY,
+    CREATIVE_INVENTORY,
+    SWAP_OFFHAND_INVENTORY
 }
