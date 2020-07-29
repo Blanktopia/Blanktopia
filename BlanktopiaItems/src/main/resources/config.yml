@@ -93,6 +93,10 @@ items:
         actions:
           - action: fly-in-claims
             can-fly: false
+      - trigger: jump
+        actions:
+          - action: message
+            message: "JUMP SIA"
 
   builders-wand:
     material: BLAZE_ROD
@@ -148,6 +152,139 @@ items:
         actions: []
 
   # Engineer's Crate
+
+  rocket-boots:
+    material: NETHERITE_BOOTS
+    name: '§dRocket Boots§5 ⭐'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§fJump while sneaking to shoot up like a rocket!'
+      - ''
+      - '§8-------------------------'
+      - '§6MINER''s Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+    unbreakable: true
+    triggers:
+      - trigger: sneak
+        actions:
+          - action: add-potion-effects
+            key: rocket-boots
+            effects:
+              jump: 4
+      - trigger: unsneak
+        actions:
+          - action: remove-potion-effects
+            key: rocket-boots
+      - trigger: jump
+        conditions:
+          - condition: is-sneaking
+        actions:
+          - action: repeat
+            interval: 2
+            count: 2
+            actions:
+              - action: spawn-particle
+                particle: FIREWORKS_SPARK
+                count: 5
+                offset-x: 0.3
+                offset-y: 0.3
+                offset-z: 0.3
+              - action: spawn-particle
+                particle: FLAME
+                count: 5
+                offset-x: 0.3
+                offset-y: 0.3
+                offset-z: 0.3
+          - action: play-sound
+            sound: ENTITY_FIREWORK_ROCKET_LAUNCH
+            pitch: 1.1
+            volume: 0.5
+
+  sandys-helmet:
+    material: WHITE_STAINED_GLASS
+    name: '§x§e§5§7§b§b§1Sandy''s Helmet ⭐'
+    lore:
+      - '§7Water Breathing'
+      - '§8-------------------------'
+      - ''
+      - '§fUpside down fish bowl.'
+      - ''
+      - '§8-------------------------'
+      - '§6MINER''s Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+      protection: 4
+      aqua_affinity: 1
+      nightvision: 1
+    unbreakable: true
+    attribute-modifiers:
+      - uuid: fb096a4d-ad65-4520-9dc0-1107e34c8124
+        name: Armor modifier
+        attribute: GENERIC_ARMOR
+        amount: 3.0
+        operation: ADD_NUMBER
+        slot: HEAD
+      - uuid: 549077a2-e23e-4c6e-9235-f20b66b6a08b
+        name: Armor toughness
+        attribute: GENERIC_ARMOR_TOUGHNESS
+        amount: 3.0
+        operation: ADD_NUMBER
+        slot: HEAD
+      - uuid: 00fa2498-a7a2-46ac-bf9d-527cbe1b601c
+        name: Knockback resistance
+        attribute: GENERIC_KNOCKBACK_RESISTANCE
+        amount: 0.1
+        operation: ADD_NUMBER
+        slot: HEAD
+    triggers:
+      - trigger: equip-armor
+        actions:
+          - action: add-potion-effects
+            key: sandys-helmet
+            effects:
+              water_breathing: 0
+      - trigger: unequip-armor
+        actions:
+          - action: remove-potion-effects
+            key: sandys-helmet
+
+  measuring-tape:
+    material: STRING
+    name: '§r§x§a§4§6§b§f§fMeasuring Tape ☲'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§bRight-click§f to measure'
+      - '§fdistances between two blocks'
+      - ''
+      - '§8-------------------------'
+      - '§6BUILDER''s Crate Item'
+    enchantments:
+      final: 1
+      soulbound: 1
+    triggers:
+      - trigger: right-click-block
+        actions:
+          - action: measure
+
+  switchpick:
+    material: NETHERITE_PICKAXE
+    name: Silk Pick
+    enchantments:
+      final: 1
+      soulbound: 1
+      silk_touch: 1
+    triggers:
+      - trigger: right-click
+        condition: is-sneaking
+        actions:
+          - action: toggle-enchantment
+            enchantments:
+              silk_touch: 1
 
   wrench:
     material: BONE

@@ -108,9 +108,12 @@ fun parseTriggerTypes(type: String): Set<TriggerType> {
         // These triggers will register when armor is equiped and unregistered when removed
         "move" -> setOf(TriggerType.MOVE)
         "jump" -> setOf(TriggerType.JUMP)
-        "toggle-sneak" -> setOf(TriggerType.TOGGLE_SNEAK)
-        "toggle-sprint" -> setOf(TriggerType.TOGGLE_SPRINT)
-        "toggle-flight" -> setOf(TriggerType.TOGGLE_FLIGHT)
+        "sneak" -> setOf(TriggerType.SNEAK)
+        "unsneak" -> setOf(TriggerType.UNSNEAK)
+        "sprint" -> setOf(TriggerType.SPRINT)
+        "unsprint" -> setOf(TriggerType.UNSPRINT)
+        "fly" -> setOf(TriggerType.FLY)
+        "unfly" -> setOf(TriggerType.UNFLY)
 
         
         else -> {

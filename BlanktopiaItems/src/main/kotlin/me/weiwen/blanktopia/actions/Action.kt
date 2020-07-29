@@ -54,11 +54,17 @@ fun parseAction(node: Node): Action? {
             }?.toMap() ?: return null
             AddPotionEffectAction(key, effects)
         }
+        "add-velocity" -> { 
+            val x = node.tryGet<Double>("x", 0.0)
+            val y = node.tryGet<Double>("y", 0.0)
+            val z = node.tryGet<Double>("z", 0.0)
+            AddVelocityAction(x, y, z)
+        }
         "builders-wand" -> node.tryGet<Int>("range")?.let { BuildersWandAction(it) }
         "console-command" -> node.tryGet<String>("command")?.let { ConsoleCommandAction(it) }
         "cycle-tool" -> node.tryGet<List<String>>("materials")?.map { Material.valueOf(it as String) }?.let { CycleToolAction(it) }
         "delay" -> {
-            val ticks = node.tryGet<Long>("ticks") ?: return null
+            val ticks = node.tryGet<Int>("ticks") ?: return null
             val actions = node.tryGet<List<Node>>("actions")?.let { parseActions(it) } ?: return null
             DelayAction(ticks, actions)
         }
@@ -75,21 +81,30 @@ fun parseAction(node: Node): Action? {
         }
         "experience-boost" -> {
             val multiplier = node.tryGet<Double>("multiplier", 1.0)
-            val ticks = node.tryGet<Long>("ticks", 0)
+            val ticks = node.tryGet<Int>("ticks", 0)
             ExperienceBoostAction(multiplier, ticks)
         }
         "fly-in-claims" -> node.tryGet<Boolean>("can-fly")?.let { FlyInClaimsAction(it) }
         "hammer" -> node.tryGet<Int>("range")?.let { HammerAction(it) }
         "item-cooldown" -> node.tryGet<Int>("ticks")?.let { ItemCooldownAction(it) }
         "lava-bucket" -> LavaBucketAction()
-        "message-action" -> node.tryGet<String>("message")?.let { MessageAction(it) }
+        "message" -> node.tryGet<String>("message")?.let { MessageAction(it) }
         "paint-brush-pick" -> PaintBrushPickAction()
         "paint-brush-paint" -> PaintBrushPaintAction()
+        "play-sound" -> {
+            val sound = node.tryGet<String>("sound") ?: return null
+            val pitch = node.tryGet("pitch", 1.0).toFloat()
+            val volume = node.tryGet("volume", 1.0).toFloat()
+            PlaySoundAction(sound, pitch, volume)
+        }
         "player-command" -> node.tryGet<String>("command")?.let { PlayerCommandAction(it) }
-        "place-block" -> node.tryGet<String>("material")?.let { 
+        "place-block" -> node.tryGet<String>("material")?.let {
             val material = Material.matchMaterial(it)
             if (material == null) {
-                BlanktopiaItems.INSTANCE.logger.log(Level.WARNING, "Unrecognized material '$it' when parsing action 'place-block'")
+                BlanktopiaItems.INSTANCE.logger.log(
+                    Level.WARNING,
+                    "Unrecognized material '$it' when parsing action 'place-block'"
+                )
                 null
             } else {
                 PlaceBlockAction(material)
@@ -97,13 +112,32 @@ fun parseAction(node: Node): Action? {
         }
         "place-random-block" -> PlaceRandomBlockAction()
         "remove-potion-effects" -> node.tryGet<String>("key")?.let { RemovePotionEffectAction(it) }
+        "repeat" -> {
+            val delay = node.tryGet<Int>("delay", 0)
+            val interval = node.tryGet<Int>("interval") ?: 0
+            val count = node.tryGet<Int>("count") ?: 0
+            val actions = node.tryGet<List<Node>>("actions")?.let { parseActions(it) } ?: return null
+            RepeatAction(delay, interval, count, actions)
+        }
         "rotate" -> RotateAction(node.tryGet<Boolean>("is-reversed", false))
+        "spawn-particle" -> {
+            val particle = node.tryGet<String>("particle") ?: return null
+            val x = node.tryGet("x", 0.0)
+            val y = node.tryGet("y", 0.0)
+            val z = node.tryGet("z", 0.0)
+            val count = node.tryGet("count", 1)
+            val offsetX = node.tryGet("offset-x", 0.0)
+            val offsetY = node.tryGet("offset-y", 0.0)
+            val offsetZ = node.tryGet("offset-z", 0.0)
+            val extra = node.tryGet("extra", 0.0)
+            SpawnParticleAction(particle, x, y, z, count, offsetX, offsetY, offsetZ, extra)
+        }
         "sudo-command" -> node.tryGet<String>("command")?.let { SudoCommandAction(it) }
         "throw-ender-pearl" -> ThrowEnderPearlAction()
         "toggle-item-frame-visibility" -> ToggleItemFrameVisibilityAction()
         "undisguise" -> UndisguiseAction()
         "water-bucket" -> WaterBucketAction()
-            else -> {
+        else -> {
             BlanktopiaItems.INSTANCE.logger.log(Level.WARNING, "Unrecognized action '$action' when parsing custom item")
             null
         }

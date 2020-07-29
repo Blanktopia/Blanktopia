@@ -43,27 +43,15 @@ class CustomItems(private val plugin: JavaPlugin) :
         val witemCommand = plugin.getCommand("witem")
         witemCommand?.setExecutor { sender, _, _, args ->
             val name = args[0] ?: return@setExecutor false
-            val player = if (args[1] != null) plugin.server.getPlayer(args[1]) else sender as? Player
+            val player = if (args.size > 1) plugin.server.getPlayer(args[1]) else sender as? Player
             if (player == null) return@setExecutor false
             player.inventory.addItem(buildItem(name))
             player.playSound(player.location, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 1.0f)
             true
         }
-        witemCommand?.setTabCompleter {
-                _, _, _, _ ->
-            config.getConfigurationSection("items")?.getKeys(false)?.toList() ?: listOf()
-        }
+        witemCommand?.setTabCompleter { _, _, _, _ -> items.keys.toList() }
 
-        for (player in plugin.server.onlinePlayers) {
-            for (item in player.inventory.armorContents) {
-                if (item == null) continue
-                val customItem = getCustomItem(item) ?: continue
-                customItem.triggers[TriggerType.EQUIP_ARMOR]?.forEach {
-                    it.run(player, item)
-                }
-            }
-        }
-
+        runEquipTriggers()
     }
 
     override fun disable() {
@@ -72,6 +60,31 @@ class CustomItems(private val plugin: JavaPlugin) :
     override fun reload() {
         config = plugin.config.getConfigurationSection("items")!!
         items = populateItems()
+
+        runEquipTriggers()
+    }
+
+    private fun runEquipTriggers() {
+        for (player in plugin.server.onlinePlayers) {
+            val slots: MutableMap<PlayerArmorChangeEvent.SlotType, ItemStack> = mutableMapOf()
+            player.inventory.helmet?.let { slots[PlayerArmorChangeEvent.SlotType.HEAD] = it }
+            player.inventory.chestplate?.let { slots[PlayerArmorChangeEvent.SlotType.CHEST] = it }
+            player.inventory.leggings?.let { slots[PlayerArmorChangeEvent.SlotType.LEGS] = it }
+            player.inventory.boots?.let { slots[PlayerArmorChangeEvent.SlotType.FEET] = it }
+            for ((slot, item) in slots.entries) {
+                val customItem = getCustomItem(item) ?: continue
+                customItem.triggers.forEach { triggerType, triggers ->
+                    if (triggerType in EQUIPPED_TRIGGERS) {
+                        equippedItems
+                            .getOrPut(player.uniqueId, { mutableMapOf() })
+                            .getOrPut(triggerType, { mutableMapOf() })[slot] = Pair(item, triggers)
+                    }
+                }
+                customItem.triggers[TriggerType.EQUIP_ARMOR]?.forEach {
+                    it.run(player, item)
+                }
+            }
+        }
     }
 
     fun buildItem(type: String): ItemStack? {
@@ -232,31 +245,32 @@ class CustomItems(private val plugin: JavaPlugin) :
 
         event.oldItem?.let { item ->
             val customItem = getCustomItem(item) ?: return@let
+            customItem.triggers.forEach { triggerType, _ ->
+                if (triggerType in EQUIPPED_TRIGGERS) {
+                    val triggersByType = equippedItems.get(event.player.uniqueId) ?: return@forEach
+                    val triggers = triggersByType.get(triggerType) ?: return@forEach
+                    triggers.remove(event.slotType)
+                    if (triggers.isEmpty()) {
+                        triggersByType.remove(triggerType)
+                    }
+                }
+            }
             customItem.triggers[TriggerType.UNEQUIP_ARMOR]?.forEach {
                 if (it.test(event.player, item)) it.run(event.player, item)
-            }
-            customItem.triggers.forEach { triggerType, triggers ->
-                if (triggerType in EQUIPPED_TRIGGERS) {
-                    equippedItems
-                        .getOrPut(event.player.uniqueId, { mutableMapOf() })
-                        .getOrPut(triggerType, { mutableMapOf() })[event.slotType] = Pair(item, triggers)
-
-                }
             }
         }
 
         event.newItem?.let { item ->
             val customItem = getCustomItem(item) ?: return@let
-            customItem.triggers[TriggerType.EQUIP_ARMOR]?.forEach {
-                it.run(event.player, item)
-            }
             customItem.triggers.forEach { triggerType, triggers ->
                 if (triggerType in EQUIPPED_TRIGGERS) {
                     equippedItems
                         .getOrPut(event.player.uniqueId, { mutableMapOf() })
-                        .getOrPut(triggerType, { mutableMapOf() })
-                        .remove(event.slotType)
+                        .getOrPut(triggerType, { mutableMapOf() })[event.slotType] = Pair(item, triggers)
                 }
+            }
+            customItem.triggers[TriggerType.EQUIP_ARMOR]?.forEach {
+                it.run(event.player, item)
             }
         }
     }
@@ -301,7 +315,8 @@ class CustomItems(private val plugin: JavaPlugin) :
 
     @EventHandler(ignoreCancelled = true)
     fun onPlayerToggleSneak(event: PlayerToggleSneakEvent) {
-        equippedItems[event.player.uniqueId]?.get(TriggerType.TOGGLE_SNEAK)?.values?.forEach { (item, triggers) ->
+        val triggerType = if (event.isSneaking) TriggerType.SNEAK else TriggerType.UNSNEAK
+        equippedItems[event.player.uniqueId]?.get(triggerType)?.values?.forEach { (item, triggers) ->
             triggers.forEach {
                 if (it.test(event.player, item)) it.run(event.player, item)
             }
@@ -310,7 +325,8 @@ class CustomItems(private val plugin: JavaPlugin) :
 
     @EventHandler(ignoreCancelled = true)
     fun onPlayerToggleSprint(event: PlayerToggleSprintEvent) {
-        equippedItems[event.player.uniqueId]?.get(TriggerType.TOGGLE_SPRINT)?.values?.forEach { (item, triggers) ->
+        val triggerType = if (event.isSprinting) TriggerType.SPRINT else TriggerType.UNSPRINT
+        equippedItems[event.player.uniqueId]?.get(triggerType)?.values?.forEach { (item, triggers) ->
             triggers.forEach {
                 if (it.test(event.player, item)) it.run(event.player, item)
             }
@@ -319,7 +335,8 @@ class CustomItems(private val plugin: JavaPlugin) :
 
     @EventHandler(ignoreCancelled = true)
     fun onPlayerToggleFlight(event: PlayerToggleFlightEvent) {
-        equippedItems[event.player.uniqueId]?.get(TriggerType.TOGGLE_FLIGHT)?.values?.forEach { (item, triggers) ->
+        val triggerType = if (event.isFlying) TriggerType.FLY else TriggerType.UNFLY
+        equippedItems[event.player.uniqueId]?.get(triggerType)?.values?.forEach { (item, triggers) ->
             triggers.forEach {
                 if (it.test(event.player, item)) it.run(event.player, item)
             }

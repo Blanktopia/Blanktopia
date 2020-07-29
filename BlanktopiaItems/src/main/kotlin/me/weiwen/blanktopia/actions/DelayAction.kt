@@ -7,28 +7,28 @@ import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-class DelayAction(private val ticks: Long, private val actions: List<Action>) : Action {
+class DelayAction(private val ticks: Int, private val actions: List<Action>) : Action {
     override fun run(player: Player, item: ItemStack) {
         BlanktopiaItems.INSTANCE.server.scheduler.runTaskLater(BlanktopiaItems.INSTANCE, { ->
             actions.forEach { it.run(player, item) }
-        }, ticks)
+        }, ticks.toLong())
     }
 
     override fun run(player: Player, item: ItemStack, block: Block) {
         BlanktopiaItems.INSTANCE.server.scheduler.runTaskLater(BlanktopiaItems.INSTANCE, { ->
             actions.forEach { it.run(player, item, block) }
-        }, ticks)
+        }, ticks.toLong())
     }
 
     override fun run(player: Player, item: ItemStack, entity: Entity) {
         BlanktopiaItems.INSTANCE.server.scheduler.runTaskLater(BlanktopiaItems.INSTANCE, { ->
             actions.forEach { it.run(player, item, entity) }
-        }, ticks)
+        }, ticks.toLong())
     }
 
     override fun run(player: Player, item: ItemStack, block: Block, face: BlockFace) {
         BlanktopiaItems.INSTANCE.server.scheduler.runTaskLater(BlanktopiaItems.INSTANCE, { ->
             actions.forEach { it.run(player, item, block, face) }
-        }, ticks)
+        }, ticks.toLong())
     }
 }

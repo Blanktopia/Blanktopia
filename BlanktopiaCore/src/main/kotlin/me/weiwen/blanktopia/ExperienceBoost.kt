@@ -42,7 +42,7 @@ class ExperienceBoost(val plugin: JavaPlugin): Module, Listener {
     }
 }
 
-fun Player.addExperienceBoost(multiplier: Double, ticks: Long) {
+fun Player.addExperienceBoost(multiplier: Double, ticks: Int) {
     ExperienceBoost.INSTANCE.experienceBoosts.put(
         uniqueId,
         ExperienceBoostData(multiplier, System.currentTimeMillis() + ticks * 50)

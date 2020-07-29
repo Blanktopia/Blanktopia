@@ -46,15 +46,21 @@ enum class TriggerType {
 
     MOVE,
     JUMP,
-    TOGGLE_SNEAK,
-    TOGGLE_SPRINT,
-    TOGGLE_FLIGHT
+    SNEAK,
+    UNSNEAK,
+    SPRINT,
+    UNSPRINT,
+    FLY,
+    UNFLY
 }
 
 val EQUIPPED_TRIGGERS = setOf(
     TriggerType.MOVE,
     TriggerType.JUMP,
-    TriggerType.TOGGLE_SNEAK,
-    TriggerType.TOGGLE_SPRINT,
-    TriggerType.TOGGLE_FLIGHT
+    TriggerType.SNEAK,
+    TriggerType.UNSNEAK,
+    TriggerType.SPRINT,
+    TriggerType.UNSPRINT,
+    TriggerType.FLY,
+    TriggerType.UNFLY
 )
