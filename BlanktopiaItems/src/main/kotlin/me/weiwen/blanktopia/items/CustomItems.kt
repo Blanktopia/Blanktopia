@@ -100,9 +100,17 @@ class CustomItems(private val plugin: JavaPlugin) :
     }
 
     fun getCustomItem(item: ItemStack): CustomItem? {
-        val data = item.itemMeta?.persistentDataContainer ?: return null
+        val meta = item.itemMeta ?: return null
+        val data = meta.persistentDataContainer ?: return null
         val type = data.get(NamespacedKey(Blanktopia.INSTANCE, "type"), PersistentDataType.STRING) ?: return null
-        return items[type]
+        val customItem = items[type] ?: return null
+
+        // Custom model data migration
+        if (customItem.customModelData != null && meta.customModelData != customItem.customModelData) {
+            meta.setCustomModelData(customItem.customModelData)
+        }
+
+        return customItem
     }
 
     @EventHandler

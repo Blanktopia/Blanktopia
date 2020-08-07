@@ -29,6 +29,11 @@ class CustomItem(val type: String, config: ConfigurationSection) {
     private val enchantments: MutableMap<Enchantment, Int> = mutableMapOf()
     private val attributeModifiers: MutableList<Pair<Attribute, AttributeModifier>> = mutableListOf()
     private val unbreakable: Boolean = config.getBoolean("unbreakable")
+    val customModelData: Int? = if (config.isInt("custom-model-data")) {
+        config.getInt("custom-model-data")
+    } else {
+        null
+    }
     private val flags: Set<ItemFlag> = config.getConfigurationSection("flags")?.let {
         val flags: MutableSet<ItemFlag> = mutableSetOf()
         if (it.getBoolean("hide-enchants")) flags.add(ItemFlag.HIDE_ENCHANTS)
@@ -89,6 +94,7 @@ class CustomItem(val type: String, config: ConfigurationSection) {
         if (name != null) meta.setDisplayName(name)
         if (lore != null) meta.lore = lore
         if (unbreakable) meta.isUnbreakable = true
+        if (customModelData != null) meta.setCustomModelData(customModelData)
         meta.persistentDataContainer.set(NamespacedKey(Blanktopia.INSTANCE, "type"), PersistentDataType.STRING, type)
         for ((attribute, attributeModifier) in  attributeModifiers) {
             meta.addAttributeModifier(attribute, attributeModifier)
