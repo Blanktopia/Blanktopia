@@ -16,7 +16,7 @@ class SpawnParticleAction(
     private val particle = Particle.valueOf(particle)
 
     override fun run(player: Player) {
-        player.spawnParticle(
+        player.world.spawnParticle(
             particle,
             player.location.add(x, y, z),
             count,

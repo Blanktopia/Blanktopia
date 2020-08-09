@@ -17,7 +17,9 @@ import java.util.logging.Level
 class Trigger(
     val triggerTypes: Set<TriggerType>,
     private val actions: List<Action>,
-    private val conditions: List<Condition>) {
+    private val conditions: List<Condition>,
+    val removeItem: Boolean = false,
+    val cancel: Boolean = true) {
 
     fun test(player: Player, item: ItemStack): Boolean {
         return conditions.all { it.test(player, item) }
@@ -46,7 +48,9 @@ fun parseTriggers(nodes: List<Node>): List<Trigger> {
         val triggerTypes = node.tryGet<String>("trigger")?.let { parseTriggerTypes(it) } ?: continue
         val actions = node.tryGet<List<Node>>("actions")?.let { parseActions(it) } ?: continue
         val conditions = node.tryGet<List<Node>>("conditions", listOf()).let { parseConditions(it) }
-        triggers.add(Trigger(triggerTypes, actions, conditions))
+        val removeItem = node.tryGet<Boolean>("remove-item", false)
+        val cancel = node.tryGet<Boolean>("cancel", true)
+        triggers.add(Trigger(triggerTypes, actions, conditions, removeItem, cancel))
     }
     return triggers
 }
@@ -114,8 +118,11 @@ fun parseTriggerTypes(type: String): Set<TriggerType> {
         "unsprint" -> setOf(TriggerType.UNSPRINT)
         "fly" -> setOf(TriggerType.FLY)
         "unfly" -> setOf(TriggerType.UNFLY)
+        "glide" -> setOf(TriggerType.GLIDE)
+        "unglide" -> setOf(TriggerType.UNGLIDE)
+        "swim" -> setOf(TriggerType.SWIM)
+        "unswim" -> setOf(TriggerType.UNSWIM)
 
-        
         else -> {
             BlanktopiaItems.INSTANCE.logger.log(Level.WARNING, "Unrecognized trigger '$type' when parsing custom item")
             setOf()

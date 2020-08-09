@@ -3,13 +3,13 @@ package me.weiwen.blanktopia.actions
 import me.libraryaddict.disguise.disguisetypes.DisguiseType
 import me.libraryaddict.disguise.disguisetypes.MobDisguise
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise
-import me.weiwen.blanktopia.BlanktopiaCore
-import me.weiwen.blanktopia.BlanktopiaItems
-import me.weiwen.blanktopia.Node
-import me.weiwen.blanktopia.tryGet
+import me.weiwen.blanktopia.*
+import me.weiwen.blanktopia.conditions.parseCondition
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -60,14 +60,24 @@ fun parseAction(node: Node): Action? {
             val z = node.tryGet<Double>("z", 0.0)
             AddVelocityAction(x, y, z)
         }
+        "all-players" -> {
+            val actions = node.tryGet<List<Node>>("actions")?.let { parseActions(it) } ?: return null
+            AllPlayersAction(actions)
+        }
         "builders-wand" -> node.tryGet<Int>("range")?.let { BuildersWandAction(it) }
-        "console-command" -> node.tryGet<String>("command")?.let { ConsoleCommandAction(it) }
-        "cycle-tool" -> node.tryGet<List<String>>("materials")?.map { Material.valueOf(it as String) }?.let { CycleToolAction(it) }
         "delay" -> {
             val ticks = node.tryGet<Int>("ticks") ?: return null
             val actions = node.tryGet<List<Node>>("actions")?.let { parseActions(it) } ?: return null
             DelayAction(ticks, actions)
         }
+        "console-command" -> node.tryGet<String>("command")?.let { ConsoleCommandAction(it) }
+        "if" -> {
+            val condition = node.tryGet<Node>("condition")?.let { parseCondition(it) } ?: return null
+            val ifTrue = node.tryGet<List<Node>>("if-true")?.let { parseActions(it) } ?: return null
+            val ifFalse = node.tryGet<List<Node>>("if-false")?.let { parseActions(it) } ?: return null
+            IfAction(condition, ifTrue, ifFalse)
+        }
+        "cycle-tool" -> node.tryGet<List<String>>("materials")?.map { Material.valueOf(it as String) }?.let { CycleToolAction(it) }
         "disguise" -> {
             when (node.tryGet<String>("kind")) {
                 "mob" -> {
@@ -89,6 +99,7 @@ fun parseAction(node: Node): Action? {
         "item-cooldown" -> node.tryGet<Int>("ticks")?.let { ItemCooldownAction(it) }
         "lava-bucket" -> LavaBucketAction()
         "message" -> node.tryGet<String>("message")?.let { MessageAction(it) }
+        "measure-distance" -> node.tryGet<Boolean>("is-origin", false)?.let { MeasureDistanceAction(it) }
         "paint-brush-pick" -> PaintBrushPickAction()
         "paint-brush-paint" -> PaintBrushPaintAction()
         "play-sound" -> {
@@ -120,6 +131,12 @@ fun parseAction(node: Node): Action? {
             RepeatAction(delay, interval, count, actions)
         }
         "rotate" -> RotateAction(node.tryGet<Boolean>("is-reversed", false))
+        "set-velocity" -> {
+            val x = node.tryGet<Double?>("x", null)
+            val y = node.tryGet<Double?>("y", null)
+            val z = node.tryGet<Double?>("z", null)
+            SetVelocityAction(x, y, z)
+        }
         "spawn-particle" -> {
             val particle = node.tryGet<String>("particle") ?: return null
             val x = node.tryGet("x", 0.0)
@@ -135,6 +152,24 @@ fun parseAction(node: Node): Action? {
         "sudo-command" -> node.tryGet<String>("command")?.let { SudoCommandAction(it) }
         "throw-ender-pearl" -> ThrowEnderPearlAction()
         "toggle-item-frame-visibility" -> ToggleItemFrameVisibilityAction()
+        "toggle-enchantment" -> {
+            val enchantment = node.tryGet<String>("enchantment")?.let {
+                Enchantment.getByKey(NamespacedKey.minecraft(it)) ?: Enchantment.getByKey(
+                    NamespacedKey(
+                        Blanktopia.INSTANCE,
+                        it
+                    )
+                )
+            }
+            val level = node.tryGet<Int>("level") ?: 1
+            val name = node.tryGet<String>("name") ?: "enchantment"
+            if (enchantment != null) {
+                ToggleEnchantmentAction(enchantment, level, name)
+            } else {
+                BlanktopiaItems.INSTANCE.logger.log(Level.WARNING, "Unrecognized enchantment when parsing custom item")
+                null
+            }
+        }
         "undisguise" -> UndisguiseAction()
         "water-bucket" -> WaterBucketAction()
         else -> {

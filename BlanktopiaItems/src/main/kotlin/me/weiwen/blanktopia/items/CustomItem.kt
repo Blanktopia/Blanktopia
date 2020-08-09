@@ -78,7 +78,7 @@ class CustomItem(val type: String, config: ConfigurationSection) {
                     it["name"] as String,
                     it["amount"] as Double,
                     AttributeModifier.Operation.valueOf(it["operation"] as String),
-                    EquipmentSlot.valueOf(it["slot"] as String)
+                    (it.get("slot") as? String)?.let { EquipmentSlot.valueOf(it) }
                 )
             ))
         }

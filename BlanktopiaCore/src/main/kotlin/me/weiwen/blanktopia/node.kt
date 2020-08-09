@@ -14,7 +14,7 @@ inline fun <reified T> Node.tryGet(path: String): T? {
 
 inline fun <reified T> Node.tryGet(path: String, def: T): T {
     val value = this[path]
-    if (value != null && value !is T) {
+    if (value != null && value !is T && null !is T) {
         BlanktopiaCore.INSTANCE.logger.log(Level.SEVERE, "Expected ${T::class.simpleName} at key '$path'")
     }
     return value as? T ?: def

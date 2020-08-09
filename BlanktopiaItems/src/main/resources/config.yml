@@ -27,6 +27,7 @@ kits:
         soulbound: 1
 
 items:
+  # Starter
   guidebook:
     material: KNOWLEDGE_BOOK
     name: Beginner's Guide
@@ -38,32 +39,93 @@ items:
           - action: player-command
             command: help
 
-  disguise-skeleton:
-    material: SKELETON_SKULL
-    name: '§6Skeleton Disguise§c ☻'
+  # Consumables
+  exp-coupon:
+    material: PAPER
+    name: §b2x EXP Coupon
     lore:
       - '§8-------------------------'
       - ''
-      - '§fDisguises you as a §bSkeleton§f.'
+      - '§bRight-click§f to receive a'
+      - '§b2x EXP§f buff for §b15 minutes§f.'
       - ''
       - '§8-------------------------'
-      - '§6BUILDER''s Crate Item'
     enchantments:
-      soulbound: 1
       final: 1
     triggers:
-      - trigger: equip-armor
+      - trigger: right-click
+        remove-item: true
         actions:
-          - action: disguise
-            kind: mob
-            type: SKELETON
-            baby: false
-      - trigger: unequip-armor
-        actions:
-          - action: undisguise
-      - trigger: right-click-block
-        actions: []
+          - action: experience-boost
+            multiplier: 2.0
+            ticks: 18000 # 15 minutes
+          - action: message
+            message: §6Received §b2x EXP§6 buff for 15 minutes.
+          - action: play-sound
+            sound: ENTITY_EXPERIENCE_ORB_PICKUP
+          - action: play-sound
+            sound: BLOCK_ENCHANTMENT_TABLE_USE
 
+  exp-coupon-server:
+    material: PAPER
+    name: §b2x EXP Coupon (Server-wide)
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§bRight-click§f to grant a §b2x EXP§f'
+      - '§fbuff to all online §fplayers'
+      - '§ffor §b15 minutes§f.'
+      - ''
+      - '§8-------------------------'
+    enchantments:
+      final: 1
+    triggers:
+      - trigger: right-click
+        remove-item: true
+        actions:
+          - action: console-command
+            command: broadcast §6%p§6 has given everyone a §b2x EXP buff§6 for 15 minutes.
+          - action: all-players
+            actions:
+              - action: experience-boost
+                multiplier: 2.0
+                ticks: 18000 # 15 minutes
+              - action: play-sound
+                sound: ENTITY_EXPERIENCE_ORB_PICKUP
+              - action: play-sound
+                sound: BLOCK_ENCHANTMENT_TABLE_USE
+
+  food-coupon-server:
+    material: FLOWER_BANNER_PATTERN
+    flags:
+      hide-attributes: true
+    name: §bFood Coupon (Server-wide)
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§bRight-click§f to grant a §b2x EXP§f'
+      - '§fbuff to all online §fplayers'
+      - '§ffor §b15 minutes§f.'
+      - ''
+      - '§8-------------------------'
+    enchantments:
+      final: 1
+    triggers:
+      - trigger: right-click
+        remove-item: true
+        actions:
+          - action: console-command
+            command: broadcast §6%p§6 has sated everyone's hunger.
+          - action: all-players
+            actions:
+              - action: sudo-command
+                command: feed
+              - action: play-sound
+                sound: ENTITY_PLAYER_BURP
+              - action: play-sound
+                sound: ENTITY_PLAYER_EAT
+
+  # Disguises
 
   # Builder's Crate
 
@@ -93,10 +155,6 @@ items:
         actions:
           - action: fly-in-claims
             can-fly: false
-      - trigger: jump
-        actions:
-          - action: message
-            message: "JUMP SIA"
 
   builders-wand:
     material: BLAZE_ROD
@@ -151,6 +209,155 @@ items:
       - trigger: right-click-entity
         actions: []
 
+  wrench:
+    material: BONE
+    name: '§r§x§a§4§6§b§f§fWrench ⇄'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§bRight-click§f to rotate a block'
+      - '§for turn an item frame'
+      - '§finvisible.'
+      - ''
+      - '§8-------------------------'
+      - '§6MINER''s Crate Item'
+    enchantments:
+      final: 1
+      soulbound: 1
+    triggers:
+      - trigger: right-click-block
+        conditions:
+          - condition: not
+            not:
+              condition: is-sneaking
+        actions:
+          - action: rotate
+      - trigger: right-click-block
+        conditions:
+          - condition: is-sneaking
+        actions:
+          - action: rotate
+            is-reversed: true
+      - trigger: right-click-entity
+        actions:
+          - action: toggle-item-frame-visibility
+
+  measuring-tape:
+    material: STRING
+    name: '§r§x§a§4§6§b§f§fMeasuring Tape ᛨ'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§bShift-right-click§f to set a'
+      - '§fpoint to measure from.'
+      - '§bRight-click§f to measure'
+      - '§fdistances between two blocks'
+      - ''
+      - '§8-------------------------'
+      - '§6BUILDER''s Crate Item'
+    enchantments:
+      final: 1
+      soulbound: 1
+    triggers:
+      - trigger: right-click-block
+        conditions:
+          - condition: not
+            not:
+              condition: is-sneaking
+        actions:
+          - action: measure-distance
+      - trigger: right-click-block
+        conditions:
+          - condition: is-sneaking
+        actions:
+          - action: measure-distance
+            is-origin: true
+
+  lumberjack:
+    material: IRON_AXE
+    name: '§6Lumberjack ⛏'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§fBreaks blocks in a §b3x3§f area.'
+      - ''
+      - '§8-------------------------'
+      - '§6BUILDER''s Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+      efficiency: 2
+    unbreakable: true
+    triggers:
+      - trigger: break-block
+        actions:
+          - action: hammer
+            range: 1
+
+  randomizer:
+    material: POPPED_CHORUS_FRUIT
+    name: Randomizer
+    enchantments:
+      final: 1
+      soulbound: 1
+    triggers:
+      - trigger: right-click-block
+        actions:
+          - action: place-random-block
+
+
+  disguise-skeleton:
+    material: SKELETON_SKULL
+    name: '§6Skeleton Disguise§c ☻'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§fDisguises you as a §bSkeleton§f.'
+      - ''
+      - '§8-------------------------'
+      - '§6BUILDER''s Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+    triggers:
+      - trigger: equip-armor
+        actions:
+          - action: disguise
+            kind: mob
+            type: SKELETON
+            baby: false
+      - trigger: unequip-armor
+        actions:
+          - action: undisguise
+      - trigger: right-click-block
+        actions: []
+
+  disguise-chicken:
+    material: PLAYER_HEAD
+    head: '1638469a599ceef7207537603248a9ab11ff591fd378bea4735b346a7fae893'
+    name: '§6Chicken Disguise§c ☻'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§fDisguises you as a §bChicken§f.'
+      - ''
+      - '§8-------------------------'
+      - '§6BUILDER''s Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+    triggers:
+      - trigger: equip-armor
+        actions:
+          - action: disguise
+            kind: mob
+            type: CHICKEN
+            baby: false
+      - trigger: unequip-armor
+        actions:
+          - action: undisguise
+      - trigger: right-click-block
+        actions: []
   # Engineer's Crate
 
   rocket-boots:
@@ -159,7 +366,7 @@ items:
     lore:
       - '§8-------------------------'
       - ''
-      - '§fJump while sneaking to shoot up like a rocket!'
+      - '§fPress Shift in the air to shoot up like a rocket!'
       - ''
       - '§8-------------------------'
       - '§6MINER''s Crate Item'
@@ -169,32 +376,63 @@ items:
     unbreakable: true
     triggers:
       - trigger: sneak
+        cancel: false
         actions:
           - action: add-potion-effects
             key: rocket-boots
             effects:
-              jump: 4
+              jump: 5
       - trigger: unsneak
+        cancel: false
         actions:
           - action: remove-potion-effects
             key: rocket-boots
       - trigger: jump
+        cancel: false
         conditions:
           - condition: is-sneaking
         actions:
           - action: repeat
             interval: 2
-            count: 2
+            count: 3
             actions:
               - action: spawn-particle
                 particle: FIREWORKS_SPARK
-                count: 5
+                count: 2
                 offset-x: 0.3
                 offset-y: 0.3
                 offset-z: 0.3
               - action: spawn-particle
                 particle: FLAME
-                count: 5
+                count: 2
+                offset-x: 0.3
+                offset-y: 0.3
+                offset-z: 0.3
+          - action: play-sound
+            sound: ENTITY_FIREWORK_ROCKET_LAUNCH
+            pitch: 1.1
+            volume: 0.5
+      - trigger: glide
+        conditions:
+          - condition: is-sneaking
+        actions:
+          - action: set-velocity
+            x: null
+            y: 0.7
+            z: null
+          - action: repeat
+            interval: 2
+            count: 3
+            actions:
+              - action: spawn-particle
+                particle: FIREWORKS_SPARK
+                count: 2
+                offset-x: 0.3
+                offset-y: 0.3
+                offset-z: 0.3
+              - action: spawn-particle
+                particle: FLAME
+                count: 2
                 offset-x: 0.3
                 offset-y: 0.3
                 offset-z: 0.3
@@ -252,72 +490,24 @@ items:
           - action: remove-potion-effects
             key: sandys-helmet
 
-  measuring-tape:
-    material: STRING
-    name: '§r§x§a§4§6§b§f§fMeasuring Tape ☲'
+  hellfire:
+    material: LAVA_BUCKET
+    name: '§x§f§f§8§0§3§eHellfire ≈'
     lore:
       - '§8-------------------------'
       - ''
-      - '§bRight-click§f to measure'
-      - '§fdistances between two blocks'
+      - '§fHot hot hot!'
       - ''
       - '§8-------------------------'
-      - '§6BUILDER''s Crate Item'
+      - '§6INFINITY Crate Item'
     enchantments:
-      final: 1
       soulbound: 1
-    triggers:
-      - trigger: right-click-block
-        actions:
-          - action: measure
-
-  switchpick:
-    material: NETHERITE_PICKAXE
-    name: Silk Pick
-    enchantments:
       final: 1
-      soulbound: 1
-      silk_touch: 1
+      infinity: 1
     triggers:
       - trigger: right-click
-        condition: is-sneaking
         actions:
-          - action: toggle-enchantment
-            enchantments:
-              silk_touch: 1
-
-  wrench:
-    material: BONE
-    name: '§r§x§a§4§6§b§f§fWrench ☲'
-    lore:
-      - '§8-------------------------'
-      - ''
-      - '§bRight-click§f to rotate a block'
-      - '§for turn an item frame'
-      - '§finvisible.'
-      - ''
-      - '§8-------------------------'
-      - '§6MINER''s Crate Item'
-    enchantments:
-      final: 1
-      soulbound: 1
-    triggers:
-      - trigger: right-click-block
-        conditions:
-          - condition: not
-            not:
-              condition: is-sneaking
-        actions:
-          - action: rotate
-      - trigger: right-click-block
-        conditions:
-          - condition: is-sneaking
-        actions:
-          - action: rotate
-            is-reversed: true
-      - trigger: right-click-entity
-        actions:
-          - action: toggle-item-frame-visibility
+          - action: lava-bucket
 
   multitool:
     material: NETHERITE_PICKAXE
@@ -332,41 +522,6 @@ items:
               - NETHERITE_AXE
               - NETHERITE_SHOVEL
               - NETHERITE_HOE
-
-  randomizer:
-    material: POPPED_CHORUS_FRUIT
-    name: Randomizer
-    enchantments:
-      final: 1
-      soulbound: 1
-    triggers:
-      - trigger: right-click-block
-        actions:
-          - action: place-random-block
-
-  trashcan:
-    material: COAL_BLOCK
-    name: Trashcan
-    enchantments:
-      final: 1
-      soulbound: 1
-    triggers:
-      - trigger: right-click
-        actions:
-          - action: sudo-command
-            command: disposal
-
-  condenser:
-    material: NETHER_STAR
-    name: Condenser
-    enchantments:
-      final: 1
-      soulbound: 1
-    triggers:
-      - trigger: right-click
-        actions:
-          - action: sudo-command
-            command: condense
 
   # Miner's Crate
 
@@ -431,6 +586,44 @@ items:
           - action: hammer
             range: 1
 
+  condenser:
+    material: NETHER_STAR
+    name: Condenser
+    enchantments:
+      final: 1
+      soulbound: 1
+    triggers:
+      - trigger: right-click
+        actions:
+          - action: sudo-command
+            command: condense
+
+  lumos:
+    material: TORCH
+    name: '§fLumos§e ☀'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§fNever be afraid of the dark'
+      - '§fagain!'
+      - ''
+      - '§8-------------------------'
+      - '§6BUILDER''s Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+      infinity: 1
+    triggers:
+      - trigger: right-click-block
+        conditions:
+          - condition: item-cooldown
+        actions:
+          - action: place-block
+            material: torch
+          - action: item-cooldown
+            ticks: 10
+
+
   excavator:
     material: IRON_SHOVEL
     name: '§6Excavator§c ⛏'
@@ -450,6 +643,35 @@ items:
         actions:
           - action: hammer
             range: 1
+
+  silk-pick:
+    material: NETHERITE_PICKAXE
+    name: Silk Pick
+    enchantments:
+      final: 1
+      soulbound: 1
+      silk_touch: 1
+    triggers:
+      - trigger: right-click
+        conditions:
+          - condition: is-sneaking
+        actions:
+          - action: toggle-enchantment
+            name: Silk Touch
+            enchantment: silk_touch
+            level: 1
+
+  trashcan:
+    material: SHULKER_SHELL
+    name: Trashcan
+    enchantments:
+      final: 1
+      soulbound: 1
+    triggers:
+      - trigger: right-click
+        actions:
+          - action: sudo-command
+            command: disposal
 
   disguise-zombie:
     material: ZOMBIE_HEAD
@@ -505,31 +727,6 @@ items:
 
   # Infinity Crate
 
-  lumos:
-    material: TORCH
-    name: '§fLumos§e ☀'
-    lore:
-      - '§8-------------------------'
-      - ''
-      - '§fNever be afraid of the dark'
-      - '§fagain!'
-      - ''
-      - '§8-------------------------'
-      - '§6INFINITY Crate Item'
-    enchantments:
-      soulbound: 1
-      final: 1
-      infinity: 1
-    triggers:
-      - trigger: right-click-block
-        conditions:
-          - condition: item-cooldown
-        actions:
-          - action: place-block
-            material: torch
-          - action: item-cooldown
-            ticks: 10
-
   subspace-bubble:
     material: ENDER_PEARL
     name: '§5Subspace Bubble§d ⏺'
@@ -546,6 +743,8 @@ items:
       infinity: 1
     triggers:
       - trigger: right-click
+        conditions:
+          - condition: item-cooldown
         actions:
           - action: throw-ender-pearl
           - action: item-cooldown

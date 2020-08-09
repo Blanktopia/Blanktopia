@@ -51,7 +51,11 @@ enum class TriggerType {
     SPRINT,
     UNSPRINT,
     FLY,
-    UNFLY
+    UNFLY,
+    GLIDE,
+    UNGLIDE,
+    SWIM,
+    UNSWIM,
 }
 
 val EQUIPPED_TRIGGERS = setOf(
@@ -62,5 +66,9 @@ val EQUIPPED_TRIGGERS = setOf(
     TriggerType.SPRINT,
     TriggerType.UNSPRINT,
     TriggerType.FLY,
-    TriggerType.UNFLY
+    TriggerType.UNFLY,
+    TriggerType.GLIDE,
+    TriggerType.UNGLIDE,
+    TriggerType.SWIM,
+    TriggerType.UNSWIM
 )

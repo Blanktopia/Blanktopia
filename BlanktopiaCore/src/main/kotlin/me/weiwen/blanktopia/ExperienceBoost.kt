@@ -1,6 +1,7 @@
 package me.weiwen.blanktopia
 
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent
+import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -39,10 +40,14 @@ class ExperienceBoost(val plugin: JavaPlugin): Module, Listener {
         }
 
         event.experienceOrb.setExperience(event.experienceOrb.experience * experienceBoost.multiplier)
+        player.sendActionBar("${ChatColor.AQUA}${experienceBoost.multiplier}x EXP")
     }
 }
 
 fun Player.addExperienceBoost(multiplier: Double, ticks: Int) {
+    val other = ExperienceBoost.INSTANCE.experienceBoosts.get(uniqueId)
+    if (other != null && other.multiplier < multiplier) return
+
     ExperienceBoost.INSTANCE.experienceBoosts.put(
         uniqueId,
         ExperienceBoostData(multiplier, System.currentTimeMillis() + ticks * 50)

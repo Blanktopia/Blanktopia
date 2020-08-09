@@ -24,6 +24,10 @@ fun parseCondition(node: Node): Condition? {
         "all" -> node.tryGet<List<Node>>("all")?.let { AllCondition(parseConditions(it)) }
 
         "is-sneaking" -> IsSneakingCondition()
+        "is-sprinting" -> IsSneakingCondition()
+        "is-flying" -> IsSneakingCondition()
+        "is-on-ground" -> IsSneakingCondition()
+
         "item-cooldown" -> ItemCooldownCondition()
         else -> {
             BlanktopiaItems.INSTANCE.logger.log(Level.WARNING, "Unrecognized condition '$condition' when parsing custom item")

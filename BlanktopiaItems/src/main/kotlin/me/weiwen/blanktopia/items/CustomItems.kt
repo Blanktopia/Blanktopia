@@ -16,6 +16,9 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.event.entity.EntityToggleGlideEvent
+import org.bukkit.event.entity.EntityToggleSwimEvent
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.FurnaceBurnEvent
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -65,6 +68,7 @@ class CustomItems(private val plugin: JavaPlugin) :
     }
 
     private fun runEquipTriggers() {
+        equippedItems.clear()
         for (player in plugin.server.onlinePlayers) {
             val slots: MutableMap<PlayerArmorChangeEvent.SlotType, ItemStack> = mutableMapOf()
             player.inventory.helmet?.let { slots[PlayerArmorChangeEvent.SlotType.HEAD] = it }
@@ -118,34 +122,52 @@ class CustomItems(private val plugin: JavaPlugin) :
         val item = event.item ?: return
         val customItem = getCustomItem(item) ?: return
         val player = event.player
-            when (event.action) {
-                Action.RIGHT_CLICK_AIR -> customItem.triggers[TriggerType.RIGHT_CLICK_AIR]?.forEach {
-                    if (it.test(player, item)) it.run(player, item)
-                    event.isCancelled = true
+
+        var removeItem = false
+        when (event.action) {
+            Action.RIGHT_CLICK_AIR -> customItem.triggers[TriggerType.RIGHT_CLICK_AIR]?.forEach {
+                if (it.test(player, item)) {
+                    it.run(player, item)
+                    if (it.cancel) event.isCancelled = true
+                    if (it.removeItem) removeItem = true
                 }
-                Action.RIGHT_CLICK_BLOCK -> customItem.triggers[TriggerType.RIGHT_CLICK_BLOCK]?.forEach {
-                    if (it.test(player, item)) it.run(
+            }
+            Action.RIGHT_CLICK_BLOCK -> customItem.triggers[TriggerType.RIGHT_CLICK_BLOCK]?.forEach {
+                if (it.test(player, item)) {
+                    it.run(
                         player,
                         item,
                         event.clickedBlock ?: return@forEach,
                         event.blockFace
                     )
-                    event.isCancelled = true
+                    if (it.cancel) event.isCancelled = true
+                    if (it.removeItem) removeItem = true
                 }
-                Action.LEFT_CLICK_AIR -> customItem.triggers[TriggerType.LEFT_CLICK_AIR]?.forEach {
-                    if (it.test(player, item)) it.run(player, item)
-                    event.isCancelled = true
+            }
+            Action.LEFT_CLICK_AIR -> customItem.triggers[TriggerType.LEFT_CLICK_AIR]?.forEach {
+                if (it.test(player, item)) {
+                    it.run(player, item)
+                    if (it.cancel) event.isCancelled = true
+                    if (it.removeItem) removeItem = true
                 }
-                Action.LEFT_CLICK_BLOCK -> customItem.triggers[TriggerType.LEFT_CLICK_BLOCK]?.forEach {
-                    if (it.test(player, item)) it.run(
+            }
+            Action.LEFT_CLICK_BLOCK -> customItem.triggers[TriggerType.LEFT_CLICK_BLOCK]?.forEach {
+                if (it.test(player, item)) {
+                    it.run(
                         player,
                         item,
                         event.clickedBlock ?: return@forEach,
                         event.blockFace
                     )
-                    event.isCancelled = true
+                    if (it.cancel) event.isCancelled = true
+                    if (it.removeItem) removeItem = true
                 }
-                else -> return
+            }
+            else -> return
+        }
+
+        if (removeItem) {
+            event.hand?.let { removeOne(player, it) }
         }
     }
 
@@ -153,26 +175,46 @@ class CustomItems(private val plugin: JavaPlugin) :
     fun onPlayerInteractEntity(event: PlayerInteractEntityEvent) {
         val item = if (event.hand == EquipmentSlot.HAND) event.player.inventory.itemInMainHand else if (event.hand === EquipmentSlot.OFF_HAND) event.player.inventory.itemInOffHand else return
         val customItem = getCustomItem(item) ?: return
+
+        var removeItem = false
         customItem.triggers[TriggerType.RIGHT_CLICK_ENTITY]?.forEach {
-            if (it.test(event.player, item)) it.run(event.player, item, event.rightClicked)
-            event.isCancelled = true
+            if (it.test(event.player, item)) {
+                it.run(event.player, item, event.rightClicked)
+                if (it.cancel) event.isCancelled = true
+                if (it.removeItem) removeItem = true
+            }
+        }
+        if (removeItem) {
+            removeOne(event.player, event.hand)
         }
     }
 
     @EventHandler
     fun onEntityDamageByPlayer(event: EntityDamageByEntityEvent) {
+        if (event.cause != EntityDamageEvent.DamageCause.ENTITY_ATTACK) return
+
         val player = event.damager as? Player ?: return
         val item = player.inventory.itemInMainHand
         val customItem = getCustomItem(item) ?: return
+
+
+        var removeItem = false
         customItem.triggers[TriggerType.DAMAGE_ENTITY]?.forEach {
-            if (it.test(player, item)) it.run(player, item, event.entity)
-            event.isCancelled = true
+            if (it.test(player, item)) {
+                it.run(player, item, event.entity)
+                if (it.cancel) event.isCancelled = true
+                if (it.removeItem) removeItem = true
+            }
+        }
+        if (removeItem) {
+            player.inventory.setItemInMainHand(removeOne(item))
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     fun onInventoryClick(event: InventoryClickEvent) {
-        val item = event.inventory.getItem(event.slot) ?: return
+        val inventory = event.clickedInventory ?: return
+        val item = inventory.getItem(event.slot) ?: return
         val customItem = getCustomItem(item) ?: return
         val player = event.whoClicked as? Player ?: return
         val trigger = when (event.click) {
@@ -202,9 +244,17 @@ class CustomItems(private val plugin: JavaPlugin) :
             ClickType.SWAP_OFFHAND -> TriggerType.SWAP_OFFHAND_INVENTORY
             ClickType.UNKNOWN -> null
         } ?: return
+
+        var removeItem = false
         customItem.triggers[trigger]?.forEach {
-            if (it.test(player, item)) it.run(player, item)
-            event.isCancelled = true
+            if (it.test(player, item)) {
+                it.run(player, item)
+                if (it.cancel) event.isCancelled = true
+                if (it.removeItem) removeItem = true
+            }
+        }
+        if (removeItem) {
+            inventory.setItem(event.slot, removeOne(item))
         }
     }
 
@@ -212,9 +262,11 @@ class CustomItems(private val plugin: JavaPlugin) :
     fun onPlayerDropItem(event: PlayerDropItemEvent) {
         val item = event.itemDrop.itemStack
         val customItem = getCustomItem(item) ?: return
+
+        var removeItem = false
         customItem.triggers[TriggerType.DROP]?.forEach {
             if (it.test(event.player, item)) it.run(event.player, item)
-            event.isCancelled = true
+            if (it.cancel) event.isCancelled = true
         }
     }
 
@@ -223,8 +275,10 @@ class CustomItems(private val plugin: JavaPlugin) :
         val item = event.item
         val customItem = getCustomItem(item) ?: return
         customItem.triggers[TriggerType.CONSUME]?.forEach {
-            if (it.test(event.player, item)) it.run(event.player, item)
-            event.isCancelled = true
+            if (it.test(event.player, item)) {
+                it.run(event.player, item)
+                if (it.cancel) event.isCancelled = true
+            }
         }
     }
 
@@ -264,7 +318,9 @@ class CustomItems(private val plugin: JavaPlugin) :
                 }
             }
             customItem.triggers[TriggerType.UNEQUIP_ARMOR]?.forEach {
-                if (it.test(event.player, item)) it.run(event.player, item)
+                if (it.test(event.player, item)) {
+                    it.run(event.player, item)
+                }
             }
         }
 
@@ -278,7 +334,9 @@ class CustomItems(private val plugin: JavaPlugin) :
                 }
             }
             customItem.triggers[TriggerType.EQUIP_ARMOR]?.forEach {
-                it.run(event.player, item)
+                if (it.test(event.player, item)) {
+                    it.run(event.player, item)
+                }
             }
         }
     }
@@ -288,8 +346,10 @@ class CustomItems(private val plugin: JavaPlugin) :
         val item = event.player.inventory.itemInMainHand
         val customItem = getCustomItem(item) ?: return
         customItem.triggers[TriggerType.BREAK_BLOCK]?.forEach {
-            it.run(event.player, item, event.block)
-            event.isCancelled = true
+            if (it.test(event.player, item)) {
+                it.run(event.player, item, event.block)
+                if (it.cancel) event.isCancelled = true
+            }
         }
     }
 
@@ -299,7 +359,7 @@ class CustomItems(private val plugin: JavaPlugin) :
         val customItem = getCustomItem(item) ?: return
         customItem.triggers[TriggerType.PLACE_BLOCK]?.forEach {
             it.run(event.player, item, event.block)
-            event.isCancelled = true
+            if (it.cancel) event.isCancelled = true
         }
     }
 
@@ -307,7 +367,10 @@ class CustomItems(private val plugin: JavaPlugin) :
     fun onPlayerMove(event: PlayerMoveEvent) {
         equippedItems[event.player.uniqueId]?.get(TriggerType.MOVE)?.values?.forEach { (item, triggers) ->
             triggers.forEach {
-                if (it.test(event.player, item)) it.run(event.player, item)
+                if (it.test(event.player, item)) {
+                    it.run(event.player, item)
+                    if (it.cancel) event.isCancelled = true
+                }
             }
         }
     }
@@ -316,7 +379,10 @@ class CustomItems(private val plugin: JavaPlugin) :
     fun onPlayerJump(event: PlayerJumpEvent) {
         equippedItems[event.player.uniqueId]?.get(TriggerType.JUMP)?.values?.forEach { (item, triggers) ->
             triggers.forEach {
-                if (it.test(event.player, item)) it.run(event.player, item)
+                if (it.test(event.player, item)) {
+                    it.run(event.player, item)
+                    if (it.cancel) event.isCancelled = true
+                }
             }
         }
     }
@@ -326,7 +392,10 @@ class CustomItems(private val plugin: JavaPlugin) :
         val triggerType = if (event.isSneaking) TriggerType.SNEAK else TriggerType.UNSNEAK
         equippedItems[event.player.uniqueId]?.get(triggerType)?.values?.forEach { (item, triggers) ->
             triggers.forEach {
-                if (it.test(event.player, item)) it.run(event.player, item)
+                if (it.test(event.player, item)) {
+                    it.run(event.player, item)
+                    if (it.cancel) event.isCancelled = true
+                }
             }
         }
     }
@@ -336,7 +405,10 @@ class CustomItems(private val plugin: JavaPlugin) :
         val triggerType = if (event.isSprinting) TriggerType.SPRINT else TriggerType.UNSPRINT
         equippedItems[event.player.uniqueId]?.get(triggerType)?.values?.forEach { (item, triggers) ->
             triggers.forEach {
-                if (it.test(event.player, item)) it.run(event.player, item)
+                if (it.test(event.player, item)) {
+                    it.run(event.player, item)
+                    if (it.cancel) event.isCancelled = true
+                }
             }
         }
     }
@@ -346,7 +418,38 @@ class CustomItems(private val plugin: JavaPlugin) :
         val triggerType = if (event.isFlying) TriggerType.FLY else TriggerType.UNFLY
         equippedItems[event.player.uniqueId]?.get(triggerType)?.values?.forEach { (item, triggers) ->
             triggers.forEach {
-                if (it.test(event.player, item)) it.run(event.player, item)
+                if (it.test(event.player, item)) {
+                    it.run(event.player, item)
+                    if (it.cancel) event.isCancelled = true
+                }
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    fun onPlayerToggleGlide(event: EntityToggleGlideEvent) {
+        val player = event.entity as? Player ?: return
+        val triggerType = if (event.isGliding) TriggerType.GLIDE else TriggerType.UNGLIDE
+        equippedItems[player.uniqueId]?.get(triggerType)?.values?.forEach { (item, triggers) ->
+            triggers.forEach {
+                if (it.test(player, item)) {
+                    it.run(player, item)
+                    if (it.cancel) event.isCancelled = true
+                }
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    fun onPlayerToggleSwim(event: EntityToggleSwimEvent) {
+        val player = event.entity as? Player ?: return
+        val triggerType = if (event.isSwimming) TriggerType.SWIM else TriggerType.UNSWIM
+        equippedItems[player.uniqueId]?.get(triggerType)?.values?.forEach { (item, triggers) ->
+            triggers.forEach {
+                if (it.test(player, item)) {
+                    it.run(player, item)
+                    if (it.cancel) event.isCancelled = true
+                }
             }
         }
     }
@@ -357,4 +460,16 @@ class CustomItems(private val plugin: JavaPlugin) :
         equippedItems.remove(event.player.uniqueId)
     }
 
+    private fun removeOne(item: ItemStack): ItemStack? {
+        if (item.amount > 1) {
+            item.amount -= 1
+            return item
+        } else {
+            return null
+        }
+    }
+
+    private fun removeOne(player: Player, slot: EquipmentSlot) {
+        player.inventory.setItem(slot, removeOne(player.inventory.getItem(slot)))
+    }
 }
