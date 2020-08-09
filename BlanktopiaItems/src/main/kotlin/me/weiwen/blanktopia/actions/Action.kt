@@ -39,7 +39,7 @@ fun parseActions(nodes: List<Node>): List<Action> {
 fun parseAction(node: Node): Action? {
     return when (val action = node.tryGet<String>("action")) {
         "action-bar" -> node.tryGet<String>("message")?.let { ActionBarAction(it) }
-        "add-potion-effects" -> {
+        "add-permanent-potion-effects" -> {
             val key = node.tryGet<String>("key") ?: return null
             val effects = node.tryGet<Node>("effects")?.let {
                 it.mapNotNull { (key, value) ->
@@ -52,7 +52,17 @@ fun parseAction(node: Node): Action? {
                     }
                 }
             }?.toMap() ?: return null
-            AddPotionEffectAction(key, effects)
+            AddPermanentPotionEffectAction(key, effects)
+        }
+        "add-potion-effect" -> {
+            val type = node.tryGet<String>("type")?.let { PotionEffectType.getByName(it) }
+            if (type == null) {
+                BlanktopiaCore.INSTANCE.logger.log(Level.SEVERE, "Invalid potion effect type")
+                return null
+            }
+            val ticks = node.tryGet<Int>("ticks") ?: return null
+            val level = node.tryGet<Int>("level") ?: return null
+            AddPotionEffectAction(type, ticks, level)
         }
         "add-velocity" -> { 
             val x = node.tryGet<Double>("x", 0.0)
@@ -122,7 +132,7 @@ fun parseAction(node: Node): Action? {
             }
         }
         "place-random-block" -> PlaceRandomBlockAction()
-        "remove-potion-effects" -> node.tryGet<String>("key")?.let { RemovePotionEffectAction(it) }
+        "remove-permanent-potion-effects" -> node.tryGet<String>("key")?.let { RemovePermanentPotionEffectAction(it) }
         "repeat" -> {
             val delay = node.tryGet<Int>("delay", 0)
             val interval = node.tryGet<Int>("interval") ?: 0
