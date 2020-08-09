@@ -23,7 +23,7 @@ val SMELT = CustomEnchantment(
     "smelt",
     "Smelt",
     1,
-    PICKAXES + SHOVELS + BOOKS,
+    PICKAXES + SHOVELS + HOES + BOOKS,
     AXES,
     0.1,
     30,
