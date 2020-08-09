@@ -19,10 +19,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntityToggleGlideEvent
 import org.bukkit.event.entity.EntityToggleSwimEvent
-import org.bukkit.event.inventory.ClickType
-import org.bukkit.event.inventory.FurnaceBurnEvent
-import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.PrepareItemCraftEvent
+import org.bukkit.event.inventory.*
 import org.bukkit.event.player.*
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
@@ -280,6 +277,13 @@ class CustomItems(private val plugin: JavaPlugin) :
                 if (it.cancel) event.isCancelled = true
             }
         }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    fun onPrepareAnvil(event: PrepareAnvilEvent) {
+        val item = event.inventory.secondItem ?: return
+        val customItem = getCustomItem(item) ?: return
+        event.result = null
     }
 
     @EventHandler(ignoreCancelled = true)
