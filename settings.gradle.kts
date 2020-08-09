@@ -5,6 +5,7 @@ include("BlanktopiaItems")
 include("BlanktopiaTweaks")
 include("BlanktopiaShop")
 include("BlanktopiaPortals")
+include("BlanktopiaLikes")
 
 pluginManagement {
     repositories {

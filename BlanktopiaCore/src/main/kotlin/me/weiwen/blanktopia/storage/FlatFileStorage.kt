@@ -10,6 +10,7 @@ class FlatFileStorage(private val logger: Logger, dataFolder: File): IStorage {
     private val playerDataFolder = File(dataFolder, "playerData")
 
     private var playerConfigs = mutableMapOf<UUID, FileConfiguration>()
+    private var likes = YamlConfiguration.loadConfiguration(File(dataFolder, "likes.yml"))
 
     override fun enable() {
         try {
@@ -55,4 +56,32 @@ class FlatFileStorage(private val logger: Logger, dataFolder: File): IStorage {
         return playerConfigs[uuid]?.getObject("data", PlayerData::class.java)
     }
 
+    override fun createLikes(uuid: UUID, world: String, x: Int, y: Int, z: Int, callback: (String) -> Unit) {
+        val id = likes.getKeys(false).size.toString()
+        val config = likes.createSection(id)
+        config.set("world", world)
+        config.set("x", x)
+        config.set("y", y)
+        config.set("z", z)
+        config.set("votes", listOf<String>())
+        callback(id)
+    }
+
+    override fun like(uuid: UUID, id: String, callback: (Int) -> Unit) {
+        val config = likes.getConfigurationSection(id) ?: return
+        val votes = config.getStringList("votes")
+        if (!votes.contains(uuid.toString())) {
+            votes.add(uuid.toString())
+        }
+        callback(votes.size)
+    }
+
+    override fun unlike(uuid: UUID, id: String, callback: (Int) -> Unit) {
+        val config = likes.getConfigurationSection(id) ?: return
+        val votes = config.getStringList("votes")
+        if (votes.contains(uuid.toString())) {
+            votes.remove(uuid.toString())
+        }
+        callback(votes.size)
+    }
 }
