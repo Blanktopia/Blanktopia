@@ -46,7 +46,7 @@ class ExperienceBoost(val plugin: JavaPlugin): Module, Listener {
 
 fun Player.addExperienceBoost(multiplier: Double, ticks: Int) {
     val other = ExperienceBoost.INSTANCE.experienceBoosts.get(uniqueId)
-    if (other != null && other.multiplier < multiplier) return
+    if (other != null && other.multiplier > multiplier) return
 
     ExperienceBoost.INSTANCE.experienceBoosts.put(
         uniqueId,
