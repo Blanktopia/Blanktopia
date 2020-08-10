@@ -87,7 +87,10 @@ class Kits(val plugin: JavaPlugin, val customItems: CustomItems) : Listener, Mod
             for (itemConfig in kitConfig) {
                 val customItem = itemConfig["custom-item"] as? String
                 if (customItem != null) {
-                    customItems.buildItem(customItem)?.let { kit.add(Pair(null, it)) }
+                    customItems.buildItem(customItem)?.let {
+                        it.amount = itemConfig["amount"] as? Int ?: 1
+                        kit.add(Pair(null, it))
+                    }
                 } else {
                     val slot = (itemConfig["slot"] as? String? ?: null)?.let { EquipmentSlot.valueOf(it) }
                     val material: Material =
