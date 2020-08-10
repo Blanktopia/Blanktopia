@@ -3,6 +3,7 @@ package me.weiwen.blanktopia
 import me.weiwen.blanktopia.enchants.enchantments.NightVision.plugin
 import me.weiwen.blanktopia.items.CustomItems
 import me.weiwen.blanktopia.kits.Kits
+import me.weiwen.blanktopia.kits.ResourcePackLoader
 import org.bukkit.ChatColor
 import org.bukkit.Sound
 import org.bukkit.configuration.file.YamlConfiguration
@@ -12,7 +13,8 @@ import java.io.File
 
 
 class BlanktopiaItems : JavaPlugin() {
-    private lateinit var customItems: CustomItems
+    lateinit var customItems: CustomItems
+    lateinit var resourcePackLoader: ResourcePackLoader
     private lateinit var kits: Kits
 
     companion object {
@@ -27,6 +29,7 @@ class BlanktopiaItems : JavaPlugin() {
 
     override fun onEnable() {
         reloadConfig()
+
         getCommand("blanktopiaitems")?.setExecutor { sender, _, _, args ->
             when (args[0]) {
                 "reload" -> {
@@ -69,6 +72,8 @@ class BlanktopiaItems : JavaPlugin() {
             sender.playSound(sender.location, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 1.0f)
             true
         }
+        resourcePackLoader = ResourcePackLoader(this)
+        resourcePackLoader.enable()
         customItems = CustomItems(this)
         kits = Kits(this, customItems)
         customItems.enable()
@@ -79,6 +84,7 @@ class BlanktopiaItems : JavaPlugin() {
     override fun onDisable() {
         kits.disable()
         customItems.disable()
+        resourcePackLoader.disable()
         logger.info("BlanktopiaItems is disabled")
     }
 

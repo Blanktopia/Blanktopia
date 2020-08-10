@@ -13,13 +13,17 @@ bukkit {
     author = "Goh Wei Wen <goweiwen@gmail.com>"
     website = "www.blanktopia.com"
     depend = listOf("BlanktopiaCore")
-    softDepend = listOf("LibsDisguises")
-    loadBefore = listOf("Blanktopia")
+    softDepend = listOf("LibsDisguises", "Blanktopia")
     commands {
         register("blanktopiaitems") {
             description = "Manages the BlanktopiaItems plugin"
             usage = "/<command> reload"
             permission = "blanktopia.admin"
+        }
+        register("rp") {
+            description = "Downloads the resource pack"
+            usage = "/<command>"
+            permission = "blanktopia.rp"
         }
         register("witem") {
             description = "Gives the player a custom item"
@@ -44,6 +48,7 @@ bukkit {
     }
     permissions {
         register("blanktopia.admin") { }
+        register("blanktopia.rp") { }
         register("blanktopia.item") { }
         register("blanktopia.head") { }
         register("blanktopia.kit") { }
