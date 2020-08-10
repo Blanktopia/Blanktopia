@@ -14,11 +14,12 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 
 class Kits(val plugin: JavaPlugin, val customItems: CustomItems) : Listener, Module {
-    private var kits = mapOf<String, List<ItemStack>>()
+    private var kits = mapOf<String, List<Pair<EquipmentSlot?, ItemStack>>>()
 
     override fun enable() {
         plugin.server.pluginManager.registerEvents(this, plugin)
@@ -44,22 +45,51 @@ class Kits(val plugin: JavaPlugin, val customItems: CustomItems) : Listener, Mod
 
     fun giveKit(player: Player, name: String) {
         if (kits[name] != null) {
-            for (item in kits[name]!!) {
-                player.inventory.addItem(item.clone())
+            for ((slot, item) in kits[name]!!) {
+                when (slot) {
+                    EquipmentSlot.HEAD -> if (player.inventory.helmet == null) {
+                        player.inventory.helmet = item.clone()
+                    } else {
+                        player.inventory.addItem(item.clone())
+                    }
+                    EquipmentSlot.CHEST -> if (player.inventory.chestplate == null) {
+                        player.inventory.chestplate = item.clone()
+                    } else {
+                        player.inventory.addItem(item.clone())
+                    }
+                    EquipmentSlot.LEGS -> if (player.inventory.leggings == null) {
+                        player.inventory.leggings = item.clone()
+                    } else {
+                        player.inventory.addItem(item.clone())
+                    }
+                    EquipmentSlot.FEET -> if (player.inventory.boots == null) {
+                        player.inventory.boots = item.clone()
+                    } else {
+                        player.inventory.addItem(item.clone())
+                    }
+                    EquipmentSlot.OFF_HAND -> if (player.inventory.itemInOffHand.type == Material.AIR) {
+                        player.inventory.setItemInOffHand(item.clone())
+                    } else {
+                        player.inventory.addItem(item.clone())
+                    }
+
+                    null -> player.inventory.addItem(item.clone())
+                }
             }
         }
     }
 
-    private fun populateKits(config: ConfigurationSection): Map<String, List<ItemStack>> {
-        val kits = mutableMapOf<String, List<ItemStack>>()
+    private fun populateKits(config: ConfigurationSection): Map<String, List<Pair<EquipmentSlot?, ItemStack>>> {
+        val kits = mutableMapOf<String, List<Pair<EquipmentSlot?, ItemStack>>>()
         for (name in config.getKeys(false)) {
             val kitConfig = config.getMapList(name)
-            val kit = mutableListOf<ItemStack>()
+            val kit = mutableListOf<Pair<EquipmentSlot?, ItemStack>>()
             for (itemConfig in kitConfig) {
                 val customItem = itemConfig["custom-item"] as? String
                 if (customItem != null) {
-                    customItems.buildItem(customItem)?.let { kit.add(it) }
+                    customItems.buildItem(customItem)?.let { kit.add(Pair(null, it)) }
                 } else {
+                    val slot = (itemConfig["slot"] as? String? ?: null)?.let { EquipmentSlot.valueOf(it) }
                     val material: Material =
                         Material.matchMaterial(itemConfig["material"] as? String ?: "STICK") ?: Material.STICK
                     val amount: Int = itemConfig["amount"] as? Int ?: 1
@@ -83,7 +113,7 @@ class Kits(val plugin: JavaPlugin, val customItems: CustomItems) : Listener, Mod
                             }
                         }
                     }
-                    kit.add(item)
+                    kit.add(Pair(slot, item))
                 }
             }
             kits[name] = kit
