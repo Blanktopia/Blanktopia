@@ -143,6 +143,16 @@ fun Player.canBuildAt(location: Location): Boolean {
     return GriefPrevention.instance.allowBuild(this, location) == null
 }
 
+fun ConfigurationSection.asNode(): Node {
+    return this.getValues(false).mapValues {
+        (_, v) ->
+        when (v) {
+            is ConfigurationSection -> v.asNode()
+            else -> v
+        }
+    }
+}
+
 fun ConfigurationSection.getIntOrError(path: String): Int {
     val value = getInt(path)
     if (!contains(path)) {
@@ -167,11 +177,11 @@ fun ConfigurationSection.getDoubleOrError(path: String): Double {
     return value
 }
 
-fun ConfigurationSection.getStringOrError(path: String): String {
+fun ConfigurationSection.getStringOrError(path: String): String? {
     val value = getString(path)
     if (value == null) {
         BlanktopiaCore.INSTANCE.logger.log(Level.SEVERE, "Expected string at key '$path'")
-        return ""
+        return null
     }
     return value
 }

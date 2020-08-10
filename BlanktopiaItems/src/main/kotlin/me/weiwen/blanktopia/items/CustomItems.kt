@@ -2,8 +2,8 @@ package me.weiwen.blanktopia.items
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent
 import com.destroystokyo.paper.event.player.PlayerJumpEvent
-import me.weiwen.blanktopia.Blanktopia
-import me.weiwen.blanktopia.Module
+import me.weiwen.blanktopia.*
+import me.weiwen.blanktopia.recipes.build
 import me.weiwen.blanktopia.triggers.EQUIPPED_TRIGGERS
 import me.weiwen.blanktopia.triggers.Trigger
 import me.weiwen.blanktopia.triggers.TriggerType
@@ -26,11 +26,12 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
+import java.util.logging.Level
 
 class CustomItems(private val plugin: JavaPlugin) :
     Listener, Module {
-    private var config = plugin.config.getConfigurationSection("items")!!
-    private lateinit var items: Map<String, CustomItem>
+    lateinit var items: Map<String, CustomItem>
+    lateinit var recipes: Set<Recipe>
 
     private val equippedItems: MutableMap<UUID,
             MutableMap<TriggerType,
@@ -38,6 +39,7 @@ class CustomItems(private val plugin: JavaPlugin) :
 
     override fun enable() {
         items = populateItems()
+        recipes = populateRecipes()
         plugin.server.pluginManager.registerEvents(this, plugin)
 
         val witemCommand = plugin.getCommand("witem")
@@ -58,8 +60,8 @@ class CustomItems(private val plugin: JavaPlugin) :
     }
 
     override fun reload() {
-        config = plugin.config.getConfigurationSection("items")!!
         items = populateItems()
+        recipes = populateRecipes()
 
         runEquipTriggers()
     }
@@ -73,7 +75,7 @@ class CustomItems(private val plugin: JavaPlugin) :
             player.inventory.leggings?.let { slots[PlayerArmorChangeEvent.SlotType.LEGS] = it }
             player.inventory.boots?.let { slots[PlayerArmorChangeEvent.SlotType.FEET] = it }
             for ((slot, item) in slots.entries) {
-                val customItem = getCustomItem(item) ?: continue
+                val customItem = item.getCustomItem() ?: continue
                 customItem.triggers.forEach { triggerType, triggers ->
                     if (triggerType in EQUIPPED_TRIGGERS) {
                         equippedItems
@@ -92,34 +94,33 @@ class CustomItems(private val plugin: JavaPlugin) :
         return items[type]?.build()
     }
 
-    fun populateItems(): Map<String, CustomItem> {
+    private fun populateItems(): Map<String, CustomItem> {
         val items = mutableMapOf<String, CustomItem>()
+        val config = plugin.config.getConfigurationSectionOrError("items") ?: return items
         for (type in config.getKeys(false)) {
             items[type] = CustomItem(type, config.getConfigurationSection(type)!!)
         }
         return items
     }
 
-    fun getCustomItem(item: ItemStack): CustomItem? {
-        val meta = item.itemMeta ?: return null
-        val data = meta.persistentDataContainer ?: return null
-        val type = data.get(NamespacedKey(Blanktopia.INSTANCE, "type"), PersistentDataType.STRING) ?: return null
-        val customItem = items[type] ?: return null
-
-        // Custom model data migration
-        if (customItem.customModelData != null &&
-                (!meta.hasCustomModelData() || meta.customModelData != customItem.customModelData)) {
-            meta.setCustomModelData(customItem.customModelData)
-            item.itemMeta = meta
+    private fun populateRecipes(): Set<Recipe> {
+        val recipes = mutableSetOf<Recipe>()
+        val config = plugin.config.getConfigurationSectionOrError("recipes") ?: return recipes
+        for ((key, node) in config.asNode()) {
+            if (node == null) {
+                BlanktopiaItems.INSTANCE.logger.log(Level.WARNING, "Invalid recipe detected at key '$key'")
+                continue
+            }
+            val recipe = parseRecipe(node as Node) ?: continue
+            recipes.add(recipe)
         }
-
-        return customItem
+        return recipes
     }
 
     @EventHandler
     fun onPlayerInteract(event: PlayerInteractEvent) {
         val item = event.item ?: return
-        val customItem = getCustomItem(item) ?: return
+        val customItem = item.getCustomItem() ?: return
         val player = event.player
 
         var removeItem = false
@@ -173,7 +174,7 @@ class CustomItems(private val plugin: JavaPlugin) :
     @EventHandler
     fun onPlayerInteractEntity(event: PlayerInteractEntityEvent) {
         val item = if (event.hand == EquipmentSlot.HAND) event.player.inventory.itemInMainHand else if (event.hand === EquipmentSlot.OFF_HAND) event.player.inventory.itemInOffHand else return
-        val customItem = getCustomItem(item) ?: return
+        val customItem = item.getCustomItem() ?: return
 
         var removeItem = false
         customItem.triggers[TriggerType.RIGHT_CLICK_ENTITY]?.forEach {
@@ -194,7 +195,7 @@ class CustomItems(private val plugin: JavaPlugin) :
 
         val player = event.damager as? Player ?: return
         val item = player.inventory.itemInMainHand
-        val customItem = getCustomItem(item) ?: return
+        val customItem = item.getCustomItem() ?: return
 
 
         var removeItem = false
@@ -214,7 +215,7 @@ class CustomItems(private val plugin: JavaPlugin) :
     fun onInventoryClick(event: InventoryClickEvent) {
         val inventory = event.clickedInventory ?: return
         val item = inventory.getItem(event.slot) ?: return
-        val customItem = getCustomItem(item) ?: return
+        val customItem = item.getCustomItem() ?: return
         val player = event.whoClicked as? Player ?: return
         val trigger = when (event.click) {
             ClickType.RIGHT -> TriggerType.RIGHT_CLICK_INVENTORY
@@ -260,7 +261,7 @@ class CustomItems(private val plugin: JavaPlugin) :
     @EventHandler
     fun onPlayerDropItem(event: PlayerDropItemEvent) {
         val item = event.itemDrop.itemStack
-        val customItem = getCustomItem(item) ?: return
+        val customItem = item.getCustomItem() ?: return
 
         var removeItem = false
         customItem.triggers[TriggerType.DROP]?.forEach {
@@ -272,7 +273,7 @@ class CustomItems(private val plugin: JavaPlugin) :
     @EventHandler
     fun onPlayerItemConsume(event: PlayerItemConsumeEvent) {
         val item = event.item
-        val customItem = getCustomItem(item) ?: return
+        val customItem = item.getCustomItem() ?: return
         customItem.triggers[TriggerType.CONSUME]?.forEach {
             if (it.test(event.player, item)) {
                 it.run(event.player, item)
@@ -284,15 +285,22 @@ class CustomItems(private val plugin: JavaPlugin) :
     @EventHandler(ignoreCancelled = true)
     fun onPrepareAnvil(event: PrepareAnvilEvent) {
         val item = event.inventory.secondItem ?: return
-        val customItem = getCustomItem(item) ?: return
+        val customItem = item.getCustomItem() ?: return
         event.result = null
     }
 
     @EventHandler(ignoreCancelled = true)
     fun onPrepareItemCraft(event: PrepareItemCraftEvent) {
+        for (recipe in recipes) {
+            if (recipe.validate(event.inventory)) {
+                event.inventory.result = recipe.result.build()
+                return
+            }
+        }
+
         for (item in event.inventory.matrix) {
             if (item == null) continue
-            if (getCustomItem(item) != null) {
+            if (item.getCustomItem() != null) {
                 event.inventory.result = null
                 return
             }
@@ -301,7 +309,7 @@ class CustomItems(private val plugin: JavaPlugin) :
 
     @EventHandler(ignoreCancelled = true)
     fun onFurnaceBurn(event: FurnaceBurnEvent) {
-        if (getCustomItem(event.fuel) != null) {
+        if (event.fuel.getCustomItem() != null) {
             event.isCancelled = true
             return
         }
@@ -312,7 +320,7 @@ class CustomItems(private val plugin: JavaPlugin) :
         if (event.newItem == event.oldItem) return
 
         event.oldItem?.let { item ->
-            val customItem = getCustomItem(item) ?: return@let
+            val customItem = item.getCustomItem() ?: return@let
             customItem.triggers.forEach { triggerType, _ ->
                 if (triggerType in EQUIPPED_TRIGGERS) {
                     val triggersByType = equippedItems.get(event.player.uniqueId) ?: return@forEach
@@ -331,7 +339,7 @@ class CustomItems(private val plugin: JavaPlugin) :
         }
 
         event.newItem?.let { item ->
-            val customItem = getCustomItem(item) ?: return@let
+            val customItem = item.getCustomItem() ?: return@let
             customItem.triggers.forEach { triggerType, triggers ->
                 if (triggerType in EQUIPPED_TRIGGERS) {
                     equippedItems
@@ -350,7 +358,7 @@ class CustomItems(private val plugin: JavaPlugin) :
     @EventHandler(ignoreCancelled = true)
     fun onBlockBreak(event: BlockBreakEvent) {
         val item = event.player.inventory.itemInMainHand
-        val customItem = getCustomItem(item) ?: return
+        val customItem = item.getCustomItem() ?: return
         customItem.triggers[TriggerType.BREAK_BLOCK]?.forEach {
             if (it.test(event.player, item)) {
                 it.run(event.player, item, event.block)
@@ -362,7 +370,7 @@ class CustomItems(private val plugin: JavaPlugin) :
     @EventHandler(ignoreCancelled = true)
     fun onBlockPlace(event: BlockPlaceEvent) {
         val item = event.player.inventory.itemInMainHand
-        val customItem = getCustomItem(item) ?: return
+        val customItem = item.getCustomItem() ?: return
         customItem.triggers[TriggerType.PLACE_BLOCK]?.forEach {
             it.run(event.player, item, event.block)
             if (it.cancel) event.isCancelled = true
@@ -478,4 +486,20 @@ class CustomItems(private val plugin: JavaPlugin) :
     private fun removeOne(player: Player, slot: EquipmentSlot) {
         player.inventory.setItem(slot, removeOne(player.inventory.getItem(slot)))
     }
+}
+
+fun ItemStack.getCustomItem(): CustomItem? {
+    val meta = itemMeta ?: return null
+    val data = meta.persistentDataContainer ?: return null
+    val type = data.get(NamespacedKey(Blanktopia.INSTANCE, "type"), PersistentDataType.STRING) ?: return null
+    val customItem = BlanktopiaItems.INSTANCE.customItems.items[type] ?: return null
+
+    // Custom model data migration
+    if (customItem.customModelData != null &&
+            (!meta.hasCustomModelData() || meta.customModelData != customItem.customModelData)) {
+        meta.setCustomModelData(customItem.customModelData)
+        itemMeta = meta
+    }
+
+    return customItem
 }
