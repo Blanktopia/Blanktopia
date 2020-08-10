@@ -107,8 +107,10 @@ class CustomItems(private val plugin: JavaPlugin) :
         val customItem = items[type] ?: return null
 
         // Custom model data migration
-        if (customItem.customModelData != null && meta.customModelData != customItem.customModelData) {
+        if (customItem.customModelData != null &&
+                (!meta.hasCustomModelData() || meta.customModelData != customItem.customModelData)) {
             meta.setCustomModelData(customItem.customModelData)
+            item.itemMeta = meta
         }
 
         return customItem
