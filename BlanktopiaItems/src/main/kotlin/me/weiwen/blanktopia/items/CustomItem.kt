@@ -1,5 +1,6 @@
 package me.weiwen.blanktopia.items
 
+import de.themoep.minedown.MineDown
 import me.weiwen.blanktopia.Blanktopia
 import me.weiwen.blanktopia.Node
 import me.weiwen.blanktopia.enchants.enchant
@@ -8,6 +9,7 @@ import me.weiwen.blanktopia.playerHeadFromUrl
 import me.weiwen.blanktopia.triggers.Trigger
 import me.weiwen.blanktopia.triggers.TriggerType
 import me.weiwen.blanktopia.triggers.parseTriggers
+import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -25,7 +27,7 @@ class CustomItem(val type: String, config: ConfigurationSection) {
     private val material: Material = Material.matchMaterial(config.getStringOrError("material") ?: "STICK") ?: Material.STICK
     private val name: String? = config.getString("name")
     private val head: String? = config.getString("head")
-    private val lore: List<String>? = config.getStringList("lore")
+    private val lore: List<Array<BaseComponent>> = config.getStringList("lore").map { MineDown.parse(it) }
     private val enchantments: MutableMap<Enchantment, Int> = mutableMapOf()
     private val attributeModifiers: MutableList<Pair<Attribute, AttributeModifier>> = mutableListOf()
     private val unbreakable: Boolean = config.getBoolean("unbreakable")
@@ -92,7 +94,7 @@ class CustomItem(val type: String, config: ConfigurationSection) {
         }
         val meta = item.itemMeta ?: Bukkit.getItemFactory().getItemMeta(material)!!
         if (name != null) meta.setDisplayName(name)
-        if (lore != null) meta.lore = lore
+        if (!lore.isEmpty()) meta.loreComponents = lore
         if (unbreakable) meta.isUnbreakable = true
         if (customModelData != null) meta.setCustomModelData(customModelData)
         meta.persistentDataContainer.set(NamespacedKey(Blanktopia.INSTANCE, "type"), PersistentDataType.STRING, type)
