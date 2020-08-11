@@ -9,6 +9,7 @@ class FlyInClaimsAction(private val canFly: Boolean) : Action {
         player.canFlyInClaims = canFly
         if (!canFly) {
             if (player.gameMode != GameMode.CREATIVE && player.gameMode != GameMode.SPECTATOR) {
+                player.allowFlight = false
                 player.isFlying = false
             }
         }

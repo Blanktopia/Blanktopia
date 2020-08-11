@@ -35,7 +35,7 @@ class FlyInClaims(val plugin: BlanktopiaCore) : Listener, Module {
         checkCanFly(event.player, event.to, event.from)
     }
 
-    private fun checkCanFly(player: Player, to: Location?, from: Location) {
+    fun checkCanFly(player: Player, to: Location?, from: Location) {
         if (to == null) return
         if (to.blockX == from.blockX && to.blockZ == from.blockZ) return
         if (player.gameMode == GameMode.CREATIVE || player.gameMode == GameMode.SPECTATOR) return
@@ -50,6 +50,7 @@ var Player.canFlyInClaims: Boolean
     set(canFly) {
         if (canFly) {
             FlyInClaims.INSTANCE.canFlyPlayers.add(uniqueId)
+            allowFlight = hasAccessTrust(location)
         } else {
             FlyInClaims.INSTANCE.canFlyPlayers.remove(uniqueId)
         }
