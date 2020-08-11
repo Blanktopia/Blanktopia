@@ -38,6 +38,8 @@ val CONTAINER_TYPES = setOf(
 )
 
 class BlanktopiaShop : JavaPlugin(), Listener {
+    val canBuyFromOwnShop: MutableSet<UUID> = mutableSetOf()
+
     companion object {
         lateinit var INSTANCE: BlanktopiaShop
             private set
