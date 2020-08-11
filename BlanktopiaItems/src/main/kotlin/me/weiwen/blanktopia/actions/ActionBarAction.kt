@@ -1,9 +1,12 @@
 package me.weiwen.blanktopia.actions
 
+import de.themoep.minedown.MineDown
 import org.bukkit.entity.Player
 
-class ActionBarAction(private val message: String) : Action {
+class ActionBarAction(message: String) : Action {
+    private val message = MineDown.parse(message)
+
     override fun run(player: Player) {
-        player.sendActionBar(message)
+        player.sendActionBar(*message)
     }
 }
