@@ -42,7 +42,7 @@ fun parseAction(node: Node): Action? {
         "add-permanent-potion-effects" -> {
             val key = node.tryGet<String>("key") ?: return null
             val effects = node.tryGet<Node>("effects")?.let {
-                it.mapNotNull { (key, value) ->
+                it.mapNotNull { (key, _) ->
                     val type = PotionEffectType.getByName(key)
                     if (type == null) {
                         BlanktopiaCore.INSTANCE.logger.log(Level.SEVERE, "Invalid potion effect type ${key}")
@@ -87,7 +87,7 @@ fun parseAction(node: Node): Action? {
             val ifFalse = node.tryGet<List<Node>>("if-false")?.let { parseActions(it) } ?: return null
             IfAction(condition, ifTrue, ifFalse)
         }
-        "cycle-tool" -> node.tryGet<List<String>>("materials")?.map { Material.valueOf(it as String) }?.let { CycleToolAction(it) }
+        "cycle-tool" -> node.tryGet<List<String>>("materials")?.map { Material.valueOf(it) }?.let { CycleToolAction(it) }
         "disguise" -> {
             when (node.tryGet<String>("kind")) {
                 "mob" -> {
@@ -115,7 +115,7 @@ fun parseAction(node: Node): Action? {
         "item-cooldown" -> node.tryGet<Int>("ticks")?.let { ItemCooldownAction(it) }
         "lava-bucket" -> LavaBucketAction()
         "message" -> node.tryGet<String>("message")?.let { MessageAction(it) }
-        "measure-distance" -> node.tryGet<Boolean>("is-origin", false)?.let { MeasureDistanceAction(it) }
+        "measure-distance" -> MeasureDistanceAction(node.tryGet<Boolean>("is-origin", false))
         "paint-brush-pick" -> PaintBrushPickAction()
         "paint-brush-paint" -> PaintBrushPaintAction()
         "play-sound" -> {
