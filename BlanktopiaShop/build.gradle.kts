@@ -15,6 +15,13 @@ bukkit {
     website = "www.blanktopia.com"
     depend = listOf("BlanktopiaCore")
     softDepend = listOf("Skript", "Essentials")
+    commands {
+        register("shopedit") {
+            description = "Toggles shop edit mode"
+            usage = "/<command>"
+            permission = "blanktopia.shop.create"
+        }
+    }
     permissions {
         register("blanktopia.shop.create") { }
         register("blanktopia.shop.create.others") { }

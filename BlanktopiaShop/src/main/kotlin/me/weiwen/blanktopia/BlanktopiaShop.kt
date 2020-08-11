@@ -52,6 +52,19 @@ class BlanktopiaShop : JavaPlugin(), Listener {
 
     override fun onEnable() {
         reloadConfig()
+
+        getCommand("shopedit")?.setExecutor { sender, _, _, _ ->
+            if (sender !is Player) return@setExecutor false
+            if (canBuyFromOwnShop.contains(sender.uniqueId)) {
+                canBuyFromOwnShop.remove(sender.uniqueId)
+                sender.sendMessage("${ChatColor.GOLD}You can no longer buy from shops you are trusted in.")
+            } else {
+                canBuyFromOwnShop.add(sender.uniqueId)
+                sender.sendMessage("${ChatColor.GOLD}You can now buy from shops you are trusted in.")
+            }
+            true
+        }
+
         server.pluginManager.registerEvents(this, this)
         logger.info("BlanktopiaShop is enabled")
     }
@@ -200,10 +213,12 @@ class BlanktopiaShop : JavaPlugin(), Listener {
         val cost = container.get(NamespacedKey(this, "cost"), PersistentDataType.STRING) ?: return
         val uuid = container.get(NamespacedKey(this, "owner"), PersistentDataType.STRING) ?: return
         val player = event.player as? Player ?: return
-        if (uuid != "" && UUID.fromString(uuid) == player.uniqueId) {
-            player.sendMessage("${ChatColor.GOLD}Editing your own shop.")
-        } else if (player.hasContainerTrust(block.location)) {
-            player.sendMessage("${ChatColor.GOLD}Editing someone else's shop.")
+        if (!canBuyFromOwnShop.contains(player.uniqueId)) {
+            if (uuid != "" && UUID.fromString(uuid) == player.uniqueId) {
+                player.sendMessage("${ChatColor.GOLD}Editing your own shop. Use /shopedit to buy from shops you are trusted in.")
+            } else if (player.hasContainerTrust(block.location)) {
+                player.sendMessage("${ChatColor.GOLD}Editing someone else's shop. Use /shopedit to buy from shops you are trusted in.")
+            }
         }
         event.player.sendMessage("${ChatColor.GOLD}Each stack costs ${cost}.")
     }
@@ -215,7 +230,9 @@ class BlanktopiaShop : JavaPlugin(), Listener {
         val container = chest.persistentDataContainer
         val uuid = container.get(NamespacedKey(this, "owner"), PersistentDataType.STRING) ?: return
         val player = event.whoClicked as? Player ?: return
-        if ((uuid != "" && UUID.fromString(uuid) == player.uniqueId) || player.hasContainerTrust(block.location)) {
+        if (!canBuyFromOwnShop.contains(player.uniqueId) &&
+                ((uuid != "" && UUID.fromString(uuid) == player.uniqueId) ||
+                        player.hasContainerTrust(block.location))) {
             return
         }
         event.isCancelled = true
@@ -228,7 +245,9 @@ class BlanktopiaShop : JavaPlugin(), Listener {
         val container = chest.persistentDataContainer
         val uuid = container.get(NamespacedKey(this, "owner"), PersistentDataType.STRING) ?: return
         val player = event.whoClicked as? Player ?: return
-        if ((uuid != "" && UUID.fromString(uuid) == player.uniqueId) || player.hasContainerTrust(block.location)) {
+        if (!canBuyFromOwnShop.contains(player.uniqueId) &&
+                ((uuid != "" && UUID.fromString(uuid) == player.uniqueId) ||
+                        player.hasContainerTrust(block.location))) {
             return
         }
         event.isCancelled = true
