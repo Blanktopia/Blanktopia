@@ -139,6 +139,15 @@ object Smelt : Listener {
             Material.CHORUS_FRUIT -> Pair(ItemStack(Material.POPPED_CHORUS_FRUIT, amount), 0.0)
             Material.WET_SPONGE -> Pair(ItemStack(Material.SPONGE, amount), 0.0)
             Material.SEA_PICKLE -> Pair(ItemStack(Material.LIME_DYE, amount), 0.0)
+            Material.ANCIENT_DEBRIS -> Pair(ItemStack(Material.NETHERITE_SCRAP, amount), 0.0)
+            Material.WARPED_HYPHAE -> Pair(ItemStack(Material.CHARCOAL, amount), 0.0)
+            Material.WARPED_STEM -> Pair(ItemStack(Material.CHARCOAL, amount), 0.0)
+            Material.STRIPPED_WARPED_HYPHAE -> Pair(ItemStack(Material.CHARCOAL, amount), 0.0)
+            Material.STRIPPED_WARPED_STEM -> Pair(ItemStack(Material.CHARCOAL, amount), 0.0)
+            Material.CRIMSON_HYPHAE -> Pair(ItemStack(Material.CHARCOAL, amount), 0.0)
+            Material.CRIMSON_STEM -> Pair(ItemStack(Material.CHARCOAL, amount), 0.0)
+            Material.STRIPPED_CRIMSON_HYPHAE -> Pair(ItemStack(Material.CHARCOAL, amount), 0.0)
+            Material.STRIPPED_CRIMSON_STEM -> Pair(ItemStack(Material.CHARCOAL, amount), 0.0)
             else -> null
         }
     }
