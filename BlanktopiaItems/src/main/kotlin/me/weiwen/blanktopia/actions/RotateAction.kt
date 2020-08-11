@@ -32,11 +32,8 @@ class RotateAction(private val reversed: Boolean) : Action {
         val data = block.blockData
         when (data) {
             is Directional -> {
-                val faces = BlockFace.values()
-                var index = faces.indexOf(data.facing) + 1
-                while (!data.faces.contains(faces[index % faces.size]))  {
-                    index++
-                }
+                val faces = data.faces.sorted()
+                val index = faces.indexOf(data.facing) + 1
                 data.facing = faces[index % faces.size]
             }
             is MultipleFacing -> {
@@ -45,11 +42,8 @@ class RotateAction(private val reversed: Boolean) : Action {
                 }
             }
             is Orientable -> {
-                val axes = Axis.values()
-                var index = axes.indexOf(data.axis) + 1
-                while (!data.axes.contains(axes[index % axes.size]))  {
-                    index++
-                }
+                val axes = data.axes.sorted()
+                val index = axes.indexOf(data.axis) + 1
                 data.axis = axes[index % axes.size]
             }
             is Rotatable -> {
@@ -57,11 +51,8 @@ class RotateAction(private val reversed: Boolean) : Action {
                 data.rotation = SIGN_ROTATIONS[index % SIGN_ROTATIONS.size]
             }
             is Rail -> {
-                val shapes = Rail.Shape.values()
-                var index = shapes.indexOf(data.shape) + 1
-                while (!data.shapes.contains(shapes[index % shapes.size]))  {
-                    index++
-                }
+                val shapes = data.shapes.sorted()
+                val index = shapes.indexOf(data.shape) + 1
                 data.shape = shapes[index % shapes.size]
             }
             is Bisected -> {
@@ -88,23 +79,17 @@ class RotateAction(private val reversed: Boolean) : Action {
                 data.half = if (data.half == Bisected.Half.BOTTOM) Bisected.Half.TOP else Bisected.Half.BOTTOM
             }
             is Rail -> {
-                val shapes = Rail.Shape.values()
-                var index = shapes.indexOf(data.shape) - 1
-                while (!data.shapes.contains(shapes[index % shapes.size]))  {
-                    index++
-                }
+                val shapes = data.shapes.sorted()
+                val index = shapes.size + shapes.indexOf(data.shape) - 1
                 data.shape = shapes[index % shapes.size]
             }
             is Rotatable -> {
-                val index = SIGN_ROTATIONS.indexOf(data.rotation) - 1
+                val index = SIGN_ROTATIONS.size + SIGN_ROTATIONS.indexOf(data.rotation) - 1
                 data.rotation = SIGN_ROTATIONS[index % SIGN_ROTATIONS.size]
             }
             is Orientable -> {
-                val axes = Axis.values()
-                var index = axes.indexOf(data.axis) - 1
-                while (!data.axes.contains(axes[index % axes.size]))  {
-                    index++
-                }
+                val axes = data.axes.sorted()
+                val index = axes.size + axes.indexOf(data.axis) - 1
                 data.axis = axes[index % axes.size]
             }
             is MultipleFacing -> {
@@ -113,11 +98,8 @@ class RotateAction(private val reversed: Boolean) : Action {
                 }
             }
             is Directional -> {
-                val faces = BlockFace.values()
-                var index = faces.indexOf(data.facing) - 1
-                while (!data.faces.contains(faces[index % faces.size]))  {
-                    index++
-                }
+                val faces = data.faces.sorted()
+                val index = faces.size + faces.indexOf(data.facing) + 1
                 data.facing = faces[index % faces.size]
             }
             else -> return false
