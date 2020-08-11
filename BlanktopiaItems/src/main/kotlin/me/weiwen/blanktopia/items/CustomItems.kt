@@ -7,6 +7,7 @@ import me.weiwen.blanktopia.recipes.build
 import me.weiwen.blanktopia.triggers.EQUIPPED_TRIGGERS
 import me.weiwen.blanktopia.triggers.Trigger
 import me.weiwen.blanktopia.triggers.TriggerType
+import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -122,6 +123,18 @@ class CustomItems(private val plugin: JavaPlugin) :
         val item = event.item ?: return
         val customItem = item.getCustomItem() ?: return
         val player = event.player
+
+        if (event.hand == EquipmentSlot.OFF_HAND) {
+            if (event.player.inventory.itemInMainHand.type == Material.CROSSBOW) {
+                return
+            }
+        } else if (event.hand == EquipmentSlot.HAND) {
+            if (event.action == Action.RIGHT_CLICK_BLOCK &&
+                    event.clickedBlock?.type?.isInteractable() == true &&
+                    !event.player.isSneaking) {
+                return
+            }
+        }
 
         var removeItem = false
         when (event.action) {
@@ -263,7 +276,6 @@ class CustomItems(private val plugin: JavaPlugin) :
         val item = event.itemDrop.itemStack
         val customItem = item.getCustomItem() ?: return
 
-        var removeItem = false
         customItem.triggers[TriggerType.DROP]?.forEach {
             if (it.test(event.player, item)) it.run(event.player, item)
             if (it.cancel) event.isCancelled = true
@@ -285,7 +297,7 @@ class CustomItems(private val plugin: JavaPlugin) :
     @EventHandler(ignoreCancelled = true)
     fun onPrepareAnvil(event: PrepareAnvilEvent) {
         val item = event.inventory.secondItem ?: return
-        val customItem = item.getCustomItem() ?: return
+        item.getCustomItem() ?: return
         event.result = null
     }
 
