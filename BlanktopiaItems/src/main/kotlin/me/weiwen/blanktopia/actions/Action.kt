@@ -104,8 +104,14 @@ fun parseAction(node: Node): Action? {
             val ticks = node.tryGet<Int>("ticks", 0)
             ExperienceBoostAction(multiplier, ticks)
         }
+        "feed" -> {
+            val amount = node.tryGet<Int>("amount") ?: 0
+            val saturation = node.tryGet<Double>("saturation")?.toFloat() ?: 0.0f
+            FeedAction(amount, saturation)
+        }
         "fly-in-claims" -> node.tryGet<Boolean>("can-fly")?.let { FlyInClaimsAction(it) }
         "hammer" -> node.tryGet<Int>("range")?.let { HammerAction(it) }
+        "heal" -> node.tryGet<Int>("amount")?.let { HealAction(it) }
         "item-cooldown" -> node.tryGet<Int>("ticks")?.let { ItemCooldownAction(it) }
         "lava-bucket" -> LavaBucketAction()
         "message" -> node.tryGet<String>("message")?.let { MessageAction(it) }
