@@ -111,6 +111,7 @@ fun parseAction(node: Node): Action? {
         }
         "fly-in-claims" -> node.tryGet<Boolean>("can-fly")?.let { FlyInClaimsAction(it) }
         "hammer" -> node.tryGet<Int>("range")?.let { HammerAction(it) }
+        "hammer-strip" -> node.tryGet<Int>("range")?.let { HammerStripAction(it) }
         "heal" -> node.tryGet<Int>("amount")?.let { HealAction(it) }
         "item-cooldown" -> node.tryGet<Int>("ticks")?.let { ItemCooldownAction(it) }
         "lava-bucket" -> LavaBucketAction()
