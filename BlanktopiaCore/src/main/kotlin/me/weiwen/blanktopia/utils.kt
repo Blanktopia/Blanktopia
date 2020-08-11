@@ -213,3 +213,34 @@ fun ConfigurationSection.getConfigurationSectionList(path: String): List<Configu
     }
     return getKeys(false).mapNotNull { getConfigurationSection(it) }
 }
+
+val INTERACTABLE_MATERIALS = setOf(
+        Material.OAK_STAIRS,
+        Material.OAK_FENCE,
+        Material.OAK_SIGN,
+        Material.SPRUCE_STAIRS,
+        Material.SPRUCE_FENCE,
+        Material.SPRUCE_SIGN,
+        Material.BIRCH_STAIRS,
+        Material.BIRCH_FENCE,
+        Material.BIRCH_SIGN,
+        Material.JUNGLE_STAIRS,
+        Material.JUNGLE_FENCE,
+        Material.JUNGLE_SIGN,
+        Material.ACACIA_STAIRS,
+        Material.ACACIA_FENCE,
+        Material.ACACIA_SIGN,
+        Material.DARK_OAK_STAIRS,
+        Material.DARK_OAK_FENCE,
+        Material.DARK_OAK_SIGN,
+        Material.CRIMSON_STAIRS,
+        Material.CRIMSON_FENCE,
+        Material.CRIMSON_SIGN,
+        Material.WARPED_STAIRS,
+        Material.WARPED_FENCE,
+        Material.WARPED_SIGN
+)
+val Material.canBeInteractedWith get(): Boolean {
+    if (!isInteractable) return false
+    return INTERACTABLE_MATERIALS.contains(this)
+}

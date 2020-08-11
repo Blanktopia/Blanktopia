@@ -124,16 +124,11 @@ class CustomItems(private val plugin: JavaPlugin) :
         val customItem = item.getCustomItem() ?: return
         val player = event.player
 
-        if (event.hand == EquipmentSlot.OFF_HAND) {
-            if (event.player.inventory.itemInMainHand.type == Material.CROSSBOW) {
-                return
-            }
-        } else if (event.hand == EquipmentSlot.HAND) {
-            if (event.action == Action.RIGHT_CLICK_BLOCK &&
-                    event.clickedBlock?.type?.isInteractable() == true &&
-                    !event.player.isSneaking) {
-                return
-            }
+        if ((event.action == Action.RIGHT_CLICK_AIR ||
+                        event.action == Action.RIGHT_CLICK_BLOCK) &&
+                event.hand != EquipmentSlot.HAND &&
+                event.player.inventory.itemInMainHand.type == Material.CROSSBOW) {
+            return
         }
 
         var removeItem = false
@@ -146,6 +141,9 @@ class CustomItems(private val plugin: JavaPlugin) :
                 }
             }
             Action.RIGHT_CLICK_BLOCK -> customItem.triggers[TriggerType.RIGHT_CLICK_BLOCK]?.forEach {
+                if (!it.force && event.action == Action.RIGHT_CLICK_BLOCK &&
+                        !event.player.isSneaking &&
+                        event.clickedBlock!!.type.canBeInteractedWith) return@forEach
                 if (it.test(player, item)) {
                     it.run(
                         player,

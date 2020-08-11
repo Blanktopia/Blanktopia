@@ -19,7 +19,8 @@ class Trigger(
     private val actions: List<Action>,
     private val conditions: List<Condition>,
     val removeItem: Boolean = false,
-    val cancel: Boolean = true) {
+    val cancel: Boolean = true,
+    val force: Boolean = false) {
 
     fun test(player: Player, item: ItemStack): Boolean {
         return conditions.all { it.test(player, item) }
@@ -50,7 +51,8 @@ fun parseTriggers(nodes: List<Node>): List<Trigger> {
         val conditions = node.tryGet<List<Node>>("conditions", listOf()).let { parseConditions(it) }
         val removeItem = node.tryGet<Boolean>("remove-item", false)
         val cancel = node.tryGet<Boolean>("cancel", true)
-        triggers.add(Trigger(triggerTypes, actions, conditions, removeItem, cancel))
+        val force = node.tryGet<Boolean>("force", false)
+        triggers.add(Trigger(triggerTypes, actions, conditions, removeItem, cancel, force))
     }
     return triggers
 }
