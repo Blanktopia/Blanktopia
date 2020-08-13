@@ -86,6 +86,8 @@ open class Projectile(
                         }
                     }
                     if (hit === ProjectileHitResult.DESTROY) {
+                        val p = ray.hitPosition
+                        location.set(p.x, p.y, p.z)
                         return false
                     }
                 }
