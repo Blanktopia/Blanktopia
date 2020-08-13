@@ -183,7 +183,7 @@ class CustomItems(private val plugin: JavaPlugin) :
     }
 
     @EventHandler
-    fun onPlayerInteractEntity(event: PlayerInteractEntityEvent) {
+    fun onPlayerInteractEntity(event: PlayerInteractAtEntityEvent) {
         val item = if (event.hand == EquipmentSlot.HAND) event.player.inventory.itemInMainHand else if (event.hand === EquipmentSlot.OFF_HAND) event.player.inventory.itemInOffHand else return
         val customItem = item.getCustomItem() ?: return
 
