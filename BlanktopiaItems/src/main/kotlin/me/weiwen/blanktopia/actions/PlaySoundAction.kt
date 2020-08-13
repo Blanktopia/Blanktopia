@@ -9,6 +9,6 @@ class PlaySoundAction(sound: String, private val pitch: Float, private val volum
     private val sound = Sound.valueOf(sound)
 
     override fun run(player: Player) {
-        player.playSoundAt(sound, SoundCategory.PLAYERS, pitch, volume)
+        player.playSoundAt(sound, SoundCategory.PLAYERS, volume, pitch)
     }
 }
