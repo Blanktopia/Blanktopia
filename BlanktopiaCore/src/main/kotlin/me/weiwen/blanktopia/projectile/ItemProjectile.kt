@@ -3,17 +3,22 @@ package me.weiwen.blanktopia.projectile
 import me.weiwen.blanktopia.BlanktopiaCore
 import org.bukkit.FluidCollisionMode
 import org.bukkit.Location
+import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Entity
+import org.bukkit.entity.EntityType
 import org.bukkit.entity.Item
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
 import java.util.function.Predicate
 import java.util.logging.Level
+import kotlin.math.cos
 
 class ItemProjectile
     : Projectile {
 
-    lateinit var item: Item
+    private val armorStand: ArmorStand
+    private val offset: Vector
 
     constructor(
             itemStack: ItemStack,
@@ -28,37 +33,33 @@ class ItemProjectile
             ignoreOrigin: Boolean = true,
             size: Double = 0.0,
             predicate: Predicate<Entity?>? = null) : super(location, entity, velocity, bounce, drag, gravity, fluidCollisionMode, ignorePassableBlocks, ignoreOrigin, size, predicate) {
-        item = location.world.dropItem(location, itemStack)
-        item.pickupDelay = Int.MAX_VALUE
-        item.setCanMobPickup(false)
+        armorStand = location.world.spawnEntity(location, EntityType.ARMOR_STAND) as ArmorStand
+        armorStand.isVisible = false
+        armorStand.setGravity(false)
+        armorStand.setItem(EquipmentSlot.HAND, itemStack)
+        armorStand.setDisabledSlots(EquipmentSlot.HAND, EquipmentSlot.OFF_HAND, EquipmentSlot.LEGS, EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.FEET)
         this.predicate = if (predicate != null) {
-            Predicate { it != item && this.predicate!!.test(it) }
+            Predicate { it != armorStand && this.predicate!!.test(it) }
         } else {
-            Predicate { it != item }
+            Predicate { it != armorStand }
         }
-    }
 
-    fun test(entity: Entity): Boolean {
-        return entity == item
+        val dir = armorStand.location.direction
+        offset = Vector(dir.x * -0.5 + dir.z * 0.65, -1.45, dir.z * -0.5 + dir.x * 0.65)
     }
 
     override fun tick(): Boolean {
-        BlanktopiaCore.INSTANCE.logger.log(Level.INFO, "x: ${location.x}, y: ${location.y}, z: ${location.z}, vx: ${velocity.x}, vy: ${velocity.y}, vz: ${velocity.z}")
         return if (super.tick()) {
-            item.teleport(location)
-            item.velocity = velocity
+            armorStand.velocity = velocity
+            armorStand.rightArmPose = armorStand.rightArmPose.add(0.300, 0.0, 0.0)
+            armorStand.teleport(location.clone().add(offset).add(0.0, cos(armorStand.rightArmPose.x) * 0.7, 0.0))
             true
         } else {
-            item.velocity.zero().add(Vector(0.0, -0.01, 0.0))
-            item.teleport(location)
-            for (i in 1..10) {
-                BlanktopiaCore.INSTANCE.server.scheduler.runTaskLater(BlanktopiaCore.INSTANCE, { ->
-                    item.teleport(location)
-                    item.velocity.zero().add(Vector(0.0, -0.01, 0.0))
-                }, i.toLong())
-            }
+            armorStand.rightArmPose = armorStand.rightArmPose.setX(0.0)
+            armorStand.teleport(location.clone().add(offset).add(0.0, cos(armorStand.rightArmPose.x) * 0.7, 0.0))
+            armorStand.velocity.zero()
             BlanktopiaCore.INSTANCE.server.scheduler.runTaskLater(BlanktopiaCore.INSTANCE, { ->
-                item.remove()
+                armorStand.remove()
             }, 300)
             false
         }
