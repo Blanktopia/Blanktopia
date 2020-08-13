@@ -1,8 +1,6 @@
 package me.weiwen.blanktopia.actions
 
-import me.libraryaddict.disguise.disguisetypes.DisguiseType
-import me.libraryaddict.disguise.disguisetypes.MobDisguise
-import me.libraryaddict.disguise.disguisetypes.PlayerDisguise
+import me.libraryaddict.disguise.disguisetypes.*
 import me.weiwen.blanktopia.*
 import me.weiwen.blanktopia.conditions.parseCondition
 import org.bukkit.Material
@@ -88,17 +86,7 @@ fun parseAction(node: Node): Action? {
             IfAction(condition, ifTrue, ifFalse)
         }
         "cycle-tool" -> node.tryGet<List<String>>("materials")?.map { Material.valueOf(it) }?.let { CycleToolAction(it) }
-        "disguise" -> {
-            when (node.tryGet<String>("kind")) {
-                "mob" -> {
-                    val type = node.tryGet<String>("type") ?: "ZOMBIE"
-                    val isBaby = node.tryGet<Boolean>("baby", false)
-                    DisguiseAction(MobDisguise(DisguiseType.valueOf(type), !isBaby))
-                }
-                "player" -> node.tryGet<String>("name")?.let { DisguiseAction(PlayerDisguise(it)) }
-                else -> null
-            }
-        }
+        "disguise" -> parseDisguise(node)?.let { DisguiseAction(it)}
         "experience-boost" -> {
             val multiplier = node.tryGet<Double>("multiplier", 1.0)
             val ticks = node.tryGet<Int>("ticks", 0)
@@ -114,6 +102,23 @@ fun parseAction(node: Node): Action? {
         "hammer-strip" -> node.tryGet<Int>("range")?.let { HammerStripAction(it) }
         "heal" -> node.tryGet<Int>("amount")?.let { HealAction(it) }
         "item-cooldown" -> node.tryGet<Int>("ticks")?.let { ItemCooldownAction(it) }
+        "launch-item-projectile" -> {
+            val material = node.tryGet<String>("material")?.let { Material.valueOf(it) } ?: Material.DIRT
+            val amount = node.tryGet<Int>("amount", 1)
+            val magnitude = node.tryGet<Double>("magnitude") ?: 1.0
+            val pitch = node.tryGet<Double>("pitch") ?: 1.0
+            val disguise = node.tryGet<Node?>("disguise", null)?.let { parseDisguise(it) }
+            val isPitchRelative = node.tryGet<Boolean>("is-pitch-relative", true)
+            LaunchItemProjectileAction(material, amount, magnitude, pitch, disguise, isPitchRelative)
+        }
+        "launch-entity" -> {
+            val type = node.tryGet<String>("type") ?: "ARROW"
+            val magnitude = node.tryGet<Double>("magnitude") ?: 1.0
+            val pitch = node.tryGet<Double>("pitch") ?: 1.0
+            val disguise = node.tryGet<Node?>("disguise", null)?.let { parseDisguise(it) }
+            val isPitchRelative = node.tryGet<Boolean>("is-pitch-relative", true)
+            LaunchEntityAction(type, magnitude, pitch, disguise, isPitchRelative)
+        }
         "lava-bucket" -> LavaBucketAction()
         "message" -> node.tryGet<String>("message")?.let { MessageAction(it) }
         "measure-distance" -> MeasureDistanceAction(node.tryGet<Boolean>("is-origin", false))
@@ -167,7 +172,6 @@ fun parseAction(node: Node): Action? {
             SpawnParticleAction(particle, x, y, z, count, offsetX, offsetY, offsetZ, extra)
         }
         "sudo-command" -> node.tryGet<String>("command")?.let { SudoCommandAction(it) }
-        "throw-ender-pearl" -> ThrowEnderPearlAction()
         "toggle-item-frame-visibility" -> ToggleItemFrameVisibilityAction()
         "toggle-enchantment" -> {
             val enchantment = node.tryGet<String>("enchantment")?.let {
@@ -196,3 +200,24 @@ fun parseAction(node: Node): Action? {
     }
 }
 
+fun parseDisguise(node: Node): Disguise? {
+    return when (node.tryGet<String>("kind")) {
+        "mob" -> {
+            val type = node.tryGet<String>("type") ?: "ZOMBIE"
+            val isBaby = node.tryGet("baby", false)
+            MobDisguise(DisguiseType.valueOf(type), !isBaby)
+        }
+        "player" -> node.tryGet<String>("name")?.let { PlayerDisguise(it) }
+        "item" -> {
+            val material = node.tryGet<String>("material")?.let { Material.valueOf(it) } ?: Material.STICK
+            val amount = node.tryGet("amount", 1)
+            MiscDisguise(DisguiseType.DROPPED_ITEM, ItemStack(material, amount))
+        }
+        "block" -> {
+            val material = node.tryGet<String>("material")?.let { Material.valueOf(it) } ?: Material.DIRT
+            val data = node.tryGet("data", 0)
+            MiscDisguise(DisguiseType.FALLING_BLOCK, material, data)
+        }
+        else -> return null
+    }
+}
