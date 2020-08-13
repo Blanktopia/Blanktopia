@@ -1,5 +1,6 @@
 dependencies {
     api(kotlin("stdlib-jdk8", "1.3.72"))
+    api(kotlin("reflect", "1.3.72"))
     api("io.papermc:paperlib:1.0.2")
     api("de.themoep:minedown:1.6.1-SNAPSHOT")
 

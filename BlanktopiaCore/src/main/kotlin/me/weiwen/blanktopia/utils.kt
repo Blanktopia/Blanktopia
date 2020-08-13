@@ -3,6 +3,7 @@ package me.weiwen.blanktopia
 import me.ryanhamshire.GriefPrevention.GriefPrevention
 import org.bukkit.*
 import org.bukkit.block.Block
+import org.bukkit.block.BlockFace
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Entity
@@ -10,8 +11,11 @@ import org.bukkit.entity.ExperienceOrb
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
+import org.bukkit.util.Vector
 import java.util.*
 import java.util.logging.Level
+import kotlin.math.asin
+import kotlin.math.atan2
 import kotlin.math.sqrt
 import kotlin.random.Random
 
@@ -244,3 +248,40 @@ val Material.canBeInteractedWith get(): Boolean {
     if (!isInteractable) return false
     return INTERACTABLE_MATERIALS.contains(this)
 }
+
+fun Vector.reflect(face: BlockFace): Vector {
+    val dir = face.direction
+    return subtract(dir.multiply(dot(dir) * 2.0))
+}
+
+var Vector.pitch: Double
+    get() {
+        val normalized = clone().normalize()
+        return asin(normalized.y)
+    }
+    set(value: Double) {
+        val length = length()
+        val yaw = yaw
+        setX(0)
+        setY(0)
+        setZ(1)
+        rotateAroundX(-value)
+        rotateAroundY(-yaw)
+        multiply(length)
+    }
+
+var Vector.yaw: Double
+    get() {
+        val normalized = clone().normalize()
+        return -atan2(normalized.x, normalized.z)
+    }
+    set(value: Double) {
+        val length = length()
+        val pitch = pitch
+        setX(0)
+        setY(0)
+        setZ(1)
+        rotateAroundX(-pitch)
+        rotateAroundY(-value)
+        multiply(length)
+    }

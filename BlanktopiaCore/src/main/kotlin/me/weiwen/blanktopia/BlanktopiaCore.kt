@@ -1,5 +1,6 @@
 package me.weiwen.blanktopia
 
+import me.weiwen.blanktopia.projectile.ProjectileManager
 import me.weiwen.blanktopia.storage.Storage
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
@@ -9,6 +10,7 @@ class BlanktopiaCore: JavaPlugin() {
     lateinit var permanentPotionEffect: PermanentPotionEffect
     lateinit var experienceBoost: ExperienceBoost
     lateinit var flyInClaims: FlyInClaims
+    lateinit var projectileManager: ProjectileManager
 
     companion object {
         lateinit var INSTANCE: BlanktopiaCore
@@ -30,6 +32,8 @@ class BlanktopiaCore: JavaPlugin() {
         experienceBoost.enable()
         flyInClaims = FlyInClaims(this)
         flyInClaims.enable()
+        projectileManager = ProjectileManager(this)
+        projectileManager.enable()
     }
 
     override fun onDisable() {
@@ -37,6 +41,7 @@ class BlanktopiaCore: JavaPlugin() {
         experienceBoost.disable()
         permanentPotionEffect.disable()
         storage.disable()
+        projectileManager.disable()
     }
 
     private fun createConfig() {
