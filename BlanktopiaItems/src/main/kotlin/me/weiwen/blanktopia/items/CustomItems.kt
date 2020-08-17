@@ -141,9 +141,8 @@ class CustomItems(private val plugin: JavaPlugin) :
                 }
             }
             Action.RIGHT_CLICK_BLOCK -> customItem.triggers[TriggerType.RIGHT_CLICK_BLOCK]?.forEach {
-                if (!it.force && event.action == Action.RIGHT_CLICK_BLOCK &&
-                        !event.player.isSneaking &&
-                        event.clickedBlock!!.type.canBeInteractedWith) return@forEach
+                if (!it.force &&
+                        (event.player.isSneaking || event.clickedBlock!!.type.canBeInteractedWith)) return@forEach
                 if (it.test(player, item)) {
                     it.run(
                         player,
@@ -183,7 +182,7 @@ class CustomItems(private val plugin: JavaPlugin) :
     }
 
     @EventHandler
-    fun onPlayerInteractEntity(event: PlayerInteractAtEntityEvent) {
+    fun onPlayerInteractAtEntity(event: PlayerInteractAtEntityEvent) {
         val item = if (event.hand == EquipmentSlot.HAND) event.player.inventory.itemInMainHand else if (event.hand === EquipmentSlot.OFF_HAND) event.player.inventory.itemInOffHand else return
         val customItem = item.getCustomItem() ?: return
 
