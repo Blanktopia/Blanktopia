@@ -50,7 +50,7 @@ var Player.canFlyInClaims: Boolean
     set(canFly) {
         if (canFly) {
             FlyInClaims.INSTANCE.canFlyPlayers.add(uniqueId)
-            allowFlight = hasAccessTrust(location)
+            allowFlight = gameMode == GameMode.CREATIVE || gameMode == GameMode.SPECTATOR || hasAccessTrust(location)
         } else {
             FlyInClaims.INSTANCE.canFlyPlayers.remove(uniqueId)
         }
