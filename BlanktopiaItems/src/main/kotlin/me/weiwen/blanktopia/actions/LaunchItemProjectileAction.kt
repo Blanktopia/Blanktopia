@@ -9,7 +9,7 @@ import org.bukkit.Material
 import org.bukkit.entity.*
 import org.bukkit.inventory.ItemStack
 
-class LaunchItemProjectileAction(material: Material, private val amount: Int, private val magnitude: Double, private val pitch: Double, private val disguise: Disguise?, private val isPitchRelative: Boolean = true) : Action {
+class LaunchItemProjectileAction(material: Material, private val amount: Int, private val magnitude: Double, private val pitch: Double, private val isPitchRelative: Boolean = true) : Action {
     private val item = ItemStack(material, amount)
 
     override fun run(player: Player) {
