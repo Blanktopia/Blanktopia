@@ -36,6 +36,7 @@ class BlanktopiaItems : JavaPlugin() {
                     reloadConfig()
                     customItems.reload()
                     kits.reload()
+                    resourcePackLoader.reload()
                     sender.sendMessage(ChatColor.GOLD.toString() + "Reloaded configuration!")
                     true
                 }
