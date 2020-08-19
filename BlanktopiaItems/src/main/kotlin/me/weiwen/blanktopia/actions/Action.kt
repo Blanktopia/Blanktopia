@@ -118,6 +118,16 @@ fun parseAction(node: Node): Action? {
             val isPitchRelative = node.tryGet<Boolean>("is-pitch-relative", true)
             LaunchEntityAction(type, magnitude, pitch, disguise, isPitchRelative)
         }
+        "launch-falling-block" -> {
+            val material = node.tryGet<String?>("material")?.let { Material.valueOf(it) } ?: Material.DIRT
+            val canDropItem = node.tryGet<Boolean?>("can-drop-item") ?: true
+            val canHurtEntities = node.tryGet<Boolean?>("can-hurt-entities") ?: true
+            val magnitude = node.tryGet<Double>("magnitude") ?: 1.5
+            val pitch = node.tryGet<Double>("pitch") ?: 0.0
+            val disguise = node.tryGet<Node?>("disguise", null)?.let { parseDisguise(it) }
+            val isPitchRelative = node.tryGet<Boolean>("is-pitch-relative", true)
+            LaunchFallingBlockAction(material, canDropItem, canHurtEntities, magnitude, pitch, disguise, isPitchRelative)
+        }
         "lava-bucket" -> LavaBucketAction()
         "message" -> node.tryGet<String>("message")?.let { MessageAction(it) }
         "measure-distance" -> MeasureDistanceAction(node.tryGet<Boolean>("is-origin", false))

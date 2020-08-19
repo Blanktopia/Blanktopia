@@ -2,7 +2,6 @@ package me.weiwen.blanktopia.actions
 
 import me.libraryaddict.disguise.disguisetypes.Disguise
 import me.weiwen.blanktopia.pitch
-import me.weiwen.blanktopia.yaw
 import org.bukkit.entity.*
 
 class LaunchEntityAction(type: String, private val magnitude: Double, private val pitch: Double, private val disguise: Disguise?, private val isPitchRelative: Boolean = true) : Action {
