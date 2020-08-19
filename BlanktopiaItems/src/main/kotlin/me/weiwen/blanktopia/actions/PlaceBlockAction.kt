@@ -47,16 +47,16 @@ class PlaceBlockAction(material: Material) : Action {
         } else {
             var canPlace = false
             for (tryFace in listOf(BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH, BlockFace.NORTH)) {
-                if (block.getRelative(tryFace).type.isSolid) {
+                if (target.getRelative(tryFace).type.isSolid) {
                     state.type = Material.WALL_TORCH
                     val data = Bukkit.getServer().createBlockData(Material.WALL_TORCH)
-                    (data as? Directional)?.facing = tryFace
+                    (data as? Directional)?.facing = tryFace.oppositeFace
                     state.blockData = data
                     canPlace = true
                     break
                 }
             }
-            if (block.getRelative(BlockFace.DOWN).type.isSolid) {
+            if (!canPlace && target.getRelative(BlockFace.DOWN).type.isSolid) {
                 state.type = Material.TORCH
                 val data = Bukkit.getServer().createBlockData(Material.TORCH)
                 state.blockData = data
