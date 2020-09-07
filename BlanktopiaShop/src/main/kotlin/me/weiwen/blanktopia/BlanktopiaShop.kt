@@ -213,6 +213,11 @@ class BlanktopiaShop : JavaPlugin(), Listener {
         val cost = container.get(NamespacedKey(this, "cost"), PersistentDataType.STRING) ?: return
         val uuid = container.get(NamespacedKey(this, "owner"), PersistentDataType.STRING) ?: return
         val player = event.player as? Player ?: return
+        if (!player.hasPermission("blanktopia.shop.buy")) {
+            player.sendMessage("${ChatColor.RED}You don't have permission to buy from shops!")
+            event.isCancelled = true
+            return
+        }
         if (!canBuyFromOwnShop.contains(player.uniqueId)) {
             if (uuid != "" && UUID.fromString(uuid) == player.uniqueId) {
                 player.sendMessage("${ChatColor.GOLD}Editing your own shop. Use /shopedit to buy from shops you are trusted in.")
@@ -277,10 +282,13 @@ class BlanktopiaShop : JavaPlugin(), Listener {
         player.inventory.removeItem(cost)
         player.inventory.setItem(emptySlot, clickedItem)
         player.playSoundAt(Sound.BLOCK_NOTE_BLOCK_BELL, SoundCategory.PLAYERS, 1.0f, 0.81f)
+
+        val price = container.get(NamespacedKey(this, "cost"), PersistentDataType.STRING) ?: toString(cost)
         if (uuid != "") {
             inventory.setItem(event.slot, cost)
-            val price = container.get(NamespacedKey(this, "cost"), PersistentDataType.STRING) ?: toString(cost)
             logPurchase(player, UUID.fromString(uuid), clickedItem, price)
+        } else {
+            logger.log(Level.INFO, "${ChatColor.GOLD}${player.displayName}${ChatColor.GOLD} has bought ${toString(clickedItem)}${ChatColor.GOLD} for ${price}${ChatColor.GOLD}.")
         }
     }
 
