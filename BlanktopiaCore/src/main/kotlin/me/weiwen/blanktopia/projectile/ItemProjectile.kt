@@ -6,7 +6,6 @@ import org.bukkit.Location
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
-import org.bukkit.entity.Item
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
@@ -32,8 +31,10 @@ class ItemProjectile
             ignorePassableBlocks: Boolean = true,
             ignoreOrigin: Boolean = true,
             size: Double = 0.0,
-            predicate: Predicate<Entity?>? = null) : super(location, entity, velocity, bounce, drag, gravity, fluidCollisionMode, ignorePassableBlocks, ignoreOrigin, size, predicate) {
-        armorStand = location.world.spawnEntity(location, EntityType.ARMOR_STAND) as ArmorStand
+            predicate: Predicate<Entity>? = null) : super(location, entity, velocity, bounce, drag, gravity, fluidCollisionMode, ignorePassableBlocks, ignoreOrigin, size, predicate) {
+        val dir = location.direction
+        offset = Vector(dir.x * -0.4 + dir.z * 0.55, -1.45, dir.z * -0.4 + dir.x * 0.65)
+        armorStand = location.world.spawnEntity(location.add(offset), EntityType.ARMOR_STAND) as ArmorStand
         armorStand.isVisible = false
         armorStand.setGravity(false)
         armorStand.setItem(EquipmentSlot.HAND, itemStack)
@@ -44,8 +45,6 @@ class ItemProjectile
             Predicate { it != armorStand }
         }
 
-        val dir = armorStand.location.direction
-        offset = Vector(dir.x * -0.5 + dir.z * 0.65, -1.45, dir.z * -0.5 + dir.x * 0.65)
     }
 
     override fun tick(): Boolean {

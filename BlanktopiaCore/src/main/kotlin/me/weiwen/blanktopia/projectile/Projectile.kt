@@ -24,7 +24,7 @@ open class Projectile(
         private val ignorePassableBlocks: Boolean = true,
         private val ignoreOrigin: Boolean = true,
         private var size: Double = 0.0,
-        protected var predicate: Predicate<Entity?>?) {
+        protected var predicate: Predicate<Entity>?) {
 
     companion object {
         const val SPEED_THRESHOLD = 0.05
