@@ -3,6 +3,7 @@ package me.weiwen.blanktopia.conditions
 import me.weiwen.blanktopia.BlanktopiaItems
 import me.weiwen.blanktopia.Node
 import me.weiwen.blanktopia.tryGet
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.logging.Level
@@ -27,6 +28,12 @@ fun parseCondition(node: Node): Condition? {
         "is-sprinting" -> IsSneakingCondition()
         "is-flying" -> IsSneakingCondition()
         "is-on-ground" -> IsSneakingCondition()
+
+        "can-build-at" -> CanBuildCondition()
+        "has-build-trust" -> {
+            val material = node.tryGet<String?>("material", null)?.let { Material.valueOf(it) } ?: Material.DIRT
+            HasBuildTrustCondition(material)
+        }
 
         "item-cooldown" -> ItemCooldownCondition()
         else -> {
