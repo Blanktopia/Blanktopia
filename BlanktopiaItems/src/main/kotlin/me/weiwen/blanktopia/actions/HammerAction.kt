@@ -12,13 +12,13 @@ import org.bukkit.util.Vector
 class HammerAction(val range: Int) : Action {
     override fun run(player: Player, item: ItemStack, block: Block) {
         val face = player.rayTraceBlocks(6.0)?.hitBlockFace ?: return
-        if (!canMineBlock(block, item)) return
+        if (!item.type.canMineBlock(block)) return
         val hardness = block.type.hardness
         for (location in locationsInRange(block.location, face, range)) {
             if (!player.canBuildAt(location)) continue
             val other = location.block
             if (other.type.hardness > hardness) continue
-            if (!canMineBlock(other, item)) continue
+            if (!item.type.canMineBlock(other)) continue
             other.breakNaturally(item)
         }
     }

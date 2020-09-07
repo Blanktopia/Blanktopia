@@ -1,11 +1,12 @@
 package me.weiwen.blanktopia
 
+import org.bukkit.Material
 import org.bukkit.Material.*
 import org.bukkit.block.Block
 import org.bukkit.inventory.ItemStack
 
 
-fun canMineBlock(what: Block, with: ItemStack): Boolean {
+fun Material.canMineBlock(what: Block): Boolean {
     val type = what.getType()
     if (!type.isBlock()) return false
 
@@ -43,7 +44,7 @@ fun canMineBlock(what: Block, with: ItemStack): Boolean {
         WARPED_NYLIUM,
         WHITE_CONCRETE_POWDER,
         YELLOW_CONCRETE_POWDER ->
-            isShovel(with)
+            isShovel()
 
         ACTIVATOR_RAIL,
         ANCIENT_DEBRIS,
@@ -391,7 +392,7 @@ fun canMineBlock(what: Block, with: ItemStack): Boolean {
         YELLOW_STAINED_GLASS,
         YELLOW_STAINED_GLASS_PANE,
         YELLOW_TERRACOTTA ->
-            isPickaxe(with)
+            isPickaxe()
 
         ACACIA_BUTTON,
         ACACIA_DOOR,
@@ -551,7 +552,7 @@ fun canMineBlock(what: Block, with: ItemStack): Boolean {
         WARPED_STEM,
         WARPED_TRAPDOOR,
         WARPED_WALL_SIGN ->
-            isAxe(with)
+            isAxe()
 
         DRIED_KELP_BLOCK,
         HAY_BLOCK,
@@ -559,7 +560,7 @@ fun canMineBlock(what: Block, with: ItemStack): Boolean {
         SPONGE,
         WARPED_WART_BLOCK,
         WET_SPONGE ->
-            isHoe(with)
+            isHoe()
 
         DARK_OAK_LEAVES,
         JUNGLE_LEAVES,
@@ -600,7 +601,7 @@ fun canMineBlock(what: Block, with: ItemStack): Boolean {
         WHITE_WOOL,
         YELLOW_CARPET,
         YELLOW_WOOL ->
-            isShear(with)
+            isShear()
 
         SLIME_BLOCK,
         HONEY_BLOCK,
@@ -612,34 +613,34 @@ fun canMineBlock(what: Block, with: ItemStack): Boolean {
     }
 }
 
-fun isShovel(item: ItemStack): Boolean {
-    when (item.type) {
+fun Material.isShovel(): Boolean {
+    when (this) {
         STONE_SHOVEL, DIAMOND_SHOVEL, GOLDEN_SHOVEL, IRON_SHOVEL, WOODEN_SHOVEL, NETHERITE_SHOVEL -> return true
         else -> return false
     }
 }
 
-fun isPickaxe(item: ItemStack): Boolean {
-    when (item.type) {
+fun Material.isPickaxe(): Boolean {
+    when (this) {
         DIAMOND_PICKAXE, GOLDEN_PICKAXE, IRON_PICKAXE, STONE_PICKAXE, WOODEN_PICKAXE, NETHERITE_PICKAXE -> return true
         else -> return false
     }
 }
 
-fun isAxe(item: ItemStack): Boolean {
-    when (item.type) {
+fun Material.isAxe(): Boolean {
+    when (this) {
         DIAMOND_AXE, GOLDEN_AXE, IRON_AXE, STONE_AXE, WOODEN_AXE, NETHERITE_AXE -> return true
         else -> return false
     }
 }
 
-fun isHoe(item: ItemStack): Boolean {
-    when (item.type) {
+fun Material.isHoe(): Boolean {
+    when (this) {
         DIAMOND_HOE, GOLDEN_HOE, IRON_HOE, STONE_HOE, WOODEN_HOE, NETHERITE_HOE -> return true
         else -> return false
     }
 }
 
-fun isShear(item: ItemStack): Boolean {
-    return item.type == SHEARS
+fun Material.isShear(): Boolean {
+    return this == SHEARS
 }
