@@ -218,7 +218,7 @@ fun ConfigurationSection.getConfigurationSectionList(path: String): List<Configu
     return getKeys(false).mapNotNull { getConfigurationSection(it) }
 }
 
-val INTERACTABLE_MATERIALS = setOf(
+val UNINTERACTABLE_MATERIALS = setOf(
         Material.OAK_STAIRS,
         Material.OAK_FENCE,
         Material.OAK_SIGN,
@@ -245,8 +245,7 @@ val INTERACTABLE_MATERIALS = setOf(
         Material.WARPED_SIGN
 )
 val Material.canBeInteractedWith get(): Boolean {
-    if (!isInteractable) return false
-    return INTERACTABLE_MATERIALS.contains(this)
+    return isInteractable && !UNINTERACTABLE_MATERIALS.contains(this)
 }
 
 fun Vector.reflect(face: BlockFace): Vector {
