@@ -141,8 +141,7 @@ class CustomItems(private val plugin: JavaPlugin) :
                 }
             }
             Action.RIGHT_CLICK_BLOCK -> customItem.triggers[TriggerType.RIGHT_CLICK_BLOCK]?.forEach {
-                if (!it.force &&
-                        (event.player.isSneaking || event.clickedBlock!!.type.canBeInteractedWith)) return@forEach
+                if (!it.force && !event.player.isSneaking && event.clickedBlock!!.type.canBeInteractedWith) return@forEach
                 if (it.test(player, item)) {
                     it.run(
                         player,

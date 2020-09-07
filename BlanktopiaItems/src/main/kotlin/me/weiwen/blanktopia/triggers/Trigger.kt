@@ -51,7 +51,7 @@ fun parseTriggers(nodes: List<Node>): List<Trigger> {
         val conditions = node.tryGet<List<Node>>("conditions", listOf()).let { parseConditions(it) }
         val removeItem = node.tryGet<Boolean>("remove-item", false)
         val cancel = node.tryGet<Boolean>("cancel", true)
-        val force = node.tryGet<Boolean>("force", false)
+        val force = node.tryGet<Boolean>("force", true)
         triggers.add(Trigger(triggerTypes, actions, conditions, removeItem, cancel, force))
     }
     return triggers
