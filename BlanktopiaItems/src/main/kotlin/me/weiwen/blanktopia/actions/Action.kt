@@ -183,7 +183,11 @@ fun parseAction(node: Node): Action? {
             val extra = node.tryGet("extra", 0.0)
             SpawnParticleAction(particle, x, y, z, count, offsetX, offsetY, offsetZ, extra)
         }
-        "sudo-command" -> node.tryGet<String>("command")?.let { SudoCommandAction(it) }
+        "sudo-command" -> {
+            val command = node.tryGet<String>("command") ?: return null
+            val permissions = node.tryGet<List<String>>("permissions") ?: ArrayList()
+            SudoCommandAction(command, permissions)
+        }
         "toggle-item-frame-visibility" -> ToggleItemFrameVisibilityAction()
         "toggle-enchantment" -> {
             val enchantment = node.tryGet<String>("enchantment")?.let {
