@@ -21,7 +21,7 @@ class PlaceBlockAction(material: Material) : Action {
 
     private fun torch(player: Player, item: ItemStack, block: Block, face: BlockFace) {
         val (block, target, face) = when (block.type) {
-            Material.GRASS, Material.TALL_GRASS, Material.FERN, Material.LARGE_FERN -> Triple(
+            Material.GRASS, Material.TALL_GRASS, Material.FERN, Material.LARGE_FERN, Material.SNOW -> Triple(
                 block.getRelative(
                     BlockFace.DOWN
                 ), block, BlockFace.DOWN

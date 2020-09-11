@@ -65,5 +65,6 @@ val EMPTY_BLOCKS = setOf(
     Material.GRASS,
     Material.TALL_GRASS,
     Material.FERN,
-    Material.LARGE_FERN
+    Material.LARGE_FERN,
+    Material.SNOW
 )
