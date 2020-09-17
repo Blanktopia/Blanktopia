@@ -10,14 +10,12 @@ fun HybridItemStack.build(): ItemStack? {
     return when (item) {
         is Vanilla -> ItemStack(item.material, amount)
         is Custom -> BlanktopiaItems.INSTANCE.customItems.buildItem(item.type)
-        else -> null
     }
 }
 
 sealed class HybridItem
 data class Vanilla(val material: Material) : HybridItem()
 data class Custom(val type: String) : HybridItem()
-object Invalid : HybridItem()
 
 fun ItemStack.toHybridItem(): HybridItem {
     val customItem = getCustomItem()

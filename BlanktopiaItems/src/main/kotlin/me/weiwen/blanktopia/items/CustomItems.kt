@@ -3,7 +3,6 @@ package me.weiwen.blanktopia.items
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent
 import com.destroystokyo.paper.event.player.PlayerJumpEvent
 import me.weiwen.blanktopia.*
-import me.weiwen.blanktopia.recipes.build
 import me.weiwen.blanktopia.triggers.EQUIPPED_TRIGGERS
 import me.weiwen.blanktopia.triggers.Trigger
 import me.weiwen.blanktopia.triggers.TriggerType
@@ -22,17 +21,16 @@ import org.bukkit.event.entity.EntityToggleGlideEvent
 import org.bukkit.event.entity.EntityToggleSwimEvent
 import org.bukkit.event.inventory.*
 import org.bukkit.event.player.*
-import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.*
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 import java.util.logging.Level
 
 class CustomItems(private val plugin: JavaPlugin) :
-    Listener, Module {
+        Listener, Module {
     lateinit var items: Map<String, CustomItem>
-    lateinit var recipes: Set<Recipe>
+    private var recipes: Map<NamespacedKey, Recipe> = mapOf()
 
     private val equippedItems: MutableMap<UUID,
             MutableMap<TriggerType,
@@ -58,6 +56,9 @@ class CustomItems(private val plugin: JavaPlugin) :
     }
 
     override fun disable() {
+        recipes.keys.forEach {
+            plugin.server.removeRecipe(it)
+        }
     }
 
     override fun reload() {
@@ -80,8 +81,8 @@ class CustomItems(private val plugin: JavaPlugin) :
                 customItem.triggers.forEach { triggerType, triggers ->
                     if (triggerType in EQUIPPED_TRIGGERS) {
                         equippedItems
-                            .getOrPut(player.uniqueId, { mutableMapOf() })
-                            .getOrPut(triggerType, { mutableMapOf() })[slot] = Pair(item, triggers)
+                                .getOrPut(player.uniqueId, { mutableMapOf() })
+                                .getOrPut(triggerType, { mutableMapOf() })[slot] = Pair(item, triggers)
                     }
                 }
                 customItem.triggers[TriggerType.EQUIP_ARMOR]?.forEach {
@@ -104,18 +105,33 @@ class CustomItems(private val plugin: JavaPlugin) :
         return items
     }
 
-    private fun populateRecipes(): Set<Recipe> {
-        val recipes = mutableSetOf<Recipe>()
+    private fun populateRecipes(): Map<NamespacedKey, Recipe> {
+        recipes.keys.forEach {
+            plugin.server.removeRecipe(it)
+        }
+        val recipes = mutableMapOf<NamespacedKey, Recipe>()
         val config = plugin.config.getConfigurationSectionOrError("recipes") ?: return recipes
         for ((key, node) in config.asNode()) {
             if (node == null) {
                 BlanktopiaItems.INSTANCE.logger.log(Level.WARNING, "Invalid recipe detected at key '$key'")
                 continue
             }
-            val recipe = parseRecipe(node as Node) ?: continue
-            recipes.add(recipe)
+            val key = NamespacedKey(plugin, key)
+            val recipe = parseRecipe(key, node as Node) ?: continue
+            try {
+                plugin.server.addRecipe(recipe)
+            } catch (e: IllegalStateException) {
+                plugin.server.removeRecipe(key)
+                plugin.server.addRecipe(recipe)
+            }
+            recipes.put(key, recipe)
         }
         return recipes
+    }
+
+    @EventHandler
+    fun onPlayerJoin(event: PlayerJoinEvent) {
+        recipes.keys.forEach { event.player.discoverRecipe(it) }
     }
 
     @EventHandler
@@ -144,10 +160,10 @@ class CustomItems(private val plugin: JavaPlugin) :
                 if (!it.force && !event.player.isSneaking && event.clickedBlock!!.type.canBeInteractedWith) return@forEach
                 if (it.test(player, item)) {
                     it.run(
-                        player,
-                        item,
-                        event.clickedBlock ?: return@forEach,
-                        event.blockFace
+                            player,
+                            item,
+                            event.clickedBlock ?: return@forEach,
+                            event.blockFace
                     )
                     if (it.cancel) event.isCancelled = true
                     if (it.removeItem) removeItem = true
@@ -163,10 +179,10 @@ class CustomItems(private val plugin: JavaPlugin) :
             Action.LEFT_CLICK_BLOCK -> customItem.triggers[TriggerType.LEFT_CLICK_BLOCK]?.forEach {
                 if (it.test(player, item)) {
                     it.run(
-                        player,
-                        item,
-                        event.clickedBlock ?: return@forEach,
-                        event.blockFace
+                            player,
+                            item,
+                            event.clickedBlock ?: return@forEach,
+                            event.blockFace
                     )
                     if (it.cancel) event.isCancelled = true
                     if (it.removeItem) removeItem = true
@@ -299,16 +315,39 @@ class CustomItems(private val plugin: JavaPlugin) :
 
     @EventHandler(ignoreCancelled = true)
     fun onPrepareItemCraft(event: PrepareItemCraftEvent) {
-        for (recipe in recipes) {
-            if (recipe.validate(event.inventory)) {
-                event.inventory.result = recipe.result.build()
-                return
+        val result = event.inventory.result ?: return
+        val customItem = result.getCustomItem()
+        if (customItem != null) {
+            val recipe = event.recipe ?: return
+            when (recipe) {
+                is ShapedRecipe -> {
+                    val ingredients = recipe.shape
+                            .joinToString("")
+                            .map { recipe.ingredientMap[it] }
+                    val mirrored = recipe.shape
+                            .joinToString("") { it.reversed() }
+                            .map { recipe.ingredientMap[it] }
+                    if (!event.inventory.matrix.contentEquals(ingredients.toTypedArray()) && !event.inventory.matrix.contentEquals(mirrored.toTypedArray())) {
+                        event.inventory.result = null
+                    }
+                }
+                is ShapelessRecipe -> {
+                    val ingredients = recipe.ingredientList
+                    outer@ for (item in event.inventory.matrix.filterNotNull()) {
+                        for (ingredient in ingredients) {
+                            if (ingredient == item.asOne()) {
+                                ingredients.remove(ingredient)
+                                continue@outer
+                            }
+                        }
+                        BlanktopiaItems.INSTANCE.logger.log(Level.INFO, item.toString())
+                        event.inventory.result = null
+                        break
+                    }
+                }
             }
-        }
-
-        for (item in event.inventory.matrix) {
-            if (item == null) continue
-            if (item.getCustomItem() != null) {
+        } else {
+            if (event.inventory.matrix.filterNotNull().any { it.getCustomItem() !== null }) {
                 event.inventory.result = null
                 return
             }
@@ -351,8 +390,8 @@ class CustomItems(private val plugin: JavaPlugin) :
             customItem.triggers.forEach { triggerType, triggers ->
                 if (triggerType in EQUIPPED_TRIGGERS) {
                     equippedItems
-                        .getOrPut(event.player.uniqueId, { mutableMapOf() })
-                        .getOrPut(triggerType, { mutableMapOf() })[event.slotType] = Pair(item, triggers)
+                            .getOrPut(event.player.uniqueId, { mutableMapOf() })
+                            .getOrPut(triggerType, { mutableMapOf() })[event.slotType] = Pair(item, triggers)
                 }
             }
             customItem.triggers[TriggerType.EQUIP_ARMOR]?.forEach {
