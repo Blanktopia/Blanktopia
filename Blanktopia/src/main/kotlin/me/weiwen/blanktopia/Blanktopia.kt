@@ -1,16 +1,15 @@
 package me.weiwen.blanktopia
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import me.weiwen.blanktopia.books.Books
 import me.weiwen.blanktopia.enchants.CustomEnchants
-import me.weiwen.blanktopia.storage.Storage
 import org.bukkit.ChatColor
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 
 
 class Blanktopia : JavaPlugin() {
-    lateinit var storage: Storage
-
     var modules = mutableListOf<Module>()
 
     companion object {
@@ -36,7 +35,9 @@ class Blanktopia : JavaPlugin() {
                     true
                 }
                 "save" -> {
-                    storage.save()
+                    GlobalScope.launch {
+                        BlanktopiaCore.INSTANCE.storage.save()
+                    }
                     sender.sendMessage(ChatColor.GOLD.toString() + "Saved player data!")
                     true
                 }

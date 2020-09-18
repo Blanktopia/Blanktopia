@@ -12,7 +12,7 @@ class FlatFileStorage(private val logger: Logger, dataFolder: File): IStorage {
     private var playerConfigs = mutableMapOf<UUID, FileConfiguration>()
     private var likes = YamlConfiguration.loadConfiguration(File(dataFolder, "likes.yml"))
 
-    override fun enable() {
+    override suspend fun enable() {
         try {
             if (!playerDataFolder.exists()) {
                 playerDataFolder.mkdirs()
@@ -22,9 +22,11 @@ class FlatFileStorage(private val logger: Logger, dataFolder: File): IStorage {
         }
     }
 
-    override fun disable() {}
+    override suspend fun disable() {
+        save()
+    }
 
-    override fun save() {
+    override suspend fun save() {
         logger.info("Saving ${playerConfigs.size} players' data.")
         for ((uuid, config) in playerConfigs.entries) {
             try {
@@ -37,26 +39,23 @@ class FlatFileStorage(private val logger: Logger, dataFolder: File): IStorage {
         playerConfigs.clear()
     }
 
-    override fun savePlayer(uuid: UUID, data: PlayerData) {
+    override suspend fun savePlayer(uuid: UUID, data: PlayerData) {
         val file = File(playerDataFolder, "$uuid.yml")
         val config = playerConfigs[uuid] ?: YamlConfiguration.loadConfiguration(file)
         config.set("data", data)
         config.save(file)
     }
 
-    override fun loadPlayer(uuid: UUID, callback: (PlayerData) -> Unit) {
-        if (playerConfigs[uuid] != null) return
-        val file = File(playerDataFolder, "$uuid.yml")
-        val config = YamlConfiguration.loadConfiguration(file)
-        playerConfigs[uuid] = config
-        callback(config.getObject("data", PlayerData::class.java) ?: PlayerData(uuid))
+    override suspend fun loadPlayer(uuid: UUID): PlayerData {
+        if (playerConfigs[uuid] == null) {
+            val file = File(playerDataFolder, "$uuid.yml")
+            playerConfigs[uuid] = YamlConfiguration.loadConfiguration(file)
+        }
+        val config = playerConfigs[uuid]!!
+        return config.getObject("data", PlayerData::class.java) ?: PlayerData(uuid)
     }
 
-    override fun getPlayerData(uuid: UUID): PlayerData? {
-        return playerConfigs[uuid]?.getObject("data", PlayerData::class.java)
-    }
-
-    override fun createLikes(uuid: UUID, world: String, x: Int, y: Int, z: Int, callback: (String) -> Unit) {
+    override suspend fun createLikes(uuid: UUID, world: String, x: Int, y: Int, z: Int, callback: (String) -> Unit) {
         val id = likes.getKeys(false).size.toString()
         val config = likes.createSection(id)
         config.set("world", world)
@@ -67,7 +66,7 @@ class FlatFileStorage(private val logger: Logger, dataFolder: File): IStorage {
         callback(id)
     }
 
-    override fun like(uuid: UUID, id: String, callback: (Int) -> Unit) {
+    override suspend fun like(uuid: UUID, id: String, callback: (Int) -> Unit) {
         val config = likes.getConfigurationSection(id) ?: return
         val votes = config.getStringList("votes")
         if (!votes.contains(uuid.toString())) {
@@ -76,7 +75,7 @@ class FlatFileStorage(private val logger: Logger, dataFolder: File): IStorage {
         callback(votes.size)
     }
 
-    override fun unlike(uuid: UUID, id: String, callback: (Int) -> Unit) {
+    override suspend fun unlike(uuid: UUID, id: String, callback: (Int) -> Unit) {
         val config = likes.getConfigurationSection(id) ?: return
         val votes = config.getStringList("votes")
         if (votes.contains(uuid.toString())) {

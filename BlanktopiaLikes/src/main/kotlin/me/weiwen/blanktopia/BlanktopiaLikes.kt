@@ -68,16 +68,18 @@ class BlanktopiaLikes : JavaPlugin(), Listener {
             return
         }
 
-        BlanktopiaCore.INSTANCE.storage.storage?.createLikes(player.uniqueId, event.block.world.name, event.block.x, event.block.y, event.block.z) { id ->
-            val sign = event.block.state as? Sign ?: return@createLikes
-            sign.setLine(0, "${ChatColor.GOLD}[Likes]")
-            sign.setLine(2, "${ChatColor.GOLD}${ChatColor.BOLD}0 ⭐")
-            sign.setLine(3, "${ChatColor.GOLD}${player.displayName}${ChatColor.GOLD} : ${id}")
-            sign.isEditable = false
-            val container = sign.persistentDataContainer
-            container.set(NamespacedKey(this, "owner"), PersistentDataType.STRING, player.uniqueId.toString())
-            container.set(NamespacedKey(this, "id"), PersistentDataType.STRING, id)
-            sign.update()
+        suspend {
+            BlanktopiaCore.INSTANCE.storage.storage?.createLikes(player.uniqueId, event.block.world.name, event.block.x, event.block.y, event.block.z) { id ->
+                val sign = event.block.state as? Sign ?: return@createLikes
+                sign.setLine(0, "${ChatColor.GOLD}[Likes]")
+                sign.setLine(2, "${ChatColor.GOLD}${ChatColor.BOLD}0 ⭐")
+                sign.setLine(3, "${ChatColor.GOLD}${player.displayName}${ChatColor.GOLD} : ${id}")
+                sign.isEditable = false
+                val container = sign.persistentDataContainer
+                container.set(NamespacedKey(this, "owner"), PersistentDataType.STRING, player.uniqueId.toString())
+                container.set(NamespacedKey(this, "id"), PersistentDataType.STRING, id)
+                sign.update()
+            }
         }
     }
 
@@ -95,20 +97,24 @@ class BlanktopiaLikes : JavaPlugin(), Listener {
         }
 
         if (event.action == Action.RIGHT_CLICK_BLOCK) {
-            BlanktopiaCore.INSTANCE.storage.storage?.like(player.uniqueId, id) { likes ->
-                val owner = server.getOfflinePlayer(UUID.fromString(id)).name
-                logger.log(Level.INFO, "${player.name} has liked $owner : $id ($likes)")
-                sign.setLine(2, "${ChatColor.GOLD}${ChatColor.BOLD}$likes ⭐")
-                sign.update()
-                player.sendActionBar("${ChatColor.GOLD}You liked ${owner}'s build.")
+            suspend {
+                BlanktopiaCore.INSTANCE.storage.storage?.like(player.uniqueId, id) { likes ->
+                    val owner = server.getOfflinePlayer(UUID.fromString(id)).name
+                    logger.log(Level.INFO, "${player.name} has liked $owner : $id ($likes)")
+                    sign.setLine(2, "${ChatColor.GOLD}${ChatColor.BOLD}$likes ⭐")
+                    sign.update()
+                    player.sendActionBar("${ChatColor.GOLD}You liked ${owner}'s build.")
+                }
             }
         } else if (event.action == Action.LEFT_CLICK_BLOCK){
-            BlanktopiaCore.INSTANCE.storage.storage?.unlike(player.uniqueId, id) { likes ->
-                val owner = server.getOfflinePlayer(UUID.fromString(id)).name
-                logger.log(Level.INFO, "${player.name} has unliked $owner : $id ($likes)")
-                sign.setLine(2, "${ChatColor.GOLD}${ChatColor.BOLD}$likes ⭐")
-                sign.update()
-                player.sendActionBar("${ChatColor.GOLD}You unliked ${owner}'s build.")
+            suspend {
+                BlanktopiaCore.INSTANCE.storage.storage?.unlike(player.uniqueId, id) { likes ->
+                    val owner = server.getOfflinePlayer(UUID.fromString(id)).name
+                    logger.log(Level.INFO, "${player.name} has unliked $owner : $id ($likes)")
+                    sign.setLine(2, "${ChatColor.GOLD}${ChatColor.BOLD}$likes ⭐")
+                    sign.update()
+                    player.sendActionBar("${ChatColor.GOLD}You unliked ${owner}'s build.")
+                }
             }
         }
     }

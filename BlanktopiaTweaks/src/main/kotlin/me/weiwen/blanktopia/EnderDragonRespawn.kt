@@ -1,6 +1,8 @@
 package me.weiwen.blanktopia
 
 import io.papermc.lib.PaperLib
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import me.weiwen.blanktopia.storage.Storage
 import org.bukkit.entity.EntityType
 import org.bukkit.event.EventHandler
@@ -21,15 +23,15 @@ class EnderDragonRespawn(val plugin: JavaPlugin, val storage: Storage) : Module,
     @EventHandler
     fun onPlayerPortalEvent(event: PlayerPortalEvent) {
         if (event.cause != PlayerTeleportEvent.TeleportCause.END_PORTAL) return
-        val world = event.to?.world ?: return
+        val world = event.to.world ?: return
         val player = event.player
-        storage.storage?.loadPlayer(player.uniqueId) {
-            data ->
-            if (!data.hasSpawnedDragon) {
+        GlobalScope.launch {
+            val data = storage.storage?.loadPlayer(player.uniqueId)
+            if (data !== null && !data.hasSpawnedDragon) {
                 PaperLib.getChunkAtAsync(world, 0, 0, false).thenAccept {
                     val enderDragonBattle = world.enderDragonBattle ?: return@thenAccept
                     if (enderDragonBattle.hasBeenPreviouslyKilled()
-                        && enderDragonBattle.enderDragon == null
+                            && enderDragonBattle.enderDragon == null
                     ) {
                         val loc = enderDragonBattle.endPortalLocation ?: return@thenAccept
                         world.spawnEntity(loc.clone().add(3.5, 1.0, 0.5), EntityType.ENDER_CRYSTAL)
@@ -39,10 +41,9 @@ class EnderDragonRespawn(val plugin: JavaPlugin, val storage: Storage) : Module,
                         enderDragonBattle.initiateRespawn()
                     }
                 }
+                data.hasSpawnedDragon = true
+                storage.storage?.savePlayer(player.uniqueId, data)
             }
-            data.hasSpawnedDragon = true
-            storage.storage?.savePlayer(player.uniqueId, data)
         }
     }
 }
-

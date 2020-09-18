@@ -1,8 +1,10 @@
 dependencies {
-    api(kotlin("stdlib-jdk8", "1.3.72"))
-    api(kotlin("reflect", "1.3.72"))
+    api(kotlin("stdlib-jdk8", "1.4.0"))
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
+    api(kotlin("reflect", "1.4.0"))
     api("io.papermc:paperlib:1.0.2")
     api("de.themoep:minedown:1.6.1-SNAPSHOT")
+    api("com.okkero.skedule:skedule:1.2.6")
 
     implementation("com.zaxxer:HikariCP:3.4.5")
     implementation("org.mariadb.jdbc:mariadb-java-client:2.6.0")

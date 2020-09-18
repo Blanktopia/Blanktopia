@@ -24,61 +24,69 @@ import java.sql.ResultSet
 import java.sql.SQLException
 import java.util.logging.Level
 import java.util.logging.Logger
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 
 class MySQL(
-    private val logger: Logger,
-    hostname: String,
-    port: Int,
-    username: String?,
-    password: String?,
-    database: String,
-    useSSL: Boolean
+        private val logger: Logger,
+        hostname: String,
+        port: Int,
+        username: String?,
+        password: String?,
+        database: String,
+        useSSL: Boolean
 ) {
     private val hikariDataSource: HikariDataSource
-    fun executeUpdate(
-        query: String,
-        vararg objects: Any?,
-        callback: ((Int) -> Unit)? = null
-    ) {
-        try {
-            hikariDataSource.connection.use { connection ->
-                connection.prepareStatement(query).use { preparedStatement ->
-                    var current = 1
-                    for (`object` in objects) {
-                        preparedStatement.setObject(current, `object`)
-                        current++
+    suspend fun executeUpdate(
+            query: String,
+            vararg objects: Any?
+    ): Int {
+        return suspendCoroutine<Int> { cont ->
+            try {
+                hikariDataSource.connection.use { connection ->
+                    connection.prepareStatement(query).use { preparedStatement ->
+                        var current = 1
+                        for (`object` in objects) {
+                            preparedStatement.setObject(current, `object`)
+                            current++
+                        }
+                        val result = preparedStatement.executeUpdate()
+                        cont.resume(result)
                     }
-                    val result = preparedStatement.executeUpdate()
-                    callback?.let { it(result) }
                 }
+            } catch (e: SQLException) {
+                logger.log(Level.SEVERE, "Error while executing update method: $query")
+                e.printStackTrace()
+                cont.resumeWithException(e)
             }
-        } catch (e: SQLException) {
-            logger.log(Level.SEVERE, "Error while executing update method: $query")
-            e.printStackTrace()
         }
     }
 
-    fun executeQuery(
-        query: String,
-        vararg objects: Any?,
-        callback: (ResultSet) -> Unit
-    ) = try {
-        hikariDataSource.connection.use { connection ->
-            connection.prepareStatement(query).use { preparedStatement ->
-                var current = 1
-                for (`object` in objects) {
-                    preparedStatement.setObject(current, `object`)
-                    current++
+    suspend fun executeQuery(
+            query: String,
+            vararg objects: Any?
+    ): ResultSet {
+        return suspendCoroutine<ResultSet> { cont ->
+            try {
+                hikariDataSource.connection.use { connection ->
+                    connection.prepareStatement(query).use { preparedStatement ->
+                        var current = 1
+                        for (`object` in objects) {
+                            preparedStatement.setObject(current, `object`)
+                            current++
+                        }
+                        val resultSet: ResultSet = preparedStatement.executeQuery()
+                        cont.resume(resultSet)
+                    }
                 }
-                val resultSet: ResultSet = preparedStatement.executeQuery()
-                callback(resultSet)
-                resultSet.close()
+            } catch (e: SQLException) {
+                logger.log(Level.SEVERE, "Error while executing query method: $query")
+                e.printStackTrace()
+                cont.resumeWithException(e)
             }
         }
-    } catch (e: SQLException) {
-        logger.log(Level.SEVERE, "Error while executing query method: $query")
-        e.printStackTrace()
     }
 
     fun close() {

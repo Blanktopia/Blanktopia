@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.3.72" apply false
+    kotlin("jvm") version "1.4.0" apply false
     id("net.minecrell.plugin-yml.bukkit") apply false
     id("com.github.johnrengelman.shadow") apply false
 }
@@ -31,6 +31,10 @@ subprojects {
         maven { url = uri("http://repo.md-5.net/content/repositories/releases/") }
         maven { url = uri("https://ci.ender.zone/plugin/repository/everything/") }
         maven { url = uri("https://jitpack.io") }
+        maven {
+            name = "okkero"
+            url = uri("http://nexus.okkero.com/repository/maven-releases/")
+        }
     }
 
     val implementation by configurations
