@@ -1,12 +1,11 @@
 package me.weiwen.blanktopia.items
 
-import me.weiwen.blanktopia.*
+import me.weiwen.blanktopia.Node
 import me.weiwen.blanktopia.recipes.*
+import me.weiwen.blanktopia.tryGet
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
-import org.bukkit.block.Campfire
 import org.bukkit.inventory.*
-import java.util.logging.Level
 
 fun parseItem(node: Node): HybridItem? {
     return when (node.tryGet<String?>("kind", null)) {

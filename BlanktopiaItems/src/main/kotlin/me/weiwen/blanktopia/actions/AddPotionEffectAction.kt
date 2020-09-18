@@ -1,6 +1,5 @@
 package me.weiwen.blanktopia.actions
 
-import me.weiwen.blanktopia.addPermanentPotionEffects
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType

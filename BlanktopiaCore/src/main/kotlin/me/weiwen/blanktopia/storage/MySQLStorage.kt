@@ -4,8 +4,6 @@ import me.weiwen.blanktopia.sql.MySQL
 import java.sql.SQLException
 import java.util.*
 import java.util.logging.Logger
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class MySQLStorage(private val logger: Logger, private val hostname: String, private val port: Int, private val username: String, private val password: String, private val database: String, private val useSSL: Boolean): IStorage {
     private lateinit var conn: MySQL

@@ -5,9 +5,7 @@ import me.weiwen.blanktopia.canBuildAt
 import org.bukkit.Bukkit
 import org.bukkit.FluidCollisionMode
 import org.bukkit.Material
-import org.bukkit.World
 import org.bukkit.block.data.Levelled
-import org.bukkit.block.data.Waterlogged
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 

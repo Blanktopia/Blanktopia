@@ -1,8 +1,6 @@
 package me.weiwen.blanktopia.conditions
 
 import me.weiwen.blanktopia.canBuildAt
-import me.weiwen.blanktopia.hasBuildTrust
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 

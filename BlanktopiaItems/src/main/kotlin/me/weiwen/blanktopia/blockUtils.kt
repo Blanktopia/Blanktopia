@@ -3,7 +3,6 @@ package me.weiwen.blanktopia
 import org.bukkit.Material
 import org.bukkit.Material.*
 import org.bukkit.block.Block
-import org.bukkit.inventory.ItemStack
 
 
 fun Material.canMineBlock(what: Block): Boolean {

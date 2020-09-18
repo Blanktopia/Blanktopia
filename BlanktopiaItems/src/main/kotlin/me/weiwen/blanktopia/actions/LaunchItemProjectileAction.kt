@@ -3,12 +3,9 @@ package me.weiwen.blanktopia.actions
 import me.weiwen.blanktopia.BlanktopiaCore
 import me.weiwen.blanktopia.pitch
 import me.weiwen.blanktopia.projectile.ItemProjectile
-import net.minecraft.server.v1_16_R1.Items.it
-import org.bukkit.FluidCollisionMode
 import org.bukkit.Material
-import org.bukkit.entity.*
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import java.util.function.Predicate
 
 class LaunchItemProjectileAction(
         material: Material,

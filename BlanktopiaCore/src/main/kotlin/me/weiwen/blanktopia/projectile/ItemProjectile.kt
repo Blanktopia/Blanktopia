@@ -10,7 +10,6 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
 import java.util.function.Predicate
-import java.util.logging.Level
 import kotlin.math.cos
 
 class ItemProjectile

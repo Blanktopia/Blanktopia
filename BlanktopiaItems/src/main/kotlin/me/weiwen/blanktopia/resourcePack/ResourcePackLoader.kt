@@ -1,7 +1,6 @@
 package me.weiwen.blanktopia.kits
 
 import me.weiwen.blanktopia.Module
-import me.weiwen.blanktopia.items.CustomItems
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

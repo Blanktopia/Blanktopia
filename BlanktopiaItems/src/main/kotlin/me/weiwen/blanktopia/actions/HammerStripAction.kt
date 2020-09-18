@@ -8,7 +8,6 @@ import org.bukkit.Sound
 import org.bukkit.SoundCategory
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
-import org.bukkit.block.data.BlockData
 import org.bukkit.block.data.Orientable
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack

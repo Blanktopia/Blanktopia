@@ -4,7 +4,7 @@ import me.libraryaddict.disguise.disguisetypes.Disguise
 import me.weiwen.blanktopia.pitch
 import org.bukkit.Bukkit.createBlockData
 import org.bukkit.Material
-import org.bukkit.entity.*
+import org.bukkit.entity.Player
 
 class LaunchFallingBlockAction(private val material: Material, private val canDropItem: Boolean, private val canHurtEntities: Boolean, private val magnitude: Double, private val pitch: Double, private val disguise: Disguise?, private val isPitchRelative: Boolean = true) : Action {
 
