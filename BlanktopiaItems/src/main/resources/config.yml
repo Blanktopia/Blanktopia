@@ -1,3 +1,6 @@
+resource-pack-url: 'http://files.blanktopia.com/Blanktopia-6c06454f9b68ca6ce3fa692a5863edbb27782f24.zip'
+resource-pack-hash: '6c06454f9b68ca6ce3fa692a5863edbb27782f24'
+
 kits:
   starter:
     - custom-item: guidebook
@@ -17,14 +20,149 @@ kits:
       enchantments:
         soulbound: 1
         unbreaking: 2
+    - custom-item: cotton-candy-pink
+      amount: 16
+    - material: golden_shovel
+      name: §rClaim Shovel
+      enchantments:
+        soulbound: 1
     - material: shield
+      slot: OFF_HAND
       enchantments:
         soulbound: 1
         unbreaking: 2
-    - material: bread
-      amount: 16
-      enchantments:
-        soulbound: 1
+
+recipes:
+  cotton-candy-pink:
+    type: shaped
+    result:
+      kind: custom
+      type: cotton-candy-pink
+    shape: 
+      - ' SS'
+      - ' SS'
+      - 'Z  '
+    ingredients:
+      S:
+        material: SUGAR
+      Z:
+        material: STICK
+
+  apple-cider:
+    type: shapeless
+    result:
+      kind: custom
+      type: apple-cider
+    ingredients:
+      - material: APPLE
+      - material: GLASS_BOTTLE
+      - material: SUGAR
+
+  apple-pie:
+    type: shapeless
+    result:
+      kind: custom
+      type: apple-pie
+    ingredients:
+      - material: APPLE
+      - material: SUGAR
+      - material: EGG
+
+  sunny-side-up-furnace:
+    type: furnace
+    result:
+      kind: custom
+      type: sunny-side-up
+    input:
+      material: EGG
+
+  sunny-side-up-smoking:
+    type: smoking
+    result:
+      kind: custom
+      type: sunny-side-up
+    input:
+      material: EGG
+
+  sunny-side-up-campfire:
+    type: campfire
+    result:
+      kind: custom
+      type: sunny-side-up
+    input:
+      material: EGG
+
+  cheese:
+    type: shapeless
+    result:
+      kind: custom
+      type: cheese
+    ingredients:
+      - material: MILK_BUCKET
+      - kind: custom
+        type: vinegar
+
+  vinegar:
+    type: shapeless
+    result:
+      kind: custom
+      type: vinegar
+    ingredients:
+      - material: GLASS_BOTTLE
+      - material: WHEAT
+
+  noodles:
+    type: shapeless
+    result:
+      kind: custom
+      type: noodles
+    ingredients:
+      - material: WHEAT
+      - material: WHEAT
+
+  mac-and-cheese:
+    type: shapeless
+    result:
+      kind: custom
+      type: mac-and-cheese
+    ingredients:
+      - kind: custom
+        type: noodles
+      - kind: custom
+        type: cheese
+      - material: BOWL
+
+  chicken-noodle-soup:
+    type: shapeless
+    result:
+      kind: custom
+      type: chicken-noodle-soup
+    ingredients:
+      - kind: custom
+        type: noodles
+      - material: COOKED_CHICKEN
+      - material: BOWL
+
+  pasta:
+    type: shapeless
+    result:
+      kind: custom
+      type: pasta
+    ingredients:
+      - kind: custom
+        type: noodles
+      - material: BOWL
+
+  squid-ink-pasta:
+    type: shapeless
+    result:
+      kind: custom
+      type: squid-ink-pasta
+    ingredients:
+      - kind: custom
+        type: noodles
+      - material: INK_SAC
+      - material: BOWL
 
 items:
   # Starter
@@ -35,19 +173,227 @@ items:
       soulbound: 1
     triggers:
       - trigger: right-click
+        force: true
         actions:
           - action: player-command
             command: help
 
+  throwing-axe:
+    material: IRON_AXE
+    name: &fThrowing Axe
+    triggers:
+      - trigger: right-click
+        actions:
+          - action: launch-item-projectile
+            material: IRON_AXE
+            magnitude: 1.5
+            pitch: 0.0
+            gravity: 0.0
+            drag: 0.0
+
+  # Food
+
+  cotton-candy-pink:
+    material: COOKIE
+    custom-model-data: 1
+    name: §fCotton Candy
+    triggers:
+      - trigger: consume
+        cancel: false
+        actions:
+          - action: add-potion-effect
+            type: speed
+            ticks: 1200
+            level: 1
+          - action: feed
+            amount: 3
+            saturation: 5.6
+
+  cotton-candy-blue:
+    material: COOKIE
+    custom-model-data: 2
+    name: §fCotton Candy
+    triggers:
+      - trigger: consume
+        cancel: false
+        actions:
+          - action: add-potion-effect
+            type: speed
+            ticks: 1200
+            level: 1
+          - action: feed
+            amount: 3
+            saturation: 5.6
+
+  sunny-side-up:
+    material: COOKIE
+    custom-model-data: 3
+    name: §fSunny-Side Up
+    triggers:
+      - trigger: consume
+        cancel: false
+        actions:
+          - action: add-potion-effect
+            type: damage_resistance
+            ticks: 1200
+            level: 1
+          - action: feed
+            amount: 3
+            saturation: 5.6
+
+  cheese:
+    material: COOKIE
+    custom-model-data: 4
+    name: §fCheese
+    triggers:
+      - trigger: consume
+        cancel: false
+        actions:
+          - action: add-potion-effect
+            type: damage_resistance
+            ticks: 1200
+            level: 1
+          - action: feed
+            amount: 3
+            saturation: 5.6
+
+  noodles:
+    material: COOKIE
+    custom-model-data: 6
+    name: §fNoodles
+    triggers:
+      - trigger: consume
+        cancel: false
+        actions:
+          - action: add-potion-effect
+            type: damage_resistance
+            ticks: 1200
+            level: 1
+          - action: feed
+            amount: 3
+            saturation: 5.6
+
+  pasta:
+    material: MUSHROOM_STEW
+    custom-model-data: 1
+    name: §fPasta
+    triggers:
+      - trigger: consume
+        cancel: false
+        actions:
+          - action: add-potion-effect
+            type: damage_resistance
+            ticks: 1200
+            level: 1
+          - action: feed
+            amount: 3
+            saturation: 5.6
+
+  squid-ink-pasta:
+    material: MUSHROOM_STEW
+    custom-model-data: 2
+    name: §fSquid Ink Pasta
+    triggers:
+      - trigger: consume
+        cancel: false
+        actions:
+          - action: add-potion-effect
+            type: damage_resistance
+            ticks: 1200
+            level: 1
+          - action: feed
+            amount: 3
+            saturation: 5.6
+
+  chicken-noodle-soup:
+    material: MUSHROOM_STEW
+    custom-model-data: 3
+    name: §fChicken Noodle Soup
+    triggers:
+      - trigger: consume
+        cancel: false
+        actions:
+          - action: add-potion-effect
+            type: damage_resistance
+            ticks: 1200
+            level: 1
+          - action: feed
+            amount: 3
+            saturation: 5.6
+
+  mac-and-cheese:
+    material: MUSHROOM_STEW
+    custom-model-data: 4
+    name: §fMac and Cheese
+    triggers:
+      - trigger: consume
+        cancel: false
+        actions:
+          - action: add-potion-effect
+            type: damage_resistance
+            ticks: 1200
+            level: 1
+          - action: feed
+            amount: 3
+            saturation: 5.6
+
+  apple-pie:
+    material: PUMPKIN_PIE
+    custom-model-data: 1
+    name: §fApple Pie
+    triggers:
+      - trigger: consume
+        cancel: false
+        actions:
+          - action: add-potion-effect
+            type: damage_resistance
+            ticks: 1200
+            level: 1
+          - action: feed
+            amount: 3
+            saturation: 5.6
+
+  apple-cider:
+    material: POTION
+    custom-model-data: 1
+    name: §fApple Cider
+    triggers:
+      - trigger: consume
+        cancel: false
+        actions:
+          - action: add-potion-effect
+            type: increase_damage
+            ticks: 6000
+            level: 2
+          - action: add-potion-effect
+            type: slow
+            ticks: 6000
+            level: 0
+
+  vinegar:
+    material: POTION
+    custom-model-data: 2
+    name: §fVinegar
+    triggers:
+      - trigger: consume
+        cancel: false
+        actions:
+          - action: add-potion-effect
+            type: poison
+            ticks: 200
+            level: 2
+
   # Consumables
-  exp-coupon:
+  
+  3x-exp-coupon:
     material: PAPER
-    name: §b2x EXP Coupon
+    custom-model-data: 1
+    name: §b3x EXP Coupon
     lore:
       - '§8-------------------------'
       - ''
       - '§bRight-click§f to receive a'
-      - '§b2x EXP§f buff for §b15 minutes§f.'
+      - '§b3x EXP§f buff for §b5 minutes§f.'
       - ''
       - '§8-------------------------'
     enchantments:
@@ -57,18 +403,19 @@ items:
         remove-item: true
         actions:
           - action: experience-boost
-            multiplier: 2.0
-            ticks: 18000 # 15 minutes
+            multiplier: 3.0
+            ticks: 6000 # 5 minutes
           - action: message
-            message: §6Received §b2x EXP§6 buff for 15 minutes.
+            message: §6Received §b3x EXP§6 buff for 15 minutes.
           - action: play-sound
             sound: ENTITY_EXPERIENCE_ORB_PICKUP
           - action: play-sound
             sound: BLOCK_ENCHANTMENT_TABLE_USE
 
-  exp-coupon-server:
+  2x-exp-coupon-server:
     material: PAPER
     name: §b2x EXP Coupon (Server-wide)
+    custom-model-data: 1
     lore:
       - '§8-------------------------'
       - ''
@@ -95,17 +442,15 @@ items:
               - action: play-sound
                 sound: BLOCK_ENCHANTMENT_TABLE_USE
 
-  food-coupon-server:
-    material: FLOWER_BANNER_PATTERN
-    flags:
-      hide-attributes: true
-    name: §bFood Coupon (Server-wide)
+  builders-crate-coupon-server:
+    material: PAPER
+    name: §6BUILDER's Crate Coupon
+    custom-model-data: 4
     lore:
       - '§8-------------------------'
       - ''
-      - '§bRight-click§f to grant a §b2x EXP§f'
-      - '§fbuff to all online §fplayers'
-      - '§ffor §b15 minutes§f.'
+      - '§bRight-click§f to give all online'
+      - '§fplayers a [BUILDER''s Crate Key](gold).'
       - ''
       - '§8-------------------------'
     enchantments:
@@ -115,17 +460,133 @@ items:
         remove-item: true
         actions:
           - action: console-command
-            command: broadcast §6%p§6 has sated everyone's hunger.
+            command: broadcast §6%p§6 has given everyone a BUILDER's Crate Key.
+          - action: console-command
+            command: crates givekey * builder
           - action: all-players
             actions:
-              - action: sudo-command
-                command: feed
               - action: play-sound
-                sound: ENTITY_PLAYER_BURP
+                sound: ENTITY_EXPERIENCE_ORB_PICKUP
               - action: play-sound
-                sound: ENTITY_PLAYER_EAT
+                sound: BLOCK_ENCHANTMENT_TABLE_USE
 
-  # Disguises
+  miners-crate-coupon-server:
+    material: PAPER
+    name: §6MINER's Crate Coupon
+    custom-model-data: 4
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§bRight-click§f to give all online'
+      - '§fplayers a [MINER''s Crate Key](gold).'
+      - ''
+      - '§8-------------------------'
+    enchantments:
+      final: 1
+    triggers:
+      - trigger: right-click
+        remove-item: true
+        actions:
+          - action: console-command
+            command: broadcast §6%p§6 has given everyone a MINER's Crate Key.
+          - action: console-command
+            command: crates givekey * miner
+          - action: all-players
+            actions:
+              - action: play-sound
+                sound: ENTITY_EXPERIENCE_ORB_PICKUP
+              - action: play-sound
+                sound: BLOCK_ENCHANTMENT_TABLE_USE
+
+  infinity-crate-coupon-server:
+    material: PAPER
+    name: §6INFINITY Crate Coupon
+    custom-model-data: 4
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§bRight-click§f to give all online'
+      - '§fplayers a [INFINITY Crate Key](gold).'
+      - ''
+      - '§8-------------------------'
+    enchantments:
+      final: 1
+    triggers:
+      - trigger: right-click
+        remove-item: true
+        actions:
+          - action: console-command
+            command: broadcast §6%p§6 has given everyone a INFINITY Crate Key.
+          - action: console-command
+            command: crates givekey * infinity
+          - action: all-players
+            actions:
+              - action: play-sound
+                sound: ENTITY_EXPERIENCE_ORB_PICKUP
+              - action: play-sound
+                sound: BLOCK_ENCHANTMENT_TABLE_USE
+
+
+  health-coupon-server:
+    material: PAPER
+    custom-model-data: 2
+    name: §bHealth Coupon (Server-wide)
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§bRight-click§f to heal all online'
+      - '§f§fplayers.'
+      - ''
+      - '§8-------------------------'
+    enchantments:
+      final: 1
+    triggers:
+      - trigger: right-click
+        remove-item: true
+        actions:
+          - action: console-command
+            command: broadcast §6%p§6 has healed everyone.
+          - action: all-players
+            actions:
+              - action: add-potion-effect
+                type: regeneration
+                ticks: 60
+                level: 5
+              - action: play-sound
+                sound: ENTITY_EXPERIENCE_ORB_PICKUP
+              - action: play-sound
+                sound: BLOCK_ENCHANTMENT_TABLE_USE
+
+  food-coupon-server:
+    material: PAPER
+    custom-model-data: 3
+    name: §bFood Coupon (Server-wide)
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§bRight-click§f to feed all online'
+      - '§fplayers.'
+      - ''
+      - '§8-------------------------'
+    enchantments:
+      final: 1
+    triggers:
+      - trigger: right-click
+        remove-item: true
+        actions:
+          - action: console-command
+            command: broadcast §6%p§6 has refilled everyone's hunger.
+          - action: all-players
+            actions:
+              - action: add-potion-effect
+                type: saturation
+                ticks: 60
+                level: 0
+              - action: play-sound
+                sound: ENTITY_EXPERIENCE_ORB_PICKUP
+              - action: play-sound
+                sound: BLOCK_ENCHANTMENT_TABLE_USE
+
 
   # Builder's Crate
 
@@ -147,8 +608,6 @@ items:
     triggers:
       - trigger: equip-armor
         actions:
-          - action: action-bar
-            message: "§6You feel like a hummingbird."
           - action: fly-in-claims
             can-fly: true
       - trigger: unequip-armor
@@ -158,6 +617,7 @@ items:
 
   builders-wand:
     material: BLAZE_ROD
+    custom-model-data: 1
     name: '§dBuilder''s Wand§5 ⭐'
     lore:
       - '§8-------------------------'
@@ -174,12 +634,14 @@ items:
       final: 1
     triggers:
       - trigger: right-click-block
+        force: true
         actions:
           - action: builders-wand
             range: 1
 
   paint-brush:
     material: WHEAT
+    custom-model-data: 1
     name: '§dPaint Brush§5 ⭐'
     lore:
       - '§7Paint: NONE'
@@ -204,6 +666,7 @@ items:
         actions:
           - action: paint-brush-pick
       - trigger: right-click-block
+        force: true
         actions:
           - action: paint-brush-paint
       - trigger: right-click-entity
@@ -211,7 +674,8 @@ items:
 
   wrench:
     material: BONE
-    name: '§r§x§a§4§6§b§f§fWrench ⇄'
+    custom-model-data: 1
+    name: '§dWrench §5 ⭐'
     lore:
       - '§8-------------------------'
       - ''
@@ -220,12 +684,13 @@ items:
       - '§finvisible.'
       - ''
       - '§8-------------------------'
-      - '§6MINER''s Crate Item'
+      - '§6BUILDER''s Crate Item'
     enchantments:
       final: 1
       soulbound: 1
     triggers:
       - trigger: right-click-block
+        force: true
         conditions:
           - condition: not
             not:
@@ -233,6 +698,7 @@ items:
         actions:
           - action: rotate
       - trigger: right-click-block
+        force: true
         conditions:
           - condition: is-sneaking
         actions:
@@ -248,10 +714,10 @@ items:
     lore:
       - '§8-------------------------'
       - ''
-      - '§bShift-right-click§f to set a'
+      - '§bLeft-click§f to set a'
       - '§fpoint to measure from.'
-      - '§bRight-click§f to measure'
-      - '§fdistances between two blocks'
+      - '§bRight-click§f to measure the'
+      - '§flength between two blocks.'
       - ''
       - '§8-------------------------'
       - '§6BUILDER''s Crate Item'
@@ -259,23 +725,19 @@ items:
       final: 1
       soulbound: 1
     triggers:
-      - trigger: right-click-block
-        conditions:
-          - condition: not
-            not:
-              condition: is-sneaking
-        actions:
-          - action: measure-distance
-      - trigger: right-click-block
-        conditions:
-          - condition: is-sneaking
+      - trigger: left-click-block
         actions:
           - action: measure-distance
             is-origin: true
+      - trigger: right-click-block
+        force: true
+        actions:
+          - action: measure-distance
 
   lumberjack:
     material: IRON_AXE
-    name: '§6Lumberjack ⛏'
+    custom-model-data: 1
+    name: '§6Lumberjack§c ⛏'
     lore:
       - '§8-------------------------'
       - ''
@@ -293,15 +755,28 @@ items:
         actions:
           - action: hammer
             range: 1
+      - trigger: right-click
+        actions:
+          - action: hammer-strip
+            range: 1
 
   randomizer:
     material: POPPED_CHORUS_FRUIT
-    name: Randomizer
+    name: '§r§x§a§4§6§b§f§fRandomizer ?'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§bRight-click§f to place a random'
+      - '§fblock from your hot bar.'
+      - ''
+      - '§8-------------------------'
+      - '§6BUILDER''s Crate Item'
     enchantments:
       final: 1
       soulbound: 1
     triggers:
       - trigger: right-click-block
+        force: true
         actions:
           - action: place-random-block
 
@@ -330,6 +805,7 @@ items:
         actions:
           - action: undisguise
       - trigger: right-click-block
+        force: true
         actions: []
 
   disguise-chicken:
@@ -357,6 +833,7 @@ items:
         actions:
           - action: undisguise
       - trigger: right-click-block
+        force: true
         actions: []
   # Engineer's Crate
 
@@ -378,14 +855,14 @@ items:
       - trigger: sneak
         cancel: false
         actions:
-          - action: add-potion-effects
+          - action: add-permanent-potion-effects
             key: rocket-boots
             effects:
               jump: 5
       - trigger: unsneak
         cancel: false
         actions:
-          - action: remove-potion-effects
+          - action: remove-permanent-potion-effects
             key: rocket-boots
       - trigger: jump
         cancel: false
@@ -451,7 +928,7 @@ items:
       - '§fUpside down fish bowl.'
       - ''
       - '§8-------------------------'
-      - '§6MINER''s Crate Item'
+      - '§6INFINITY Crate Item'
     enchantments:
       soulbound: 1
       final: 1
@@ -481,13 +958,13 @@ items:
     triggers:
       - trigger: equip-armor
         actions:
-          - action: add-potion-effects
+          - action: add-permanent-potion-effects
             key: sandys-helmet
             effects:
               water_breathing: 0
       - trigger: unequip-armor
         actions:
-          - action: remove-potion-effects
+          - action: remove-permanent-potion-effects
             key: sandys-helmet
 
   hellfire:
@@ -506,22 +983,9 @@ items:
       infinity: 1
     triggers:
       - trigger: right-click
+        force: true
         actions:
           - action: lava-bucket
-
-  multitool:
-    material: NETHERITE_PICKAXE
-    name: Multitool
-    triggers:
-      - trigger: right-click
-        condition: is-sneaking
-        actions:
-          - action: cycle-tool
-            materials:
-              - NETHERITE_PICKAXE
-              - NETHERITE_AXE
-              - NETHERITE_SHOVEL
-              - NETHERITE_HOE
 
   # Miner's Crate
 
@@ -532,7 +996,8 @@ items:
       - '§7Fire Resistance'
       - '§8-------------------------'
       - ''
-      - '§fGrants immunity to fire and lava.'
+      - '§fGrants immunity to fire and'
+      - '§flava.'
       - ''
       - '§8-------------------------'
       - '§6MINER''s Crate Item'
@@ -557,17 +1022,18 @@ items:
     triggers:
       - trigger: equip-armor
         actions:
-          - action: add-potion-effects
+          - action: add-permanent-potion-effects
             key: ras-protection
             effects:
               fire_resistance: 0
       - trigger: unequip-armor
         actions:
-          - action: remove-potion-effects
+          - action: remove-permanent-potion-effects
             key: ras-protection
 
   wrecking-ball:
     material: IRON_PICKAXE
+    custom-model-data: 1
     name: '§6Wrecking Ball§c ⛏'
     lore:
       - '§8-------------------------'
@@ -586,20 +1052,73 @@ items:
           - action: hammer
             range: 1
 
-  condenser:
+  pick-shovel:
+    material: NETHERITE_SHOVEL
+    name: '§x§7§3§9§2§d§bPick Shovel ⛏'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§bRight-click§f to switch between'
+      - '§fa §bPickaxe§f and §bShovel§f.'
+      - ''
+      - '§8-------------------------'
+      - '§6MINER''s Crate Item'
+    enchantments:
+      soulbound: 1
+    triggers:
+      - trigger: left-click-block
+        cancel: false
+        actions:
+          - action: cycle-tool
+            materials:
+              - NETHERITE_PICKAXE
+              - NETHERITE_SHOVEL
+      - trigger: right-click
+        cancel: false
+        actions:
+          - action: cycle-tool
+            materials:
+              - NETHERITE_PICKAXE
+              - NETHERITE_SHOVEL
+
+  portable-ore-compactor:
     material: NETHER_STAR
-    name: Condenser
+    name: '§x§3§3§d§8§f§2Portable Ore Compactor ⏹'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§bRight-click§f from your'
+      - '§finventory to compact items'
+      - '§finto blocks.'
+      - ''
+      - '§8-------------------------'
+      - '§6MINER''s Crate Item'
     enchantments:
       final: 1
       soulbound: 1
     triggers:
+      - trigger: right-click-inventory
+        actions:
+          - action: sudo-command
+            permissions:
+              - essentials.condense
+            command: condense
+          - action: play-sound
+            sound: BLOCK_BEACON_POWER_SELECT
+            pitch: 2.0
       - trigger: right-click
         actions:
           - action: sudo-command
+            permissions:
+              - essentials.condense
             command: condense
+          - action: play-sound
+            sound: BLOCK_BEACON_POWER_SELECT
+            pitch: 2.0
 
   lumos:
     material: TORCH
+    custom-model-data: 1
     name: '§fLumos§e ☀'
     lore:
       - '§8-------------------------'
@@ -608,24 +1127,43 @@ items:
       - '§fagain!'
       - ''
       - '§8-------------------------'
-      - '§6BUILDER''s Crate Item'
+      - '§6INFINITY Crate Item'
     enchantments:
       soulbound: 1
       final: 1
       infinity: 1
     triggers:
+            #      - trigger: right-click-air
+            #        conditions:
+            #          - condition: item-cooldown
+            #          - condition: can-build
+            #            material: TORCH
+            #        actions:
+                #          - action: launch-falling-block
+                #            material: TORCH
+                #            can-drop-item: false
+                #            can-hurt-entities: false
+                #            magnitude: 1.5
+                #            pitch: 0.0
+                #          - action: item-cooldown
+                #            ticks: 5
+                #          - action: play-sound
+                #            sound: BLOCK_WOOD_PLACE
+                #            pitch: 0.8
       - trigger: right-click-block
+        force: true
         conditions:
           - condition: item-cooldown
         actions:
           - action: place-block
             material: torch
           - action: item-cooldown
-            ticks: 10
+            ticks: 5
 
 
   excavator:
     material: IRON_SHOVEL
+    custom-model-data: 1
     name: '§6Excavator§c ⛏'
     lore:
       - '§8-------------------------'
@@ -644,33 +1182,61 @@ items:
           - action: hammer
             range: 1
 
-  silk-pick:
+  switch-pick:
     material: NETHERITE_PICKAXE
-    name: Silk Pick
+    name: '§x§d§7§4§4§8§1Switch Pick ⛏'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§bRight-click§f to toggle'
+      - '§fthe §bSilk Touch§f enchantment.'
+      - ''
+      - '§8-------------------------'
+      - '§6MINER''s Crate Item'
     enchantments:
-      final: 1
-      soulbound: 1
       silk_touch: 1
+      soulbound: 1
     triggers:
       - trigger: right-click
-        conditions:
-          - condition: is-sneaking
         actions:
           - action: toggle-enchantment
             name: Silk Touch
             enchantment: silk_touch
             level: 1
 
-  trashcan:
-    material: SHULKER_SHELL
-    name: Trashcan
+  portable-trash-can:
+    material: STRIPPED_WARPED_HYPHAE
+    name: '§x§3§3§8§7§6§dPortable Trash Can ⏹'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§bRight-click§f from your'
+      - '§finventory to open a'
+      - '§fportable trash can.'
+      - ''
+      - '§8-------------------------'
+      - '§6MINER''s Crate Item'
     enchantments:
       final: 1
       soulbound: 1
     triggers:
+      - trigger: right-click-inventory
+        actions:
+          - action: play-sound
+            sound: BLOCK_SHULKER_BOX_OPEN
+            pitch: 0.8
+          - action: sudo-command
+            permissions:
+              - essentials.disposal
+            command: disposal
       - trigger: right-click
         actions:
+          - action: play-sound
+            sound: BLOCK_SHULKER_BOX_OPEN
+            pitch: 0.8
           - action: sudo-command
+            permissions:
+              - essentials.disposal
             command: disposal
 
   disguise-zombie:
@@ -697,6 +1263,7 @@ items:
         actions:
           - action: undisguise
       - trigger: right-click-block
+        force: true
         actions: []
 
   disguise-creeper:
@@ -723,6 +1290,7 @@ items:
         actions:
           - action: undisguise
       - trigger: right-click-block
+        force: true
         actions: []
 
   # Infinity Crate
@@ -743,10 +1311,18 @@ items:
       infinity: 1
     triggers:
       - trigger: right-click
+        force: true
         conditions:
           - condition: item-cooldown
         actions:
-          - action: throw-ender-pearl
+          - action: play-sound
+            sound: ENTITY_ENDER_PEARL_THROW
+            pitch: 0.5
+            volume: 0.5
+          - action: launch-entity
+            type: ENDER_PEARL
+            magnitude: 1.5
+            pitch: 0.0
           - action: item-cooldown
             ticks: 20
 
@@ -756,7 +1332,7 @@ items:
     lore:
       - '§8-------------------------'
       - ''
-      - '§fBig bucket!'
+      - '§f"Water from the Nile."'
       - ''
       - '§8-------------------------'
       - '§6INFINITY Crate Item'
@@ -766,6 +1342,7 @@ items:
       infinity: 1
     triggers:
       - trigger: right-click
+        force: true
         actions:
           - action: water-bucket
 
@@ -774,10 +1351,15 @@ items:
     name: '§6Recurve Bow'
     lore:
       - '§8-------------------------'
+      - ''
+      - '§fNever repair your bow again!'
+      - ''
+      - '§8-------------------------'
       - '§6INFINITY Crate Item'
     enchantments:
       infinity: 1
       mending: 1
+      soulbound: 1
 
   doraemons-pocket:
     material: ENDER_CHEST
@@ -795,6 +1377,7 @@ items:
       soulbound: 1
     triggers:
       - trigger: right-click-block
+        force: true
         actions: []
 
   disguise-enderman:
@@ -822,6 +1405,7 @@ items:
         actions:
           - action: undisguise
       - trigger: right-click-block
+        force: true
         actions: []
 
   disguise-pig:
@@ -849,4 +1433,5 @@ items:
         actions:
           - action: undisguise
       - trigger: right-click-block
+        force: true
         actions: []
