@@ -5,13 +5,15 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class ProjectileManager(private val plugin: JavaPlugin) : Module {
     val projectiles = mutableSetOf<Projectile>()
+    var task: Int? = null
 
     override fun enable() {
-        plugin.server.scheduler.scheduleSyncRepeatingTask(plugin, ::tick, 1, 1)
+        task = plugin.server.scheduler.scheduleSyncRepeatingTask(plugin, ::tick, 1, 1)
         reload()
     }
 
     override fun disable() {
+        task?.let { plugin.server.scheduler.cancelTask(it) }
     }
 
     override fun reload() {
