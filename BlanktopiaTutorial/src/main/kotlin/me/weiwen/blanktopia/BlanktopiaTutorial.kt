@@ -16,7 +16,6 @@ import java.util.logging.Level
 
 suspend fun showTutorial(player: Player, key: String): Boolean {
     val data = BlanktopiaCore.INSTANCE.storage.storage?.loadPlayer(player.uniqueId) ?: return false
-    BlanktopiaTutorial.INSTANCE.logger.log(Level.INFO, "key: ${data.seenTutorials.contains(key)}")
     if (data.seenTutorials.contains(key)) return false
     BlanktopiaTutorial.INSTANCE.server.scheduler.schedule(BlanktopiaTutorial.INSTANCE) {
         if (player.performCommand("help tutorial $key")) {
@@ -58,10 +57,7 @@ class BlanktopiaTutorial : JavaPlugin(), Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onBlockPlace(event: BlockPlaceEvent) {
         GlobalScope.launch {
-            if (showTutorial(event.player, "build")) {
-            } else if (event.blockPlaced.type == Material.TNT) {
-                showTutorial(event.player, "tnt")
-            }
+            showTutorial(event.player, "build")
         }
     }
 

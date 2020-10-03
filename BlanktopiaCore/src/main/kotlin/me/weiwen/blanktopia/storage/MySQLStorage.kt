@@ -31,12 +31,12 @@ class MySQLStorage(private val logger: Logger, private val hostname: String, pri
         conn.executeUpdate("CREATE TABLE IF NOT EXISTS migrations (" +
                                    "version INT PRIMARY KEY)")
         val rs = conn.executeQuery("SELECT version FROM migrations")
-        if (rs.isAfterLast) {
+        val version = if (!rs.next()) {
             conn.executeUpdate("INSERT INTO migrations VALUES (0)")
+            0
         } else {
-            rs.next()
+            rs.getInt("version")
         }
-        val version = rs.getInt("version")
         rs.close()
 
         if (version < 1) {
@@ -54,20 +54,20 @@ class MySQLStorage(private val logger: Logger, private val hostname: String, pri
                                        "id INT NOT NULL, " +
                                        "uuid VARCHAR(36) NOT NULL, " +
                                        "PRIMARY KEY (id, uuid))")
-            conn.executeUpdate("UPDATE migrations SET version = 0")
+            conn.executeUpdate("UPDATE migrations SET version = 1")
         }
 
         if (version < 2) {
             conn.executeUpdate("ALTER TABLE players " +
-                                       "ADD seen_tutorials SET('break', 'place', 'crafting', 'enderchest', 'tnt')")
-            conn.executeUpdate("UPDATE migrations SET version = 1")
+                                       "ADD seen_tutorials TEXT NOT NULL DEFAULT ''")
+            conn.executeUpdate("UPDATE migrations SET version = 2")
         }
     }
 
     override suspend fun savePlayer(uuid: UUID, data: PlayerData) {
         conn.executeUpdate("INSERT INTO players (uuid, has_spawned_dragon, seen_tutorials) " +
                 "VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE " +
-                "has_spawned_dragon = ? " +
+                "has_spawned_dragon = ?," +
                 "seen_tutorials = ?",
             uuid.toString(),
             data.hasSpawnedDragon,
