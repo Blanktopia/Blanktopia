@@ -5,6 +5,7 @@ import me.weiwen.blanktopia.*
 import me.weiwen.blanktopia.conditions.parseCondition
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
+import org.bukkit.block.Biome
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.enchantments.Enchantment
@@ -73,6 +74,11 @@ fun parseAction(node: Node): Action? {
             AllPlayersAction(actions)
         }
         "builders-wand" -> node.tryGet<Int>("range")?.let { BuildersWandAction(it) }
+        "biome-wand" -> {
+            val biome = node.tryGet<String>("biome")?.let { Biome.valueOf(it) } ?: return null
+            val range = node.tryGet<Int>("range") ?: return null
+            BiomeWandAction(biome, range)
+        }
         "delay" -> {
             val ticks = node.tryGet<Int>("ticks") ?: return null
             val actions = node.tryGet<List<Node>>("actions")?.let { parseActions(it) } ?: return null

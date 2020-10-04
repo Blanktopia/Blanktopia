@@ -42,7 +42,7 @@ subprojects {
     val api by configurations
 
     dependencies {
-        compileOnly("com.destroystokyo.paper:paper-api:1.16.1-R0.1-SNAPSHOT")
+        compileOnly("com.destroystokyo.paper:paper-api:1.16.3-R0.1-SNAPSHOT")
     }
 
     tasks.withType<KotlinCompile> {

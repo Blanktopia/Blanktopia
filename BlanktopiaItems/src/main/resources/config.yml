@@ -191,6 +191,13 @@ items:
             gravity: 0.0
             drag: 0.0
 
+  # Hats
+
+  afro:
+    material: FEATHER
+    custom-model-data: 1
+    name: §fAfro
+
   # Food
 
   cotton-candy-pink:
@@ -966,6 +973,8 @@ items:
         actions:
           - action: remove-permanent-potion-effects
             key: sandys-helmet
+      - trigger: right-click-block
+        actions: []
 
   hellfire:
     material: LAVA_BUCKET
@@ -1435,3 +1444,29 @@ items:
       - trigger: right-click-block
         force: true
         actions: []
+
+  jungle-biome-wand:
+    material: WOODEN_HOE
+    custom-model-data: 1
+    name: '§dJungle Biome Wand§5 ⭐'
+    lore:
+      - '§8-------------------------'
+      - ''
+      - '§bRight-click§f on a block'
+      - '§fto turn a §b5x5x5§f area'
+      - '§finto a §bJungle§f biome'
+      - ''
+      - '§8-------------------------'
+      - '§6NATURE Crate Item'
+    enchantments:
+      soulbound: 1
+      final: 1
+    unbreakable: true
+    triggers:
+      - trigger: right-click-block
+        force: true
+        actions:
+          - action: biome-wand
+            range: 2
+            biome: JUNGLE
+
