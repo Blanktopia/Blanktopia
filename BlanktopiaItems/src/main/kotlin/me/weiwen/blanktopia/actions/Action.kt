@@ -108,17 +108,6 @@ fun parseAction(node: Node): Action? {
         "hammer-strip" -> node.tryGet<Int>("range")?.let { HammerStripAction(it) }
         "heal" -> node.tryGet<Int>("amount")?.let { HealAction(it) }
         "item-cooldown" -> node.tryGet<Int>("ticks")?.let { ItemCooldownAction(it) }
-        "launch-item-projectile" -> {
-            val material = node.tryGet<String>("material")?.let { Material.valueOf(it) } ?: Material.DIRT
-            val amount = node.tryGet<Int>("amount", 1)
-            val magnitude = node.tryGet<Double>("magnitude") ?: 1.5
-            val pitch = node.tryGet<Double>("pitch") ?: 0.0
-            val isPitchRelative = node.tryGet<Boolean>("is-pitch-relative", true)
-            val bounce = node.tryGet<Double>("bounce", 0.0)
-            val drag = node.tryGet<Double>("drag", 0.02)
-            val gravity = node.tryGet<Double>("gravity", 0.08)
-            LaunchItemProjectileAction(material, amount, magnitude, pitch, isPitchRelative, bounce, drag, gravity)
-        }
         "launch-entity" -> {
             val type = node.tryGet<String>("type") ?: "ARROW"
             val magnitude = node.tryGet<Double>("magnitude", 1.5)
