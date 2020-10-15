@@ -1,26 +1,29 @@
 package me.weiwen.blanktopia.actions
 
 import me.weiwen.blanktopia.canBuildAt
+import me.weiwen.blanktopia.nms.send
 import me.weiwen.blanktopia.playSoundTo
-import net.minecraft.server.v1_16_R3.PacketPlayOutMapChunk
-import org.bukkit.Chunk
-import org.bukkit.Location
-import org.bukkit.Sound
-import org.bukkit.SoundCategory
+import me.weiwen.blanktopia.spawnParticleAt
+import org.bukkit.*
 import org.bukkit.block.Biome
 import org.bukkit.block.Block
-import org.bukkit.craftbukkit.v1_16_R3.CraftChunk
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 
 class BiomeWandAction(private val biome: Biome, private val range: Int) : Action {
+    override fun run(player: Player, item: ItemStack) {
+        val result = player.rayTraceBlocks(5.0, FluidCollisionMode.ALWAYS) ?: return
+        val block = result.hitBlock ?: return
+        run(player, item, block)
+    }
+
     override fun run(player: Player, item: ItemStack, block: Block) {
         val chunks = mutableSetOf<Chunk>()
         for (location in locationsInRange(block.location, range)) {
             if (player.canBuildAt(location)) {
                 location.world.setBiome(location.blockX, location.blockY, location.blockZ, biome)
+                location.block.getRelative(0, 1, 0).spawnParticleAt(Particle.VILLAGER_HAPPY, 2, 0.01)
                 chunks.add(location.chunk)
             }
         }
@@ -44,7 +47,3 @@ class BiomeWandAction(private val biome: Biome, private val range: Int) : Action
     }
 }
 
-fun Chunk.send(player: Player) {
-    (player as CraftPlayer).handle.playerConnection.sendPacket(
-            PacketPlayOutMapChunk((this as CraftChunk).handle, 20, true))
-}

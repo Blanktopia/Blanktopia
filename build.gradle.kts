@@ -35,6 +35,7 @@ subprojects {
             name = "okkero"
             url = uri("http://nexus.okkero.com/repository/maven-releases/")
         }
+        mavenLocal()
     }
 
     val implementation by configurations
