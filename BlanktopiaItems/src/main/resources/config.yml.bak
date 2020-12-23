@@ -169,6 +169,71 @@
          ],
          "unbreakable": true
       },
+      "basalt-deltas-wand": {
+         "custom-model-data": 1,
+         "enchantments": {
+            "final": 1,
+            "soulbound": 1
+         },
+         "lore": [
+            "§8-------------------------",
+            "",
+            "§bRight-click§f to turn an area",
+            "§finto a §x§4§0§3§6§3§6Basalt Deltas§f biome.",
+            "",
+            "§8-------------------------",
+            "§6NATURE Crate Item"
+         ],
+         "material": "WOODEN_HOE",
+         "name": "§x§4§0§3§6§3§6Basalt Deltas Biome Wand",
+         "triggers": [
+            {
+               "actions": [
+                  {
+                     "action": "biome-wand",
+                     "biome": "BASALT_DELTAS",
+                     "range": 2
+                  }
+               ],
+               "cancel": true,
+               "trigger": "right-click-block"
+            }
+         ],
+         "unbreakable": true
+      },
+      "boots-of-haste": {
+         "attribute-modifiers": [
+            {
+               "amount": 0.20000000000000001,
+               "attribute": "GENERIC_MOVEMENT_SPEED",
+               "name": "Movement speed",
+               "operation": "MULTIPLY_SCALAR_1",
+               "slot": "FEET",
+               "uuid": "c5f2fe33-1f7f-41c5-872c-5868739f409a"
+            }
+         ],
+         "custom-model-data": 1,
+         "enchantments": {
+            "depth_strider": 3,
+            "feather_falling": 4,
+            "final": 1,
+            "protection": 4,
+            "soul_speed": 3,
+            "soulbound": 1,
+            "stride": 5
+         },
+         "lore": [
+            "§8-------------------------",
+            "",
+            "§fMove fast and break things.",
+            "",
+            "§8-------------------------",
+            "§6INFINITY Crate Item"
+         ],
+         "material": "LEATHER_BOOTS",
+         "name": "§x§f§4§c§f§8§bBoots of Haste 🪶",
+         "unbreakable": true
+      },
       "builders-crate-coupon-server": {
          "custom-model-data": 4,
          "enchantments": {
@@ -942,6 +1007,7 @@
                      "range": 1
                   }
                ],
+               "cancel": false,
                "trigger": "break-block"
             }
          ],
@@ -1292,6 +1358,7 @@
                      "range": 1
                   }
                ],
+               "cancel": false,
                "trigger": "break-block"
             },
             {
@@ -2279,6 +2346,57 @@
          ],
          "unbreakable": true
       },
+      "scythe": {
+         "attribute-modifiers": [
+            {
+               "amount": 5,
+               "attribute": "GENERIC_ATTACK_DAMAGE",
+               "name": "Tool modifier",
+               "operation": "ADD_NUMBER",
+               "slot": "HAND",
+               "uuid": "CB3F55D3-645C-4F38-A497-9C13A33DB5CF"
+            },
+            {
+               "amount": -1.5,
+               "attribute": "GENERIC_ATTACK_SPEED",
+               "name": "Tool modifier",
+               "operation": "ADD_NUMBER",
+               "slot": "HAND",
+               "uuid": "FA233E1C-4180-4865-B01B-BCCE9785ACA3"
+            }
+         ],
+         "custom-model-data": 1,
+         "enchantments": {
+            "efficiency": 5,
+            "final": 1,
+            "sharpness": 5,
+            "soulbound": 1
+         },
+         "lore": [
+            "§8-------------------------",
+            "",
+            "§fBreaks grass in a §b3x3§f area.",
+            "",
+            "§8-------------------------",
+            "§6BUILDER's Crate Item"
+         ],
+         "material": "SHEARS",
+         "name": "§x§0§0§0§0§0§0Scythe",
+         "triggers": [
+            {
+               "actions": [
+                  {
+                     "action": "hammer",
+                     "depth": 2,
+                     "range": 2
+                  }
+               ],
+               "cancel": false,
+               "trigger": "break-block"
+            }
+         ],
+         "unbreakable": true
+      },
       "snowy-taiga-biome-wand": {
          "custom-model-data": 1,
          "enchantments": {
@@ -2531,6 +2649,25 @@
          ],
          "unbreakable": true
       },
+      "unidentified-biome-wand": {
+         "custom-model-data": 1,
+         "enchantments": {
+            "final": 1,
+            "soulbound": 1
+         },
+         "lore": [
+            "§8-------------------------",
+            "",
+            "§bRight-click§f to turn an area",
+            "§finto a §8§kunknown§f biome.",
+            "",
+            "§8-------------------------",
+            "§6NATURE Crate Item"
+         ],
+         "material": "WOODEN_HOE",
+         "name": "§fUnidentified Biome Wand",
+         "unbreakable": true
+      },
       "vinegar": {
          "custom-model-data": 2,
          "material": "POTION",
@@ -2606,6 +2743,7 @@
                      "range": 1
                   }
                ],
+               "cancel": false,
                "trigger": "break-block"
             }
          ],
