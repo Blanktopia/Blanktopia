@@ -169,38 +169,6 @@
          ],
          "unbreakable": true
       },
-      "basalt-deltas-wand": {
-         "custom-model-data": 1,
-         "enchantments": {
-            "final": 1,
-            "soulbound": 1
-         },
-         "lore": [
-            "§8-------------------------",
-            "",
-            "§bRight-click§f to turn an area",
-            "§finto a §x§4§0§3§6§3§6Basalt Deltas§f biome.",
-            "",
-            "§8-------------------------",
-            "§6NATURE Crate Item"
-         ],
-         "material": "WOODEN_HOE",
-         "name": "§x§4§0§3§6§3§6Basalt Deltas Biome Wand",
-         "triggers": [
-            {
-               "actions": [
-                  {
-                     "action": "biome-wand",
-                     "biome": "BASALT_DELTAS",
-                     "range": 2
-                  }
-               ],
-               "cancel": true,
-               "trigger": "right-click-block"
-            }
-         ],
-         "unbreakable": true
-      },
       "builders-crate-coupon-server": {
          "custom-model-data": 4,
          "enchantments": {
