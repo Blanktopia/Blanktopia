@@ -327,7 +327,8 @@ class CustomItems(private val plugin: JavaPlugin) :
                     val mirrored = recipe.shape
                             .joinToString("") { it.reversed() }
                             .map { recipe.ingredientMap[it] }
-                    if (!event.inventory.matrix.contentEquals(ingredients.toTypedArray()) && !event.inventory.matrix.contentEquals(mirrored.toTypedArray())) {
+                    val matrix = event.inventory.matrix.map { it?.asOne() }
+                    if (matrix != ingredients && matrix != mirrored) {
                         event.inventory.result = null
                     }
                 }
