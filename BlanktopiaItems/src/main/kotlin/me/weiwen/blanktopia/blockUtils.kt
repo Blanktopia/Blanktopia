@@ -561,6 +561,15 @@ fun Material.canMineBlock(what: Block): Boolean {
         WET_SPONGE ->
             isHoe()
 
+        COBWEB,
+        DEAD_BUSH,
+        FERN,
+        TALL_GRASS,
+        GRASS,
+        NETHER_SPROUTS,
+        TRIPWIRE,
+        VINE,
+        SEAGRASS,
         DARK_OAK_LEAVES,
         JUNGLE_LEAVES,
         OAK_LEAVES,
@@ -573,7 +582,6 @@ fun Material.canMineBlock(what: Block): Boolean {
         BLUE_WOOL,
         BROWN_CARPET,
         BROWN_WOOL,
-        COBWEB,
         CYAN_CARPET,
         CYAN_WOOL,
         GRAY_CARPET,
