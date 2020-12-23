@@ -24,6 +24,11 @@ fun parseCondition(node: Node): Condition? {
         "any" -> node.tryGet<List<Node>>("any")?.let { AnyCondition(parseConditions(it)) }
         "all" -> node.tryGet<List<Node>>("all")?.let { AllCondition(parseConditions(it)) }
 
+        "is-in-world" -> {
+            val world = node.tryGet<String>("world") ?: return null
+            IsInWorld(world)
+        }
+
         "is-sneaking" -> IsSneakingCondition()
         "is-sprinting" -> IsSneakingCondition()
         "is-flying" -> IsSneakingCondition()
