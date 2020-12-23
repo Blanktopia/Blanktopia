@@ -10,7 +10,7 @@ dependencies {
     implementation("org.mariadb.jdbc:mariadb-java-client:2.6.0")
 
     compileOnly("com.github.TechFortress:GriefPrevention:16.7.1")
-    compileOnly("org.spigotmc:spigot:1.16.3-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot:1.16.4-R0.1-SNAPSHOT")
 }
 
 bukkit {

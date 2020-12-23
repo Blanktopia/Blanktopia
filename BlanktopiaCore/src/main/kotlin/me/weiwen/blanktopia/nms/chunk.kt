@@ -1,10 +1,10 @@
 package me.weiwen.blanktopia.nms
 
-import net.minecraft.server.v1_16_R2.PacketPlayOutMapChunk
-import net.minecraft.server.v1_16_R2.PacketPlayOutUnloadChunk
+import net.minecraft.server.v1_16_R3.PacketPlayOutMapChunk
+import net.minecraft.server.v1_16_R3.PacketPlayOutUnloadChunk
 import org.bukkit.Chunk
-import org.bukkit.craftbukkit.v1_16_R2.CraftChunk
-import org.bukkit.craftbukkit.v1_16_R2.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_16_R3.CraftChunk
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer
 import org.bukkit.entity.Player
 
 fun Chunk.send(player: Player) {
