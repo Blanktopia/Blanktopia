@@ -78,7 +78,7 @@ class CustomItem(val type: String, config: ConfigurationSection) {
                 AttributeModifier(
                     UUID.fromString(it["uuid"] as String),
                     it["name"] as String,
-                    it["amount"] as Double,
+                    it["amount"] as? Double ?: (it["amount"] as Int).toDouble(),
                     AttributeModifier.Operation.valueOf(it["operation"] as String),
                     (it.get("slot") as? String)?.let { EquipmentSlot.valueOf(it) }
                 )
