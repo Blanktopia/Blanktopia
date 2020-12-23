@@ -20,11 +20,12 @@ class BiomeWandAction(private val biome: Biome, private val range: Int) : Action
 
     override fun run(player: Player, item: ItemStack, block: Block) {
         val chunks = mutableSetOf<Chunk>()
-        for (location in locationsInRange(block.location, range)) {
-            if (player.canBuildAt(location)) {
-                location.world.setBiome(location.blockX, location.blockY, location.blockZ, biome)
-                location.block.getRelative(0, 1, 0).spawnParticleAt(Particle.VILLAGER_HAPPY, 2, 0.01)
-                chunks.add(location.chunk)
+        for ((x, z) in locationsInRange(block.location, range)) {
+            val block = block.world.getHighestBlockAt(x, z)
+            if (player.canBuildAt(block.location)) {
+                block.world.setBiome(x, z, biome)
+                block.getRelative(0, 1, 0).spawnParticleAt(Particle.VILLAGER_HAPPY, 2, 0.01)
+                chunks.add(block.location.chunk)
             }
         }
         if (chunks.size > 0) {
@@ -38,10 +39,8 @@ class BiomeWandAction(private val biome: Biome, private val range: Int) : Action
 
     private fun locationsInRange(origin: Location, range: Int) = sequence {
         for (x in -range..range) {
-            for (y in -range..range) {
-                for (z in -range..range) {
-                    yield(origin.clone().add(x.toDouble(), y.toDouble(), z.toDouble()))
-                }
+            for (z in -range..range) {
+                 yield(Pair(origin.blockX + x, origin.blockZ + z))
             }
         }
     }
