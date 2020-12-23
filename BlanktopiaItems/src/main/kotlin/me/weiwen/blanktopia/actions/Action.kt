@@ -212,6 +212,9 @@ fun parseAction(node: Node): Action? {
 }
 
 fun parseDisguise(node: Node): Disguise? {
+    if (!BlanktopiaItems.INSTANCE.server.pluginManager.isPluginEnabled("LibsDisguises")) {
+        return null
+    }
     return when (node.tryGet<String>("kind")) {
         "mob" -> {
             val type = node.tryGet<String>("type") ?: "ZOMBIE"
