@@ -15,6 +15,10 @@ enum class TriggerType {
 
     EQUIP_ARMOR,
     UNEQUIP_ARMOR,
+    EQUIP_HEAD,
+    EQUIP_CHEST,
+    EQUIP_LEGS,
+    EQUIP_FEET,
 
     CONSUME,
 

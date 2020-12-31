@@ -76,6 +76,10 @@ fun parseTriggerTypes(type: String): Set<TriggerType> {
 
         "equip-armor" -> setOf(TriggerType.EQUIP_ARMOR)
         "unequip-armor" -> setOf(TriggerType.UNEQUIP_ARMOR)
+        "equip-head" -> setOf(TriggerType.EQUIP_HEAD)
+        "equip-chest" -> setOf(TriggerType.EQUIP_CHEST)
+        "equip-legs" -> setOf(TriggerType.EQUIP_LEGS)
+        "equip-feet" -> setOf(TriggerType.EQUIP_FEET)
 
         "consume" -> setOf(TriggerType.CONSUME)
 

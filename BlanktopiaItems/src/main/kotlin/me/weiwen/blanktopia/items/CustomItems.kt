@@ -78,15 +78,28 @@ class CustomItems(private val plugin: JavaPlugin) :
             player.inventory.boots?.let { slots[PlayerArmorChangeEvent.SlotType.FEET] = it }
             for ((slot, item) in slots.entries) {
                 val customItem = item.getCustomItem() ?: continue
-                customItem.triggers.forEach { triggerType, triggers ->
+                customItem.triggers.forEach { (triggerType, triggers) ->
                     if (triggerType in EQUIPPED_TRIGGERS) {
                         equippedItems
                                 .getOrPut(player.uniqueId, { mutableMapOf() })
                                 .getOrPut(triggerType, { mutableMapOf() })[slot] = Pair(item, triggers)
                     }
                 }
+                val triggerType = when (slot) {
+                    PlayerArmorChangeEvent.SlotType.HEAD -> TriggerType.EQUIP_HEAD
+                    PlayerArmorChangeEvent.SlotType.CHEST -> TriggerType.EQUIP_CHEST
+                    PlayerArmorChangeEvent.SlotType.LEGS -> TriggerType.EQUIP_LEGS
+                    PlayerArmorChangeEvent.SlotType.FEET -> TriggerType.EQUIP_FEET
+                }
+                customItem.triggers[triggerType]?.forEach {
+                    if (it.test(player, item)) {
+                        it.run(player, item)
+                    }
+                }
                 customItem.triggers[TriggerType.EQUIP_ARMOR]?.forEach {
-                    it.run(player, item)
+                    if (it.test(player, item)) {
+                        it.run(player, item)
+                    }
                 }
             }
         }
@@ -393,6 +406,17 @@ class CustomItems(private val plugin: JavaPlugin) :
                     equippedItems
                             .getOrPut(event.player.uniqueId, { mutableMapOf() })
                             .getOrPut(triggerType, { mutableMapOf() })[event.slotType] = Pair(item, triggers)
+                }
+            }
+            val triggerType = when (event.slotType) {
+                PlayerArmorChangeEvent.SlotType.HEAD -> TriggerType.EQUIP_HEAD
+                PlayerArmorChangeEvent.SlotType.CHEST -> TriggerType.EQUIP_CHEST
+                PlayerArmorChangeEvent.SlotType.LEGS -> TriggerType.EQUIP_LEGS
+                PlayerArmorChangeEvent.SlotType.FEET -> TriggerType.EQUIP_FEET
+            }
+            customItem.triggers[triggerType]?.forEach {
+                if (it.test(event.player, item)) {
+                    it.run(event.player, item)
                 }
             }
             customItem.triggers[TriggerType.EQUIP_ARMOR]?.forEach {
