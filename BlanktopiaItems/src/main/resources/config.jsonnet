@@ -100,7 +100,7 @@ local disguise(name, skin, crate, options = {}) = {
   },
   triggers: [
     {
-      trigger: 'equip-armor',
+      trigger: 'equip-head',
       actions: [
         {
           action: 'disguise',
@@ -133,8 +133,8 @@ local smokingRecipe(input, result) = cookingRecipe(input, result, 'smoking');
 local campfireRecipe(input, result) = cookingRecipe(input, result, 'campfire');
 
 {
-  'resource-pack-url': 'http://files.blanktopia.com/Blanktopia-92ad6adb9b4ff73fb7bcbd7df487d8dbc64381ef.zip',
-  'resource-pack-hash': '92ad6adb9b4ff73fb7bcbd7df487d8dbc64381ef',
+  'resource-pack-url': 'http://files.blanktopia.com/Blanktopia-0082ea7e3bcb333cab2dfb954f8d317a64c2978c.zip',
+  'resource-pack-hash': '0082ea7e3bcb333cab2dfb954f8d317a64c2978c',
   kits: {
     starter: [
       {
@@ -978,7 +978,7 @@ local campfireRecipe(input, result) = cookingRecipe(input, result, 'campfire');
       unbreakable: true,
       triggers: [
         {
-          trigger: 'equip-armor',
+          trigger: 'equip-chest',
           actions: [
             {
               action: 'fly-in-claims',
@@ -1336,51 +1336,6 @@ local campfireRecipe(input, result) = cookingRecipe(input, result, 'campfire');
             },
           ],
         },
-        {
-          trigger: 'glide',
-          conditions: [
-            {
-              condition: 'is-sneaking',
-            },
-          ],
-          actions: [
-            {
-              action: 'set-velocity',
-              x: null,
-              y: 0.7,
-              z: null,
-            },
-            {
-              action: 'repeat',
-              interval: 2,
-              count: 3,
-              actions: [
-                {
-                  action: 'spawn-particle',
-                  particle: 'FIREWORKS_SPARK',
-                  count: 2,
-                  'offset-x': 0.3,
-                  'offset-y': 0.3,
-                  'offset-z': 0.3,
-                },
-                {
-                  action: 'spawn-particle',
-                  particle: 'FLAME',
-                  count: 2,
-                  'offset-x': 0.3,
-                  'offset-y': 0.3,
-                  'offset-z': 0.3,
-                },
-              ],
-            },
-            {
-              action: 'play-sound',
-              sound: 'ENTITY_FIREWORK_ROCKET_LAUNCH',
-              pitch: 1.1,
-              volume: 0.5,
-            },
-          ],
-        },
       ],
     },
     'sandys-helmet': {
@@ -1431,7 +1386,7 @@ local campfireRecipe(input, result) = cookingRecipe(input, result, 'campfire');
       ],
       triggers: [
         {
-          trigger: 'equip-armor',
+          trigger: 'equip-head',
           actions: [
             {
               action: 'add-permanent-potion-effects',
@@ -1524,7 +1479,7 @@ local campfireRecipe(input, result) = cookingRecipe(input, result, 'campfire');
       ],
       triggers: [
         {
-          trigger: 'equip-armor',
+          trigger: 'equip-chest',
           actions: [
             {
               action: 'add-permanent-potion-effects',
@@ -1949,13 +1904,21 @@ local campfireRecipe(input, result) = cookingRecipe(input, result, 'campfire');
       'custom-model-data': 1,
       name: "§x§f§f§d§7§4§7Miner's Helmet",
       lore: [
+        '§7Haste II',
         '§8-------------------------',
         '',
-        '§fProvides §eHaste I§f when underground.',
+        '§fSpelunky!',
         '',
         '§8-------------------------',
         "§6MINER's Crate Item",
       ],
+      enchantments: {
+        soulbound: 1,
+        final: 1,
+        blast_protection: 4,
+        aqua_affinity: 1,
+        nightvision: 1,
+      },
       unbreakable: true,
       'attribute-modifiers': [
         {
@@ -1981,6 +1944,33 @@ local campfireRecipe(input, result) = cookingRecipe(input, result, 'campfire');
           amount: 0.1,
           operation: 'ADD_NUMBER',
           slot: 'HEAD',
+        },
+      ],
+      triggers: [
+        {
+          trigger: 'equip-head',
+          actions: [
+            {
+              action: 'add-permanent-potion-effects',
+              key: 'miners-helmet',
+              effects: {
+                fast_digging: 1,
+              },
+            },
+          ],
+        },
+        {
+          trigger: 'unequip-armor',
+          actions: [
+            {
+              action: 'remove-permanent-potion-effects',
+              key: 'miners-helmet',
+            },
+          ],
+        },
+        {
+          trigger: 'right-click-block',
+          actions: [],
         },
       ],
     },
@@ -2089,7 +2079,7 @@ local campfireRecipe(input, result) = cookingRecipe(input, result, 'campfire');
       lore: [
         '§8-------------------------',
         '',
-        '§fBreaks grass in a §b3x3§f area.',
+        '§fBreaks grass in a §b5x5§f area.',
         '',
         '§8-------------------------',
         "§6NATURE Crate Item",

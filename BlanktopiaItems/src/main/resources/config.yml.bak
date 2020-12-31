@@ -228,7 +228,7 @@
             "§fMove fast and break things.",
             "",
             "§8-------------------------",
-            "§6INFINITY Crate Item"
+            "§6NATURE Crate Item"
          ],
          "material": "LEATHER_BOOTS",
          "name": "§x§f§4§c§f§8§bBoots of Haste 🪶",
@@ -506,7 +506,7 @@
                      "type": "SHEEP"
                   }
                ],
-               "trigger": "equip-armor"
+               "trigger": "equip-head"
             },
             {
                "actions": [
@@ -549,7 +549,7 @@
                      "type": "BEE"
                   }
                ],
-               "trigger": "equip-armor"
+               "trigger": "equip-head"
             },
             {
                "actions": [
@@ -592,7 +592,7 @@
                      "type": "CHICKEN"
                   }
                ],
-               "trigger": "equip-armor"
+               "trigger": "equip-head"
             },
             {
                "actions": [
@@ -635,7 +635,7 @@
                      "type": "CREEPER"
                   }
                ],
-               "trigger": "equip-armor"
+               "trigger": "equip-head"
             },
             {
                "actions": [
@@ -678,7 +678,7 @@
                      "type": "ENDERMAN"
                   }
                ],
-               "trigger": "equip-armor"
+               "trigger": "equip-head"
             },
             {
                "actions": [
@@ -722,7 +722,7 @@
                      "type": "FERN"
                   }
                ],
-               "trigger": "equip-armor"
+               "trigger": "equip-head"
             },
             {
                "actions": [
@@ -765,7 +765,7 @@
                      "type": "PIG"
                   }
                ],
-               "trigger": "equip-armor"
+               "trigger": "equip-head"
             },
             {
                "actions": [
@@ -808,7 +808,7 @@
                      "type": "SHEEP"
                   }
                ],
-               "trigger": "equip-armor"
+               "trigger": "equip-head"
             },
             {
                "actions": [
@@ -851,7 +851,7 @@
                      "type": "SKELETON"
                   }
                ],
-               "trigger": "equip-armor"
+               "trigger": "equip-head"
             },
             {
                "actions": [
@@ -894,7 +894,7 @@
                      "type": "TROPICAL_FISH"
                   }
                ],
-               "trigger": "equip-armor"
+               "trigger": "equip-head"
             },
             {
                "actions": [
@@ -937,7 +937,7 @@
                      "type": "ZOMBIE"
                   }
                ],
-               "trigger": "equip-armor"
+               "trigger": "equip-head"
             },
             {
                "actions": [
@@ -1210,7 +1210,7 @@
                      "can-fly": true
                   }
                ],
-               "trigger": "equip-armor"
+               "trigger": "equip-chest"
             },
             {
                "actions": [
@@ -1549,16 +1549,51 @@
             }
          ],
          "custom-model-data": 1,
+         "enchantments": {
+            "aqua_affinity": 1,
+            "blast_protection": 4,
+            "final": 1,
+            "nightvision": 1,
+            "soulbound": 1
+         },
          "lore": [
+            "§7Haste II",
             "§8-------------------------",
             "",
-            "§fProvides §eHaste I§f when underground.",
+            "§fSpelunky!",
             "",
             "§8-------------------------",
             "§6MINER's Crate Item"
          ],
          "material": "GLOWSTONE_DUST",
          "name": "§x§f§f§d§7§4§7Miner's Helmet",
+         "triggers": [
+            {
+               "actions": [
+                  {
+                     "action": "add-permanent-potion-effects",
+                     "effects": {
+                        "fast_digging": 1
+                     },
+                     "key": "miners-helmet"
+                  }
+               ],
+               "trigger": "equip-head"
+            },
+            {
+               "actions": [
+                  {
+                     "action": "remove-permanent-potion-effects",
+                     "key": "miners-helmet"
+                  }
+               ],
+               "trigger": "unequip-armor"
+            },
+            {
+               "actions": [ ],
+               "trigger": "right-click-block"
+            }
+         ],
          "unbreakable": true
       },
       "mushroom-fields-biome-wand": {
@@ -2045,7 +2080,7 @@
                      "key": "ras-protection"
                   }
                ],
-               "trigger": "equip-armor"
+               "trigger": "equip-chest"
             },
             {
                "actions": [
@@ -2291,7 +2326,7 @@
                      "key": "sandys-helmet"
                   }
                ],
-               "trigger": "equip-armor"
+               "trigger": "equip-head"
             },
             {
                "actions": [
@@ -2375,13 +2410,13 @@
          "lore": [
             "§8-------------------------",
             "",
-            "§fBreaks grass in a §b3x3§f area.",
+            "§fBreaks grass in a §b5x5§f area.",
             "",
             "§8-------------------------",
-            "§6BUILDER's Crate Item"
+            "§6NATURE Crate Item"
          ],
          "material": "SHEARS",
-         "name": "§x§0§0§0§0§0§0Scythe",
+         "name": "§x§2§d§7§a§5§3Scythe",
          "triggers": [
             {
                "actions": [
@@ -3369,6 +3404,6 @@
          "type": "shapeless"
       }
    },
-   "resource-pack-hash": "92ad6adb9b4ff73fb7bcbd7df487d8dbc64381ef",
-   "resource-pack-url": "http://files.blanktopia.com/Blanktopia-92ad6adb9b4ff73fb7bcbd7df487d8dbc64381ef.zip"
+   "resource-pack-hash": "0082ea7e3bcb333cab2dfb954f8d317a64c2978c",
+   "resource-pack-url": "http://files.blanktopia.com/Blanktopia-0082ea7e3bcb333cab2dfb954f8d317a64c2978c.zip"
 }
