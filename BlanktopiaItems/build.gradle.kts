@@ -14,6 +14,7 @@ bukkit {
     website = "www.blanktopia.com"
     depend = listOf("BlanktopiaCore")
     softDepend = listOf("LibsDisguises", "Blanktopia")
+    loadBefore = listOf("GoldenCrates")
     commands {
         register("blanktopiaitems") {
             description = "Manages the BlanktopiaItems plugin"
