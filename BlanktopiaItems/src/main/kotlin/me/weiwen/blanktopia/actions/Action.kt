@@ -105,8 +105,8 @@ fun parseAction(node: Node): Action? {
         }
         "fly-in-claims" -> node.tryGet<Boolean>("can-fly")?.let { FlyInClaimsAction(it) }
         "hammer" -> {
-            val range = node.tryGet<Int>("range") ?: 0
-            val depth = node.tryGet<Int>("depth") ?: 0
+            val range = node.tryGet<Int>("range", 0)
+            val depth = node.tryGet<Int>("depth", 0)
             HammerAction(range, depth)
         }
         "hammer-strip" -> node.tryGet<Int>("range")?.let { HammerStripAction(it) }
