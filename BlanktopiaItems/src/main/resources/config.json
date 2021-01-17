@@ -2221,51 +2221,6 @@
                   }
                ],
                "trigger": "jump"
-            },
-            {
-               "actions": [
-                  {
-                     "action": "set-velocity",
-                     "x": null,
-                     "y": 0.69999999999999996,
-                     "z": null
-                  },
-                  {
-                     "action": "repeat",
-                     "actions": [
-                        {
-                           "action": "spawn-particle",
-                           "count": 2,
-                           "offset-x": 0.29999999999999999,
-                           "offset-y": 0.29999999999999999,
-                           "offset-z": 0.29999999999999999,
-                           "particle": "FIREWORKS_SPARK"
-                        },
-                        {
-                           "action": "spawn-particle",
-                           "count": 2,
-                           "offset-x": 0.29999999999999999,
-                           "offset-y": 0.29999999999999999,
-                           "offset-z": 0.29999999999999999,
-                           "particle": "FLAME"
-                        }
-                     ],
-                     "count": 3,
-                     "interval": 2
-                  },
-                  {
-                     "action": "play-sound",
-                     "pitch": 1.1000000000000001,
-                     "sound": "ENTITY_FIREWORK_ROCKET_LAUNCH",
-                     "volume": 0.5
-                  }
-               ],
-               "conditions": [
-                  {
-                     "condition": "is-sneaking"
-                  }
-               ],
-               "trigger": "glide"
             }
          ],
          "unbreakable": true

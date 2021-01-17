@@ -16,3 +16,4 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 buildtools/
+BlanktopiaItems/src/main/resources/config.yml.bak
