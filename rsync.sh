@@ -13,6 +13,7 @@ rsync -iavzhP \
 	$BASE/BlanktopiaTweaks/build/libs/BlanktopiaTweaks-1.0.0.jar \
 	$BASE/BlanktopiaLikes/build/libs/BlanktopiaLikes-1.0.0.jar \
 	$BASE/BlanktopiaTutorial/build/libs/BlanktopiaTutorial-1.0.0.jar \
+	$BASE/BlanktopiaFurniture/build/libs/BlanktopiaFurniture-1.0.0.jar \
 	root@play.blanktopia.com:~/ubuntu/docker/minecraft/blanktopia/plugins
 
 rsync -iavzhP \
