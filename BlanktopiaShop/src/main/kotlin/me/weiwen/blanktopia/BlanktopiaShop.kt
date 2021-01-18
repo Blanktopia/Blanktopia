@@ -6,6 +6,7 @@ import org.bukkit.block.Block
 import org.bukkit.block.Container
 import org.bukkit.block.Sign
 import org.bukkit.block.data.Directional
+import org.bukkit.block.data.type.Chest
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -34,7 +35,9 @@ val SIGN_TYPES = setOf(
 )
 
 val CONTAINER_TYPES = setOf(
-    Material.BARREL
+    Material.BARREL,
+    Material.CHEST,
+    Material.SHULKER_BOX
 )
 
 class BlanktopiaShop : JavaPlugin(), Listener {
@@ -215,6 +218,8 @@ class BlanktopiaShop : JavaPlugin(), Listener {
 
         val chest = getBlockBehindSign(block) ?: return
         if (!CONTAINER_TYPES.contains(chest.type)) return
+        val blockData = chest.blockData
+        if (blockData is Chest && blockData.type != Chest.Type.SINGLE) return
         val state = chest.state as? Container ?: return
         val container = state.persistentDataContainer
 
