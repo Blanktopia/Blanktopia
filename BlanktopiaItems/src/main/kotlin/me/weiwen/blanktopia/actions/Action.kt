@@ -11,6 +11,7 @@ import org.bukkit.block.BlockFace
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffectType
 import java.util.logging.Level
@@ -97,6 +98,10 @@ fun parseAction(node: Node): Action? {
             val multiplier = node.tryGet<Double>("multiplier", 1.0)
             val ticks = node.tryGet<Int>("ticks", 0)
             ExperienceBoostAction(multiplier, ticks)
+        }
+        "equip-item" -> {
+            val slot = EquipmentSlot.valueOf(node.tryGet<String>("slot") ?: return null)
+            EquipItemAction(slot)
         }
         "feed" -> {
             val amount = node.tryGet<Int>("amount") ?: 0

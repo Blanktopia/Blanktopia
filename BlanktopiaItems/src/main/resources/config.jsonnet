@@ -119,12 +119,50 @@ local disguise(name, skin, crate, options = {}) = {
       ],
     },
     {
+      trigger: 'right-click',
+      cancel: true,
+      actions: [
+        {
+          action: 'equip-item',
+          slot: 'HEAD',
+        },
+      ],
+    },
+    {
       trigger: 'right-click-block',
       cancel: true,
       actions: [],
     },
   ],
 };
+
+local equipHead = [
+    {
+      trigger: 'shift-click-inventory',
+      cancel: true,
+      actions: [
+        {
+          action: 'equip-item',
+          slot: 'HEAD',
+        },
+      ],
+    },
+    {
+      trigger: 'right-click',
+      cancel: true,
+      actions: [
+        {
+          action: 'equip-item',
+          slot: 'HEAD',
+        },
+      ],
+    },
+    {
+      trigger: 'right-click-block',
+      cancel: true,
+      actions: [],
+    }
+];
 
 local cookingRecipe(input, result, type) = { input: input, result: result, type: type };
 local furnaceRecipe(input, result) = cookingRecipe(input, result, 'furnace');
@@ -133,8 +171,8 @@ local smokingRecipe(input, result) = cookingRecipe(input, result, 'smoking');
 local campfireRecipe(input, result) = cookingRecipe(input, result, 'campfire');
 
 {
-  'resource-pack-url': 'http://files.blanktopia.com/Blanktopia-0082ea7e3bcb333cab2dfb954f8d317a64c2978c.zip',
-  'resource-pack-hash': '0082ea7e3bcb333cab2dfb954f8d317a64c2978c',
+  'resource-pack-url': 'http://files.blanktopia.com/Blanktopia-9319d8e5fa45b58fbbbe4ac1376fea3bce9ab128.zip',
+  'resource-pack-hash': '9319d8e5fa45b58fbbbe4ac1376fea3bce9ab128',
   kits: {
     starter: [
       {
@@ -1406,11 +1444,7 @@ local campfireRecipe(input, result) = cookingRecipe(input, result, 'campfire');
             },
           ],
         },
-        {
-          trigger: 'right-click-block',
-          actions: [],
-        },
-      ],
+      ] + equipHead,
     },
     hellfire: {
       material: 'LAVA_BUCKET',
@@ -1968,22 +2002,20 @@ local campfireRecipe(input, result) = cookingRecipe(input, result, 'campfire');
             },
           ],
         },
-        {
-          trigger: 'right-click-block',
-          actions: [],
-        },
-      ],
+      ] + equipHead,
     },
 
     'santa-hat': {
       material: 'RED_WOOL',
       'custom-model-data': 1,
       name: "§x§a§1§2§7§2§2Santa Hat",
+      triggers: equipHead,
     },
     'elf-hat': {
       material: 'GREEN_WOOL',
       'custom-model-data': 1,
       name: "§x§5§4§6§d§1§bElf Hat",
+      triggers: equipHead,
     },
 
     'builders-crate-coupon-server': crateCoupon("BUILDER's", "builder"),

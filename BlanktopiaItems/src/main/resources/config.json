@@ -517,6 +517,16 @@
                "trigger": "unequip-armor"
             },
             {
+               "actions": [
+                  {
+                     "action": "equip-item",
+                     "slot": "HEAD"
+                  }
+               ],
+               "cancel": true,
+               "trigger": "right-click"
+            },
+            {
                "actions": [ ],
                "cancel": true,
                "trigger": "right-click-block"
@@ -558,6 +568,16 @@
                   }
                ],
                "trigger": "unequip-armor"
+            },
+            {
+               "actions": [
+                  {
+                     "action": "equip-item",
+                     "slot": "HEAD"
+                  }
+               ],
+               "cancel": true,
+               "trigger": "right-click"
             },
             {
                "actions": [ ],
@@ -603,6 +623,16 @@
                "trigger": "unequip-armor"
             },
             {
+               "actions": [
+                  {
+                     "action": "equip-item",
+                     "slot": "HEAD"
+                  }
+               ],
+               "cancel": true,
+               "trigger": "right-click"
+            },
+            {
                "actions": [ ],
                "cancel": true,
                "trigger": "right-click-block"
@@ -646,6 +676,16 @@
                "trigger": "unequip-armor"
             },
             {
+               "actions": [
+                  {
+                     "action": "equip-item",
+                     "slot": "HEAD"
+                  }
+               ],
+               "cancel": true,
+               "trigger": "right-click"
+            },
+            {
                "actions": [ ],
                "cancel": true,
                "trigger": "right-click-block"
@@ -687,6 +727,16 @@
                   }
                ],
                "trigger": "unequip-armor"
+            },
+            {
+               "actions": [
+                  {
+                     "action": "equip-item",
+                     "slot": "HEAD"
+                  }
+               ],
+               "cancel": true,
+               "trigger": "right-click"
             },
             {
                "actions": [ ],
@@ -733,6 +783,16 @@
                "trigger": "unequip-armor"
             },
             {
+               "actions": [
+                  {
+                     "action": "equip-item",
+                     "slot": "HEAD"
+                  }
+               ],
+               "cancel": true,
+               "trigger": "right-click"
+            },
+            {
                "actions": [ ],
                "cancel": true,
                "trigger": "right-click-block"
@@ -774,6 +834,16 @@
                   }
                ],
                "trigger": "unequip-armor"
+            },
+            {
+               "actions": [
+                  {
+                     "action": "equip-item",
+                     "slot": "HEAD"
+                  }
+               ],
+               "cancel": true,
+               "trigger": "right-click"
             },
             {
                "actions": [ ],
@@ -819,6 +889,16 @@
                "trigger": "unequip-armor"
             },
             {
+               "actions": [
+                  {
+                     "action": "equip-item",
+                     "slot": "HEAD"
+                  }
+               ],
+               "cancel": true,
+               "trigger": "right-click"
+            },
+            {
                "actions": [ ],
                "cancel": true,
                "trigger": "right-click-block"
@@ -860,6 +940,16 @@
                   }
                ],
                "trigger": "unequip-armor"
+            },
+            {
+               "actions": [
+                  {
+                     "action": "equip-item",
+                     "slot": "HEAD"
+                  }
+               ],
+               "cancel": true,
+               "trigger": "right-click"
             },
             {
                "actions": [ ],
@@ -905,6 +995,16 @@
                "trigger": "unequip-armor"
             },
             {
+               "actions": [
+                  {
+                     "action": "equip-item",
+                     "slot": "HEAD"
+                  }
+               ],
+               "cancel": true,
+               "trigger": "right-click"
+            },
+            {
                "actions": [ ],
                "cancel": true,
                "trigger": "right-click-block"
@@ -948,6 +1048,16 @@
                "trigger": "unequip-armor"
             },
             {
+               "actions": [
+                  {
+                     "action": "equip-item",
+                     "slot": "HEAD"
+                  }
+               ],
+               "cancel": true,
+               "trigger": "right-click"
+            },
+            {
                "actions": [ ],
                "cancel": true,
                "trigger": "right-click-block"
@@ -981,7 +1091,34 @@
       "elf-hat": {
          "custom-model-data": 1,
          "material": "GREEN_WOOL",
-         "name": "§x§5§4§6§d§1§bElf Hat"
+         "name": "§x§5§4§6§d§1§bElf Hat",
+         "triggers": [
+            {
+               "actions": [
+                  {
+                     "action": "equip-item",
+                     "slot": "HEAD"
+                  }
+               ],
+               "cancel": true,
+               "trigger": "shift-click-inventory"
+            },
+            {
+               "actions": [
+                  {
+                     "action": "equip-item",
+                     "slot": "HEAD"
+                  }
+               ],
+               "cancel": true,
+               "trigger": "right-click"
+            },
+            {
+               "actions": [ ],
+               "cancel": true,
+               "trigger": "right-click-block"
+            }
+         ]
       },
       "excavator": {
          "custom-model-data": 1,
@@ -1590,7 +1727,28 @@
                "trigger": "unequip-armor"
             },
             {
+               "actions": [
+                  {
+                     "action": "equip-item",
+                     "slot": "HEAD"
+                  }
+               ],
+               "cancel": true,
+               "trigger": "shift-click-inventory"
+            },
+            {
+               "actions": [
+                  {
+                     "action": "equip-item",
+                     "slot": "HEAD"
+                  }
+               ],
+               "cancel": true,
+               "trigger": "right-click"
+            },
+            {
                "actions": [ ],
+               "cancel": true,
                "trigger": "right-click-block"
             }
          ],
@@ -2293,7 +2451,28 @@
                "trigger": "unequip-armor"
             },
             {
+               "actions": [
+                  {
+                     "action": "equip-item",
+                     "slot": "HEAD"
+                  }
+               ],
+               "cancel": true,
+               "trigger": "shift-click-inventory"
+            },
+            {
+               "actions": [
+                  {
+                     "action": "equip-item",
+                     "slot": "HEAD"
+                  }
+               ],
+               "cancel": true,
+               "trigger": "right-click"
+            },
+            {
                "actions": [ ],
+               "cancel": true,
                "trigger": "right-click-block"
             }
          ],
@@ -2302,7 +2481,34 @@
       "santa-hat": {
          "custom-model-data": 1,
          "material": "RED_WOOL",
-         "name": "§x§a§1§2§7§2§2Santa Hat"
+         "name": "§x§a§1§2§7§2§2Santa Hat",
+         "triggers": [
+            {
+               "actions": [
+                  {
+                     "action": "equip-item",
+                     "slot": "HEAD"
+                  }
+               ],
+               "cancel": true,
+               "trigger": "shift-click-inventory"
+            },
+            {
+               "actions": [
+                  {
+                     "action": "equip-item",
+                     "slot": "HEAD"
+                  }
+               ],
+               "cancel": true,
+               "trigger": "right-click"
+            },
+            {
+               "actions": [ ],
+               "cancel": true,
+               "trigger": "right-click-block"
+            }
+         ]
       },
       "savanna-biome-wand": {
          "custom-model-data": 1,
@@ -3359,6 +3565,6 @@
          "type": "shapeless"
       }
    },
-   "resource-pack-hash": "0082ea7e3bcb333cab2dfb954f8d317a64c2978c",
-   "resource-pack-url": "http://files.blanktopia.com/Blanktopia-0082ea7e3bcb333cab2dfb954f8d317a64c2978c.zip"
+   "resource-pack-hash": "9319d8e5fa45b58fbbbe4ac1376fea3bce9ab128",
+   "resource-pack-url": "http://files.blanktopia.com/Blanktopia-9319d8e5fa45b58fbbbe4ac1376fea3bce9ab128.zip"
 }
