@@ -31,10 +31,6 @@ subprojects {
         maven { url = uri("http://repo.md-5.net/content/repositories/releases/") }
         maven { url = uri("https://ci.ender.zone/plugin/repository/everything/") }
         maven { url = uri("https://jitpack.io") }
-        maven {
-            name = "okkero"
-            url = uri("http://nexus.okkero.com/repository/maven-releases/")
-        }
         mavenLocal()
     }
 

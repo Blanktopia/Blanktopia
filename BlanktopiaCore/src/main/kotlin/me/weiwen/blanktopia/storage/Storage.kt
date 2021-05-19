@@ -1,6 +1,5 @@
 package me.weiwen.blanktopia.storage
 
-import com.okkero.skedule.schedule
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import me.weiwen.blanktopia.Module
@@ -10,12 +9,11 @@ class Storage(private val plugin: JavaPlugin) : Module {
     var storage: IStorage? = null
 
     override fun enable() {
-        plugin.server.scheduler.schedule(plugin) {
-            repeating(18077)
+        plugin.server.scheduler.scheduleSyncRepeatingTask(plugin, {
             GlobalScope.launch {
                 save()
             }
-        }
+        }, 18077, 18077)
         reload()
     }
 

@@ -1,6 +1,5 @@
 package me.weiwen.blanktopia
 
-import com.okkero.skedule.schedule
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.bukkit.Material
