@@ -562,7 +562,7 @@ class CustomItems(private val plugin: JavaPlugin) :
 
 fun ItemStack.getCustomItem(): CustomItem? {
     val meta = itemMeta ?: return null
-    val data = meta.persistentDataContainer ?: return null
+    val data = meta.persistentDataContainer
     val type = data.get(NamespacedKey(Blanktopia.INSTANCE, "type"), PersistentDataType.STRING) ?: return null
     val customItem = BlanktopiaItems.INSTANCE.customItems.items[type] ?: return null
 

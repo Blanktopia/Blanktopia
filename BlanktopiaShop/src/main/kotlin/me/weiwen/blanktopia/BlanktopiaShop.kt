@@ -226,14 +226,14 @@ class BlanktopiaShop : JavaPlugin(), Listener {
         var type = container.get(NamespacedKey(this, "type"), PersistentDataType.STRING)
 
         // Migrate chest type
-        if (type == null) {
+        if (type == null && container.get(NamespacedKey(this, "cost"), PersistentDataType.STRING) != null) {
             container.set(NamespacedKey(this, "type"), PersistentDataType.STRING, "shop")
             type = "shop"
         }
 
         if (type == "shop") {
             // Migrate chest names
-            val cost = container.get(NamespacedKey(this, "cost"), PersistentDataType.STRING)
+            val cost = container.get(NamespacedKey(this, "cost"), PersistentDataType.STRING) ?: return
             state.customName = "${cost} per stack"
             state.update()
 
