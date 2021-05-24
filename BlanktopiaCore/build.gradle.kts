@@ -1,5 +1,5 @@
 dependencies {
-    api(kotlin("stdlib-jdk8", "1.4.0"))
+    compileOnly(kotlin("stdlib-jdk8", "1.4.21"))
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
     api(kotlin("reflect", "1.4.0"))
     api("io.papermc:paperlib:1.0.2")
@@ -20,5 +20,5 @@ bukkit {
     apiVersion = "1.16"
     author = "Goh Wei Wen <goweiwen@gmail.com>"
     website = "www.blanktopia.com"
-    depend = listOf("GriefPrevention")
+    depend = listOf("GriefPrevention", "Kotlin")
 }

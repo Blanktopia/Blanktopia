@@ -18,7 +18,7 @@ pluginManagement {
             val id = requested.id.id
 
             if (id.startsWith("org.jetbrains.kotlin"))
-                useVersion("1.4.0")
+                useVersion("1.4.21")
 
             if(id.startsWith("net.minecrell.plugin-yml.bukkit"))
                 useVersion("0.3.0")
