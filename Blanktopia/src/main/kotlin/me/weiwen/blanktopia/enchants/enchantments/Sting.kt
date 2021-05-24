@@ -1,7 +1,7 @@
 package me.weiwen.blanktopia.enchants.enchantments
 
 import me.weiwen.blanktopia.enchants.*
-import me.weiwen.blanktopia.spawnParticleAt
+import me.weiwen.moromoro.extensions.spawnParticle
 import org.bukkit.Particle
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Entity
@@ -41,7 +41,7 @@ object Sting : Listener {
             val weapon = damager.equipment?.itemInMainHand ?: return
             if (weapon.containsEnchantment(STING)) {
                 val level = weapon.getEnchantmentLevel(STING)
-                entity.spawnParticleAt(Particle.SNEEZE, 10, 0.01)
+                entity.spawnParticle(Particle.SNEEZE, 10, 0.01)
                 if (event.isCancelled) return
                 entity.addPotionEffect(PotionEffect(PotionEffectType.POISON, 80,
                     when (level) {

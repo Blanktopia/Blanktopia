@@ -1,5 +1,4 @@
 dependencies {
-    compileOnly(project(":BlanktopiaCore"))
 }
 
 bukkit {

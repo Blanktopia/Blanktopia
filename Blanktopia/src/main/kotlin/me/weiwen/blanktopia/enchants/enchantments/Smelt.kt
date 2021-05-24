@@ -1,15 +1,14 @@
 package me.weiwen.blanktopia.enchants.enchantments
 
 import me.weiwen.blanktopia.enchants.*
-import me.weiwen.blanktopia.playSoundAt
-import me.weiwen.blanktopia.spawnParticleAt
+import me.weiwen.moromoro.extensions.playSoundAt
+import me.weiwen.moromoro.extensions.spawnParticle
 import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.Sound
 import org.bukkit.SoundCategory
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.ExperienceOrb
-import org.bukkit.entity.Item
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -58,7 +57,7 @@ object Smelt : Listener {
             item.itemStack = itemStack
         }
         if (smelted) {
-            block.spawnParticleAt(Particle.FLAME, 1, 0.01)
+            block.spawnParticle(Particle.FLAME, 1, 0.01)
             block.playSoundAt(Sound.BLOCK_FIRE_AMBIENT, SoundCategory.BLOCKS, 0.5f, 0.8f)
         }
         if (experience > 0) {

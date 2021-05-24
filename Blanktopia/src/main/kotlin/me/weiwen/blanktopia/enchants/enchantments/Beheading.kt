@@ -4,8 +4,8 @@ import me.weiwen.blanktopia.enchants.AXES
 import me.weiwen.blanktopia.enchants.BOOKS
 import me.weiwen.blanktopia.enchants.CustomEnchantment
 import me.weiwen.blanktopia.enchants.NONE
-import me.weiwen.blanktopia.playerHeadFromTexture
-import me.weiwen.blanktopia.playerHeadFromUrl
+import me.weiwen.blanktopia.enchants.extensions.setHeadBase64
+import me.weiwen.blanktopia.enchants.extensions.setHeadUrl
 import org.bukkit.ChatColor
 import org.bukkit.DyeColor
 import org.bukkit.Material
@@ -31,8 +31,15 @@ val BEHEADING = CustomEnchantment(
     Beheading
 )
 
+fun playerHeadFromUrl(name: String, url: String) =
+    ItemStack(Material.PLAYER_HEAD).apply { setHeadUrl(name, url) }
+
+fun playerHeadFromTexture(name: String, base64: String) =
+    ItemStack(Material.PLAYER_HEAD).apply { setHeadBase64(name, base64) }
+
 object Beheading : Listener {
-    init {}
+    init {
+    }
 
     @EventHandler
     fun onEntityDeath(event: EntityDeathEvent) {
@@ -182,7 +189,13 @@ object Beheading : Listener {
                         }
                     }
                     is Creeper -> if (entity.isPowered) {
-                        Pair(1.0, playerHeadFromUrl("Charged Creeper", "f2ceb39dd4de24a7adfe291a3a0cfc7cf4f645de59b603fcfe06c6b5a06e26"))
+                        Pair(
+                            1.0,
+                            playerHeadFromUrl(
+                                "Charged Creeper",
+                                "f2ceb39dd4de24a7adfe291a3a0cfc7cf4f645de59b603fcfe06c6b5a06e26"
+                            )
+                        )
                     } else {
                         Pair(0.1, ItemStack(Material.CREEPER_HEAD))
                     }
@@ -504,10 +517,12 @@ object Beheading : Listener {
                     )
                     is Skeleton -> {
                         when (entity) {
-                            is Stray -> Pair(0.04, playerHeadFromTexture(
-                                "Stray",
-                                "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzhkZGY3NmU1NTVkZDVjNGFhOGEwYTVmYzU4NDUyMGNkNjNkNDg5YzI1M2RlOTY5ZjdmMjJmODVhOWEyZDU2In19fQ=="
-                            ))
+                            is Stray -> Pair(
+                                0.04, playerHeadFromTexture(
+                                    "Stray",
+                                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzhkZGY3NmU1NTVkZDVjNGFhOGEwYTVmYzU4NDUyMGNkNjNkNDg5YzI1M2RlOTY5ZjdmMjJmODVhOWEyZDU2In19fQ=="
+                                )
+                            )
                             is WitherSkeleton -> Pair(0.01, ItemStack(Material.WITHER_SKELETON_SKULL))
                             else -> Pair(0.05, ItemStack(Material.SKELETON_SKULL))
                         }
@@ -535,14 +550,18 @@ object Beheading : Listener {
                     )
                     is Spider -> {
                         when (entity) {
-                            is CaveSpider -> Pair(0.01, playerHeadFromTexture(
-                                "Cave Spider",
-                                "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTNkMThkYWQwYmQ5MGYwMmFjMDg3NTRhNzUzNThiMWMyN2RhNTc5YjNjYTM1YjY5ZTZiYjEwYTdhNWMyZGJkYSJ9fX0="
-                            ))
-                            else -> Pair(0.002, playerHeadFromTexture(
-                                "Spider",
-                                "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzM4ODE3M2Y0ZjgyYTE0MTUzZTA4NmJmMTM3OTA3MjU2ZTUxMmIyMTczMWYwNDcwMDQ3YmYyZDQ1MzU0NWQyMSJ9fX0="
-                            ))
+                            is CaveSpider -> Pair(
+                                0.01, playerHeadFromTexture(
+                                    "Cave Spider",
+                                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTNkMThkYWQwYmQ5MGYwMmFjMDg3NTRhNzUzNThiMWMyN2RhNTc5YjNjYTM1YjY5ZTZiYjEwYTdhNWMyZGJkYSJ9fX0="
+                                )
+                            )
+                            else -> Pair(
+                                0.002, playerHeadFromTexture(
+                                    "Spider",
+                                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzM4ODE3M2Y0ZjgyYTE0MTUzZTA4NmJmMTM3OTA3MjU2ZTUxMmIyMTczMWYwNDcwMDQ3YmYyZDQ1MzU0NWQyMSJ9fX0="
+                                )
+                            )
                         }
                     }
                     is Squid -> Pair(

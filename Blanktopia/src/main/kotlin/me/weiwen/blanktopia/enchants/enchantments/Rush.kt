@@ -4,7 +4,7 @@ import me.weiwen.blanktopia.enchants.BOOKS
 import me.weiwen.blanktopia.enchants.CustomEnchantment
 import me.weiwen.blanktopia.enchants.NONE
 import me.weiwen.blanktopia.enchants.SHIELDS
-import me.weiwen.blanktopia.spawnParticleAt
+import me.weiwen.moromoro.extensions.spawnParticle
 import org.bukkit.Particle
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Entity
@@ -39,7 +39,7 @@ object Rush : Listener {
             val weapon = entity.equipment?.itemInOffHand ?: return
             if (weapon.containsEnchantment(RUSH)) {
                 val level = weapon.getEnchantmentLevel(RUSH)
-                entity.spawnParticleAt(Particle.CRIT, 10, 0.01)
+                entity.spawnParticle(Particle.CRIT, 10, 0.01)
                 if (event.isCancelled) return
                 entity.addPotionEffect(PotionEffect(PotionEffectType.SPEED, 40, level - 1))
             }

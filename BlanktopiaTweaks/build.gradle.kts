@@ -1,5 +1,4 @@
 dependencies {
-    compileOnly(project(":BlanktopiaCore"))
 }
 
 bukkit {
@@ -10,7 +9,7 @@ bukkit {
     apiVersion = "1.16"
     author = "Goh Wei Wen <goweiwen@gmail.com>"
     website = "www.blanktopia.com"
-    depend = listOf("BlanktopiaCore")
+    depend = listOf()
     commands {
         register("blanktopiatweaks") {
             description = "Manages the Blanktopia plugin"

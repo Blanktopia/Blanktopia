@@ -1,11 +1,11 @@
 package me.weiwen.blanktopia.enchants.enchantments
 
-import me.weiwen.blanktopia.damage
 import me.weiwen.blanktopia.enchants.BOOKS
 import me.weiwen.blanktopia.enchants.CustomEnchantment
 import me.weiwen.blanktopia.enchants.HOES
 import me.weiwen.blanktopia.enchants.NONE
-import me.weiwen.blanktopia.spawnParticleAt
+import me.weiwen.blanktopia.enchants.extensions.damage
+import me.weiwen.moromoro.extensions.spawnParticle
 import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.block.data.Ageable
@@ -57,7 +57,7 @@ object Harvest : Listener {
                 }
             }
 
-            event.block.spawnParticleAt(Particle.VILLAGER_HAPPY, 4, 0.01)
+            event.block.spawnParticle(Particle.VILLAGER_HAPPY, 4, 0.01)
             blockData.age = 0
             event.block.blockData = blockData
         }

@@ -1,8 +1,8 @@
 package me.weiwen.blanktopia.enchants.enchantments
 
 import me.weiwen.blanktopia.enchants.*
-import me.weiwen.blanktopia.playSoundAt
-import me.weiwen.blanktopia.spawnParticleAt
+import me.weiwen.moromoro.extensions.playSoundAt
+import me.weiwen.moromoro.extensions.spawnParticle
 import org.bukkit.Particle
 import org.bukkit.Sound
 import org.bukkit.SoundCategory
@@ -44,7 +44,7 @@ object Frost : Listener {
             val weapon = damager.equipment?.itemInMainHand ?: return
             if (weapon.containsEnchantment(FROST)) {
                 val level = weapon.getEnchantmentLevel(FROST)
-                entity.spawnParticleAt(Particle.SNOWBALL, 20, 0.01)
+                entity.spawnParticle(Particle.SNOWBALL, 20, 0.01)
                 if (event.cause == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
                     entity.playSoundAt(Sound.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS, 0.5f, 0.1f)
                     entity.playSoundAt(Sound.ENTITY_SNOW_GOLEM_HURT, SoundCategory.PLAYERS, 0.5f, 1.5f)

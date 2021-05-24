@@ -1,8 +1,10 @@
 package me.weiwen.blanktopia
 
 import io.papermc.lib.PaperLib
+import me.ryanhamshire.GriefPrevention.GriefPrevention
 import org.bukkit.*
 import org.bukkit.block.Beacon
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -143,4 +145,8 @@ class BlanktopiaPortals : JavaPlugin(), Listener {
             event.player.sendMessage("${ChatColor.GOLD}Portal broken.")
         }
     }
+}
+
+fun Player.canBuildAt(location: Location): Boolean {
+    return GriefPrevention.instance.allowBuild(this, location) == null
 }

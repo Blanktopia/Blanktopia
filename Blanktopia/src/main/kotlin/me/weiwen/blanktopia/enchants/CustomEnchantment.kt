@@ -1,7 +1,6 @@
 package me.weiwen.blanktopia.enchants
 
-import me.weiwen.blanktopia.Blanktopia
-import me.weiwen.blanktopia.toRomanNumerals
+import me.weiwen.blanktopia.enchants.extensions.toRomanNumerals
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material

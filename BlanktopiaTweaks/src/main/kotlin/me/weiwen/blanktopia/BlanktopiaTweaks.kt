@@ -45,9 +45,6 @@ class BlanktopiaTweaks : JavaPlugin() {
         if (config.getBoolean("single-player-sleep")) {
             modules.add(SinglePlayerSleep(this))
         }
-        if (config.getBoolean("ender-dragon-spawns-on-first-portal")) {
-            modules.add(EnderDragonRespawn(this, BlanktopiaCore.INSTANCE.storage))
-        }
         if (config.getBoolean("ender-dragon-drops-elytra")) {
             modules.add(EnderDragonElytra(this))
         }

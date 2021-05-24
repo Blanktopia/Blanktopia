@@ -1,13 +1,9 @@
 package me.weiwen.blanktopia.enchants.enchantments
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent
-import me.weiwen.blanktopia.Blanktopia
-import me.weiwen.blanktopia.addPermanentPotionEffects
-import me.weiwen.blanktopia.enchants.BOOKS
-import me.weiwen.blanktopia.enchants.CustomEnchantment
-import me.weiwen.blanktopia.enchants.HELMET
-import me.weiwen.blanktopia.enchants.NONE
-import me.weiwen.blanktopia.removePermanentPotionEffects
+import me.weiwen.blanktopia.enchants.*
+import me.weiwen.blanktopia.enchants.managers.addPermanentPotionEffects
+import me.weiwen.blanktopia.enchants.managers.removePermanentPotionEffects
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.potion.PotionEffectType
@@ -30,7 +26,7 @@ object NightVision : Listener {
     lateinit var plugin: Blanktopia
 
     fun enable(plugin: Blanktopia) {
-        this.plugin = plugin
+        NightVision.plugin = plugin
 
         for (player in plugin.server.onlinePlayers) {
             for (item in player.inventory.armorContents) {

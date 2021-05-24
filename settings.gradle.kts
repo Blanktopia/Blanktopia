@@ -1,13 +1,8 @@
 rootProject.name = "Blanktopia"
-include("BlanktopiaCore")
 include("Blanktopia")
-include("BlanktopiaItems")
 include("BlanktopiaTweaks")
 include("BlanktopiaShop")
 include("BlanktopiaPortals")
-include("BlanktopiaLikes")
-include("BlanktopiaTutorial")
-include("BlanktopiaFurniture")
 
 pluginManagement {
     repositories {
@@ -18,7 +13,7 @@ pluginManagement {
             val id = requested.id.id
 
             if (id.startsWith("org.jetbrains.kotlin"))
-                useVersion("1.4.21")
+                useVersion("1.5.0")
 
             if(id.startsWith("net.minecrell.plugin-yml.bukkit"))
                 useVersion("0.3.0")

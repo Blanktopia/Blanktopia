@@ -1,5 +1,7 @@
 dependencies {
-    compileOnly(project(":BlanktopiaCore"))
+    implementation("io.papermc:paperlib:1.0.6")
+
+    compileOnly("com.github.TechFortress:GriefPrevention:16.7.1")
 }
 
 bukkit {
@@ -10,7 +12,7 @@ bukkit {
     apiVersion = "1.16"
     author = "Goh Wei Wen <goweiwen@gmail.com>"
     website = "www.blanktopia.com"
-    depend = listOf("BlanktopiaCore")
+    depend = listOf("GriefPrevention")
     permissions {
         register("blanktopia.portal.use") { }
         register("blanktopia.portal.create") { }

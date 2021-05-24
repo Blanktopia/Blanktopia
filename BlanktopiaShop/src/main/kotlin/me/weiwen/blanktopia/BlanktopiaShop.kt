@@ -1,6 +1,9 @@
 package me.weiwen.blanktopia
 
 import com.earth2me.essentials.Essentials
+import me.ryanhamshire.GriefPrevention.GriefPrevention
+import me.weiwen.blanktopia.extensions.playSoundAt
+import me.weiwen.blanktopia.extensions.playSoundTo
 import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.block.Container
@@ -434,4 +437,9 @@ class BlanktopiaShop : JavaPlugin(), Listener {
             }
         }
     }
+}
+
+fun Player.hasContainerTrust(location: Location): Boolean {
+    val claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null) ?: return false
+    return claim.allowContainers(this) == null
 }

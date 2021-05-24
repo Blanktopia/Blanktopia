@@ -1,0 +1,9 @@
+database: mysql
+
+mysql:
+  hostname: localhost
+  port: 3306
+  username: root
+  password:
+  database: blanktopia
+  use-ssl: false

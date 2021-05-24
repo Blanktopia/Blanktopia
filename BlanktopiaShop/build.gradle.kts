@@ -1,8 +1,7 @@
 dependencies {
-    compileOnly(project(":BlanktopiaCore"))
-
     compileOnly("com.github.SkriptLang:Skript:3d49509")
     compileOnly("net.ess3:EssentialsX:2.17.2")
+    compileOnly("com.github.TechFortress:GriefPrevention:16.7.1")
 }
 
 bukkit {
@@ -13,7 +12,7 @@ bukkit {
     apiVersion = "1.16"
     author = "Goh Wei Wen <goweiwen@gmail.com>"
     website = "www.blanktopia.com"
-    depend = listOf("BlanktopiaCore")
+    depend = listOf("GriefPrevention")
     softDepend = listOf("Skript", "Essentials")
     commands {
         register("shopedit") {
