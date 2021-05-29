@@ -1,5 +1,6 @@
-package me.weiwen.blanktopia
+package me.weiwen.blanktopia.tweaks.modules
 
+import me.weiwen.blanktopia.tweaks.Module
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.EntityType

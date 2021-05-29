@@ -1,5 +1,6 @@
-package me.weiwen.blanktopia
+package me.weiwen.blanktopia.tweaks
 
+import me.weiwen.blanktopia.tweaks.modules.*
 import org.bukkit.ChatColor
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
@@ -50,6 +51,9 @@ class BlanktopiaTweaks : JavaPlugin() {
         }
         if (config.getBoolean("shulkers-respawn")) {
             modules.add(ShulkerRespawn(this))
+        }
+        if (config.getBoolean("chestsort-hook")) {
+            modules.add(ChestSortHook(this))
         }
         for (module in modules) {
             module.enable()

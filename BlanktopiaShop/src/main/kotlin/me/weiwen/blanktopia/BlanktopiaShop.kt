@@ -12,6 +12,7 @@ import org.bukkit.block.data.Directional
 import org.bukkit.block.data.type.Chest
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
@@ -200,7 +201,10 @@ class BlanktopiaShop : JavaPlugin(), Listener {
         val state = chest.state as? Container ?: return
         val container = state.persistentDataContainer
         val uuid = container.get(NamespacedKey(this, "owner"), PersistentDataType.STRING)
-        if (uuid != null && uuid != "" && UUID.fromString(uuid) != event.player.uniqueId && !event.player.hasPermission("blanktopia.shop.break")) {
+        if (uuid != null && uuid != "" && UUID.fromString(uuid) != event.player.uniqueId && !event.player.hasPermission(
+                "blanktopia.shop.break"
+            )
+        ) {
             event.player.sendMessage("${ChatColor.RED}You don't have permission to break other players' shops!")
             event.isCancelled = true
             return
@@ -278,7 +282,7 @@ class BlanktopiaShop : JavaPlugin(), Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     fun onInventoryDrag(event: InventoryDragEvent) {
         val block = (event.inventory.holder as? BlockInventoryHolder)?.block ?: return
         val chest = block.state as? Container ?: return
@@ -304,7 +308,7 @@ class BlanktopiaShop : JavaPlugin(), Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     fun onInventoryClick(event: InventoryClickEvent) {
         val block = (event.inventory.holder as? BlockInventoryHolder)?.block ?: return
         val chest = block.state as? Container ?: return
@@ -360,12 +364,16 @@ class BlanktopiaShop : JavaPlugin(), Listener {
         } else if (type == "mail") {
             val uuid = container.get(NamespacedKey(this, "owner"), PersistentDataType.STRING) ?: return
             val player = event.whoClicked as? Player ?: return
-            if ((uuid != "" && UUID.fromString(uuid) == player.uniqueId) || player.hasContainerTrust(block.location)) {
+            if (!canBuyFromOwnShop.contains(player.uniqueId) &&
+                ((uuid != "" && UUID.fromString(uuid) == player.uniqueId) ||
+                        player.hasContainerTrust(block.location))
+            ) {
                 return
             }
             val inventory = event.clickedInventory ?: return
             if (inventory.type == InventoryType.PLAYER
-                && (event.click != ClickType.SHIFT_LEFT || event.click != ClickType.SHIFT_RIGHT)) {
+                && (event.click != ClickType.SHIFT_LEFT || event.click != ClickType.SHIFT_RIGHT)
+            ) {
                 return
             }
 
@@ -377,7 +385,8 @@ class BlanktopiaShop : JavaPlugin(), Listener {
             val clickedItem = inventory.getItem(event.slot)
             if (item == null
                 || event.click != ClickType.LEFT
-                || (clickedItem != null && clickedItem.type != Material.AIR)) {
+                || (clickedItem != null && clickedItem.type != Material.AIR)
+            ) {
                 player.playSoundTo(Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, SoundCategory.PLAYERS, 1.0f, 1.0f)
                 event.isCancelled = true
                 return
@@ -409,7 +418,10 @@ class BlanktopiaShop : JavaPlugin(), Listener {
 
         val essentials = server.pluginManager.getPlugin("Essentials") as? Essentials ?: return
         val user = essentials.getUser(owner.uniqueId) ?: return
-        logger.log(Level.INFO, "${ChatColor.GOLD}${player.displayName}${ChatColor.GOLD} has bought ${boughtItem}${ChatColor.GOLD} from ${owner.name} for ${price}${ChatColor.GOLD}.")
+        logger.log(
+            Level.INFO,
+            "${ChatColor.GOLD}${player.displayName}${ChatColor.GOLD} has bought ${boughtItem}${ChatColor.GOLD} from ${owner.name} for ${price}${ChatColor.GOLD}."
+        )
         if (!owner.isOnline || user.isAfk) {
             user.addMail("${ChatColor.GOLD}${player.displayName}${ChatColor.GOLD} has bought ${boughtItem}${ChatColor.GOLD} for ${price}${ChatColor.GOLD}.")
         } else {
@@ -427,7 +439,10 @@ class BlanktopiaShop : JavaPlugin(), Listener {
 
         val essentials = server.pluginManager.getPlugin("Essentials") as? Essentials ?: return
         val user = essentials.getUser(owner.uniqueId) ?: return
-        logger.log(Level.INFO, "${ChatColor.GOLD}${player.displayName}${ChatColor.GOLD} has sent ${item}${ChatColor.GOLD} to ${owner.name}.")
+        logger.log(
+            Level.INFO,
+            "${ChatColor.GOLD}${player.displayName}${ChatColor.GOLD} has sent ${item}${ChatColor.GOLD} to ${owner.name}."
+        )
         if (!owner.isOnline || user.isAfk) {
             user.addMail("${ChatColor.GOLD}${player.displayName}${ChatColor.GOLD} has sent you ${item}${ChatColor.GOLD}.")
         } else {

@@ -6,11 +6,10 @@ pet-teleport-together: false
 
 single-player-sleep: true
 
-ender-dragon-spawns-on-first-portal: true
-
 ender-dragon-drops-elytra: true
 
 shulkers-respawn: true
 max-shulkers-per-chunk: 1
 shulker-spawn-chance: 0.1
 
+chestsort-hook: true

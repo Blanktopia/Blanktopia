@@ -1,4 +1,4 @@
-package me.weiwen.blanktopia
+package me.weiwen.blanktopia.tweaks
 
 interface Module {
     fun enable()

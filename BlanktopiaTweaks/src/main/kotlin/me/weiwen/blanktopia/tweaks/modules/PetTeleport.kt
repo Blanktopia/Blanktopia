@@ -1,5 +1,6 @@
-package me.weiwen.blanktopia
+package me.weiwen.blanktopia.tweaks.modules
 
+import me.weiwen.blanktopia.tweaks.Module
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
