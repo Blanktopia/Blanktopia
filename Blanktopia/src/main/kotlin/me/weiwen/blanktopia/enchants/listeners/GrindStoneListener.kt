@@ -68,8 +68,9 @@ class GrindStoneListener(val plugin: Blanktopia) : Listener {
                 }
                 exp += sacrificeExp * sacrifice.amount
             }
-            inventory.setItem(2, getResult(target, sacrifice))
-            if (exp > 0.0) {
+            val result = getResult(target, sacrifice)
+            inventory.setItem(2, result)
+            if (result != null && exp > 0.0) {
                 event.inventory.location?.run {
                     val orb = world?.spawnEntity(this, EntityType.EXPERIENCE_ORB) as ExperienceOrb
                     orb.level = exp
@@ -90,15 +91,22 @@ class GrindStoneListener(val plugin: Blanktopia) : Listener {
 
     fun getResult(target: ItemStack?, sacrifice: ItemStack?): ItemStack? {
         if (target != null && sacrifice != null && target.type != sacrifice.type) return null
+
         val result = (target ?: sacrifice ?: return null).clone()
-        if (result.enchantments.containsKey(FINAL)) return null
+
+        if (target?.enchantments?.containsKey(FINAL) == true || sacrifice?.enchantments?.containsKey(FINAL) == true) {
+            return null
+        }
+
         for (enchant in result.enchantments.keys) {
             result.disenchant(enchant)
         }
+
         val meta = result.itemMeta
         if (meta is EnchantmentStorageMeta) {
             return ItemStack(Material.BOOK)
         }
+
         val resultMeta = result.itemMeta
         if (target != null && sacrifice != null) {
             val targetMeta = target.itemMeta
@@ -111,6 +119,7 @@ class GrindStoneListener(val plugin: Blanktopia) : Listener {
                 )
             }
         }
+
         result.itemMeta = resultMeta
         return result
     }
