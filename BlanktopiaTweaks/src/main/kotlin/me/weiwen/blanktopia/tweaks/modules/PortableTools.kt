@@ -42,20 +42,31 @@ class PortableTools(private val plugin: JavaPlugin) :
         event.isCancelled = usePortableTool(player, item)
     }
 
-    fun usePortableTool(player: Player, item: ItemStack): Boolean {
-        if (item.type == Material.CRAFTING_TABLE) {
-            plugin.server.scheduler.runTask(plugin) { ->
+    private fun usePortableTool(player: Player, item: ItemStack): Boolean {
+        when (item.type) {
+            Material.CRAFTING_TABLE -> plugin.server.scheduler.runTask(plugin) { ->
                 player.openWorkbench(null, true)
             }
-            return true
-        } else if (item.type == Material.ENDER_CHEST) {
-            player.world.playSound(player.location, Sound.BLOCK_ENDER_CHEST_OPEN, SoundCategory.BLOCKS, 1.0f, 1.0f)
-            plugin.server.scheduler.runTask(plugin) { ->
-                player.openInventory(player.enderChest)
+            Material.ENDER_CHEST -> {
+                player.world.playSound(player.location, Sound.BLOCK_ENDER_CHEST_OPEN, SoundCategory.BLOCKS, 1.0f, 1.0f)
+                plugin.server.scheduler.runTask(plugin) { ->
+                    player.openInventory(player.enderChest)
+                }
             }
-            return true
-        } else {
-            return false
+            Material.LOOM -> plugin.server.scheduler.runTask(plugin) { ->
+                player.openLoom(null, true)
+            }
+            Material.STONECUTTER -> plugin.server.scheduler.runTask(plugin) { ->
+                player.openStonecutter(null, true)
+            }
+            Material.GRINDSTONE -> plugin.server.scheduler.runTask(plugin) { ->
+                player.openGrindstone(null, true)
+            }
+            Material.CARTOGRAPHY_TABLE -> plugin.server.scheduler.runTask(plugin) { ->
+                player.openCartographyTable(null, true)
+            }
+            else -> return false
         }
+        return true
     }
 }
