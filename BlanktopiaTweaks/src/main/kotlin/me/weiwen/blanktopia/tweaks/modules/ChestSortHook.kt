@@ -46,7 +46,6 @@ class ChestSortHook(private val plugin: JavaPlugin) : Module, Listener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     fun onChestSortEvent(event: ChestSortEvent) {
-        plugin.logger.info("${event.inventory.contents}")
         event.inventory.contents.forEachIndexed { i, item ->
             if (item?.type in SHULKER_BOXES) event.setUnmovable(i)
         }
