@@ -46,9 +46,6 @@ object NightVision : Listener {
         val oldItem = event.oldItem
         val player = event.player
         if (newItem != null && newItem.containsEnchantment(NIGHT_VISION)) {
-            if (player.world.name.startsWith("DXL_Game_")) {
-                return
-            }
             player.addPermanentPotionEffects("night_vision", mapOf(
                 Pair(PotionEffectType.NIGHT_VISION, 0)
             ))
