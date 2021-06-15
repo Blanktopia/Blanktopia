@@ -25,10 +25,10 @@ subprojects {
         jcenter()
         mavenCentral()
         maven { url = uri("https://papermc.io/repo/repository/maven-public/") }
-        maven { url = uri("http://repo.minebench.de/") }
+        maven { url = uri("https://repo.minebench.de/") }
         maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
         maven { url = uri("https://repo.dmulloy2.net/nexus/repository/public/") }
-        maven { url = uri("http://repo.md-5.net/content/repositories/releases/") }
+        maven { url = uri("https://repo.md-5.net/content/repositories/releases/") }
         maven { url = uri("https://ci.ender.zone/plugin/repository/everything/") }
         maven { url = uri("https://jitpack.io") }
         mavenLocal()
