@@ -55,9 +55,8 @@ class BlanktopiaPortals : JavaPlugin(), Listener {
         val loc = Location(server.getWorld(world), x.toDouble(), y.toDouble() + 1, z.toDouble())
         loc.pitch = event.player.location.pitch
         loc.yaw = event.player.location.yaw
-        PaperLib.getChunkAtAsync(loc, false).thenAccept {
+        event.player.teleportAsync(loc.add(0.5, 0.0, 0.5), PlayerTeleportEvent.TeleportCause.PLUGIN).thenAccept {
             event.player.playSound(event.to, Sound.ITEM_CHORUS_FRUIT_TELEPORT, 1.0f, 1.0f)
-            event.player.teleport(loc.add(0.5, 0.0, 0.5), PlayerTeleportEvent.TeleportCause.PLUGIN)
         }
     }
 
