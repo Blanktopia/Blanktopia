@@ -33,7 +33,6 @@ val SHULKER_BOXES = listOf(
 class ChestSortHook(private val plugin: JavaPlugin) : Module, Listener {
     override fun enable() {
         if (plugin.server.pluginManager.isPluginEnabled("ChestSort")) {
-            plugin.logger.info("registered event handler")
             Bukkit.getServer().pluginManager.registerEvents(this, plugin)
         }
     }
