@@ -34,6 +34,7 @@ object Sting : Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onEntityDamageByEntity(event: EntityDamageByEntityEvent) {
+        if (event.damage == 0.0) return
         val entity: Entity = event.entity
         val damager = event.damager
         if (event.cause != EntityDamageEvent.DamageCause.ENTITY_ATTACK && event.cause != EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK) return
@@ -43,7 +44,6 @@ object Sting : Listener {
             if (weapon.containsEnchantment(STING)) {
                 val level = weapon.getEnchantmentLevel(STING)
                 entity.spawnParticle(Particle.SNEEZE, 10, 0.01)
-                if (event.isCancelled) return
                 entity.addPotionEffect(PotionEffect(PotionEffectType.POISON, 80,
                     when (level) {
                         0, 1 -> 0

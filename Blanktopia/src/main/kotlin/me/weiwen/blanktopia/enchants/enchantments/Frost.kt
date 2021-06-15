@@ -37,6 +37,7 @@ object Frost : Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onEntityDamageByEntity(event: EntityDamageByEntityEvent) {
+        if (event.damage == 0.0) return
         val entity: Entity = event.entity
         val damager = event.damager
         if (event.cause != EntityDamageEvent.DamageCause.ENTITY_ATTACK && event.cause != EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK) return
@@ -50,7 +51,6 @@ object Frost : Listener {
                     entity.playSoundAt(Sound.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS, 0.5f, 0.1f)
                     entity.playSoundAt(Sound.ENTITY_SNOW_GOLEM_HURT, SoundCategory.PLAYERS, 0.5f, 1.5f)
                 }
-                if (event.isCancelled) return
                 entity.fireTicks = 0
                 entity.addPotionEffect(PotionEffect(PotionEffectType.SLOW, 20 + level * 20, level))
             }
