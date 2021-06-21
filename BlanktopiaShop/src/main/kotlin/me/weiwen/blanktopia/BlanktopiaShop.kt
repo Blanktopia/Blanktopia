@@ -249,14 +249,16 @@ class BlanktopiaShop : JavaPlugin(), Listener {
                 return
             }
 
+            player.openInventory(state.inventory)
+
         } else if (type == "mail") {
             if (!player.hasPermission("blanktopia.mail.send")) {
                 player.sendMessage("${ChatColor.RED}You don't have permission to send mail!")
                 return
             }
-        }
 
-        player.openInventory(state.inventory)
+            player.openInventory(state.inventory)
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
