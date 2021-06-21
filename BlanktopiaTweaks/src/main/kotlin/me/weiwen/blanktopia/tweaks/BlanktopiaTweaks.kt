@@ -55,6 +55,9 @@ class BlanktopiaTweaks : JavaPlugin() {
         if (config.getBoolean("chestsort-hook")) {
             modules.add(ChestSortHook(this))
         }
+        if (config.getBoolean("allow-petting")) {
+            modules.add(Petting(this))
+        }
         for (module in modules) {
             module.enable()
         }

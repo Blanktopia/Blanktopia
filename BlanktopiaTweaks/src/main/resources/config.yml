@@ -2,7 +2,7 @@ use-crafting-table-and-ender-chest-from-inventory: true
 
 disable-crop-trampling: true
 
-pet-teleport-together: false
+pet-teleport-together: true
 
 single-player-sleep: true
 
@@ -13,3 +13,42 @@ max-shulkers-per-chunk: 1
 shulker-spawn-chance: 0.1
 
 chestsort-hook: true
+
+allow-petting: true
+pettable-entities:
+  - AXOLOTL
+  - BAT
+  - BEE
+  - CAT
+  - CHICKEN
+  - COD
+  - COW
+  - DOLPHIN
+  - DONKEY
+  - FOX
+  - GLOW_SQUID
+  - GOAT
+  - HOGLIN
+  - HORSE
+  - IRON_GOLEM
+  - LLAMA
+  - MULE
+  - MUSHROOM_COW
+  - OCELOT
+  - PANDA
+  - PARROT
+  - PIG
+  - POLAR_BEAR
+  - PUFFERFISH
+  - RABBIT
+  - SALMON
+  - SHEEP
+  - SKELETON_HORSE
+  - SNOWMAN
+  - STRIDER
+  - TRADER_LLAMA
+  - TROPICAL_FISH
+  - TURTLE
+  - WOLF
+  - ZOGLIN
+  - ZOMBIE_HORSE
