@@ -49,6 +49,8 @@ class Petting(private val plugin: JavaPlugin) :
 
         entity.world.spawnParticle(Particle.HEART, entity.location.add(0.0, entity.height + 0.2, 0.0), 1)
 
+        event.player.swingMainHand()
+
         event.isCancelled = true
     }
 }
