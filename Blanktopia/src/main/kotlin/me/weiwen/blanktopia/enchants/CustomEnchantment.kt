@@ -1,13 +1,17 @@
 package me.weiwen.blanktopia.enchants
 
+import io.papermc.paper.enchantments.EnchantmentRarity
 import me.weiwen.blanktopia.enchants.extensions.toRomanNumerals
+import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.enchantments.EnchantmentTarget
+import org.bukkit.entity.EntityCategory
 import org.bukkit.event.Listener
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.EnchantmentStorageMeta
 
@@ -34,6 +38,34 @@ open class CustomEnchantment(
 
     override fun getName(): String {
         return _name
+    }
+
+    override fun displayName(level: Int): Component {
+        return if (maxLevel != 1) {
+            Component.text("$name ${level.toRomanNumerals()}")
+        } else {
+            Component.text(name)
+        }
+    }
+
+    override fun isTradeable(): Boolean {
+        return false
+    }
+
+    override fun isDiscoverable(): Boolean {
+        return false
+    }
+
+    override fun getRarity(): EnchantmentRarity {
+        return EnchantmentRarity.RARE
+    }
+
+    override fun getDamageIncrease(level: Int, entityCategory: EntityCategory): Float {
+        return 0f
+    }
+
+    override fun getActiveSlots(): MutableSet<EquipmentSlot> {
+        return mutableSetOf()
     }
 
     override fun isCursed(): Boolean {

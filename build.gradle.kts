@@ -40,6 +40,7 @@ subprojects {
 
     dependencies {
         compileOnly("io.papermc.paper:paper-api:1.17-R0.1-SNAPSHOT")
+        compileOnly("net.kyori:adventure-api:4.8.1")
     }
 
     tasks.withType<KotlinCompile> {
