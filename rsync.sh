@@ -1,33 +1,4 @@
 #!/bin/sh
-BASE=.
+BASE="."
 
-jsonnet $BASE/BlanktopiaItems/src/main/resources/config.jsonnet -o $BASE/BlanktopiaItems/src/main/resources/config.json
-cat $BASE/BlanktopiaItems/src/main/resources/config.json | yq -y > $BASE/BlanktopiaItems/src/main/resources/config.yml
-
-rsync -iavzhP \
-	$BASE/Blanktopia/build/libs/Blanktopia-1.0.0.jar \
-	$BASE/BlanktopiaCore/build/libs/BlanktopiaCore-1.0.0.jar \
-	$BASE/BlanktopiaItems/build/libs/BlanktopiaItems-1.0.0.jar \
-	$BASE/BlanktopiaPortals/build/libs/BlanktopiaPortals-1.0.0.jar \
-	$BASE/BlanktopiaShop/build/libs/BlanktopiaShop-1.0.0.jar \
-	$BASE/BlanktopiaTweaks/build/libs/BlanktopiaTweaks-1.0.0.jar \
-	$BASE/BlanktopiaLikes/build/libs/BlanktopiaLikes-1.0.0.jar \
-	$BASE/BlanktopiaTutorial/build/libs/BlanktopiaTutorial-1.0.0.jar \
-	$BASE/BlanktopiaFurniture/build/libs/BlanktopiaFurniture-1.0.0.jar \
-	root@play.blanktopia.com:~/ubuntu/docker/minecraft/blanktopia/plugins
-
-rsync -iavzhP \
-	root@play.blanktopia.com:~/ubuntu/docker/minecraft/blanktopia/plugins/BlanktopiaItems/config.yml \
-	"$BASE/BlanktopiaItems/src/main/resources/config.yml.bak"
-
-rsync -iavzhP \
-	"$BASE/BlanktopiaItems/src/main/resources/config.yml" \
-	root@play.blanktopia.com:~/ubuntu/docker/minecraft/blanktopia/plugins/BlanktopiaItems/config.yml
-
-rsync -iavzhP \
-	root@play.blanktopia.com:~/ubuntu/docker/minecraft/blanktopia/plugins/Blanktopia/config.yml \
-	"$BASE/Blanktopia/src/main/resources/config.yml.bak"
-jsonnet BlanktopiaItems/src/main/resources/config.jsonnet -o BlanktopiaItems/src/main/resources/config.yml
-rsync -iavzhP \
-	"$BASE/Blanktopia/src/main/resources/config.yml" \
-	root@play.blanktopia.com:~/ubuntu/docker/minecraft/blanktopia/plugins/Blanktopia/config.yml
+scp "./Blanktopia/build/libs/Blanktopia-1.0.0.jar" "./BlanktopiaPortals/build/libs/BlanktopiaPortals-1.0.0.jar" "./BlanktopiaShop/build/libs/BlanktopiaShop-1.0.0.jar" "./BlanktopiaTweaks/build/libs/BlanktopiaTweaks-1.0.0.jar" ssh.piggyp.ink:/opt/nomad/volumes/blanktopia/plugins
