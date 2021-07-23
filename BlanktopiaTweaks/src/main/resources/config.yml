@@ -52,3 +52,5 @@ pettable-entities:
   - WOLF
   - ZOGLIN
   - ZOMBIE_HORSE
+
+void-keep-inventory: true

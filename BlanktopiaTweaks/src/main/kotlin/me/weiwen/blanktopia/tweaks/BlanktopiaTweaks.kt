@@ -58,6 +58,9 @@ class BlanktopiaTweaks : JavaPlugin() {
         if (config.getBoolean("allow-petting")) {
             modules.add(Petting(this))
         }
+        if (config.getBoolean("void-keep-inventory")) {
+            modules.add(VoidKeepInventory(this))
+        }
         for (module in modules) {
             module.enable()
         }
