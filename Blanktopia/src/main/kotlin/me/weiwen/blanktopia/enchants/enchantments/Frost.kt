@@ -50,9 +50,9 @@ object Frost : Listener {
                 if (event.cause == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
                     entity.playSoundAt(Sound.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS, 0.5f, 0.1f)
                     entity.playSoundAt(Sound.ENTITY_SNOW_GOLEM_HURT, SoundCategory.PLAYERS, 0.5f, 1.5f)
+                    entity.fireTicks = 0
+                    entity.freezeTicks = minOf(entity.maxFreezeTicks, 60 * level)
                 }
-                entity.fireTicks = 0
-                entity.addPotionEffect(PotionEffect(PotionEffectType.SLOW, 20 + level * 20, level))
             }
         }
     }
