@@ -4,7 +4,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("de.jeff_media", "ChestSortAPI", "4.0.0")
+    compileOnly("de.jeff_media", "ChestSortAPI", "11.0.0-SNAPSHOT")
 }
 
 bukkit {

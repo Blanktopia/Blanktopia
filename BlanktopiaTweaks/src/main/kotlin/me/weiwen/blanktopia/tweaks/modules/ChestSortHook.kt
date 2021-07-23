@@ -1,12 +1,12 @@
 package me.weiwen.blanktopia.tweaks.modules
 
+import de.jeff_media.chestsort.api.ChestSortEvent
 import me.weiwen.blanktopia.tweaks.Module
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
-import de.jeff_media.chestsort.ChestSortEvent
 import org.bukkit.Material
 import org.bukkit.plugin.java.JavaPlugin
 
