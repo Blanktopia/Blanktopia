@@ -3,6 +3,7 @@ package me.weiwen.blanktopia.tweaks.modules
 import me.weiwen.blanktopia.tweaks.Module
 import org.bukkit.Material
 import org.bukkit.Particle
+import org.bukkit.Sound
 import org.bukkit.attribute.Attributable
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.*
@@ -49,7 +50,7 @@ class Petting(private val plugin: JavaPlugin) :
 
         entity.world.spawnParticle(Particle.HEART, entity.location.add(0.0, entity.height + 0.2, 0.0), 1)
 
-        event.player.swingMainHand()
+        event.player.world.playSound(event.player.eyeLocation, Sound.ENTITY_PLAYER_ATTACK_WEAK, 0.5f, 1.0f)
 
         event.isCancelled = true
     }
