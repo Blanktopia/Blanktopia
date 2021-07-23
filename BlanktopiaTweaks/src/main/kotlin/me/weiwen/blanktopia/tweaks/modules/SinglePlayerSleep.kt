@@ -1,5 +1,6 @@
 package me.weiwen.blanktopia.tweaks.modules
 
+import io.papermc.paper.event.player.PlayerDeepSleepEvent
 import me.weiwen.blanktopia.tweaks.Module
 import org.bukkit.ChatColor
 import org.bukkit.World
@@ -12,7 +13,7 @@ import org.bukkit.scheduler.BukkitTask
 import java.util.*
 
 class SinglePlayerSleep(val plugin: JavaPlugin) : Module, Listener {
-    val tasks: MutableMap<UUID, BukkitTask> = mutableMapOf()
+    val sleeping: MutableSet<UUID> = mutableSetOf()
 
     override fun enable() {
         plugin.server.pluginManager.registerEvents(this, plugin)
@@ -32,15 +33,18 @@ class SinglePlayerSleep(val plugin: JavaPlugin) : Module, Listener {
             return
         }
         plugin.server.broadcastMessage(event.player.displayName + ChatColor.GRAY + " is going to bed. Sweet dreams!")
-        tasks[event.player.uniqueId] = plugin.server.scheduler.runTaskLater(plugin, {
-            skipNight(event.player.world)
-            tasks.clear()
-        } as () -> Unit, 100)
+        sleeping.add(event.player.uniqueId)
+    }
+
+    @EventHandler
+    fun onPlayerDeepSleep(event: PlayerDeepSleepEvent) {
+        skipNight(event.player.world)
+        sleeping.remove(event.player.uniqueId)
     }
 
     @EventHandler
     fun onPlayerBedLeave(event: PlayerBedLeaveEvent) {
-        tasks[event.player.uniqueId]?.cancel()
+        sleeping.remove(event.player.uniqueId)
     }
 
     private fun skipNight(world: World) {
