@@ -32,19 +32,15 @@ class SinglePlayerSleep(val plugin: JavaPlugin) : Module, Listener {
         if (event.bedEnterResult != PlayerBedEnterEvent.BedEnterResult.OK) {
             return
         }
-        plugin.server.broadcastMessage(event.player.displayName + ChatColor.GRAY + " is going to bed. Sweet dreams!")
-        sleeping.add(event.player.uniqueId)
+        if (sleeping.add(event.player.uniqueId)) {
+            plugin.server.broadcastMessage(event.player.displayName + ChatColor.GRAY + " is going to bed. Sweet dreams!")
+        }
     }
 
     @EventHandler
     fun onPlayerDeepSleep(event: PlayerDeepSleepEvent) {
         skipNight(event.player.world)
-        sleeping.remove(event.player.uniqueId)
-    }
-
-    @EventHandler
-    fun onPlayerBedLeave(event: PlayerBedLeaveEvent) {
-        sleeping.remove(event.player.uniqueId)
+        sleeping.clear()
     }
 
     private fun skipNight(world: World) {
