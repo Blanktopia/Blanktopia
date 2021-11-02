@@ -386,6 +386,7 @@ class BlanktopiaShop : JavaPlugin(), Listener {
             val item = event.cursor
             val clickedItem = inventory.getItem(event.slot)
             if (item == null
+                || item.type == Material.AIR
                 || event.click != ClickType.LEFT
                 || (clickedItem != null && clickedItem.type != Material.AIR)
             ) {
