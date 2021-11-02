@@ -1,13 +1,18 @@
 package me.weiwen.blanktopia.tweaks
 
+import com.sk89q.worldedit.WorldEdit
+import com.sk89q.worldedit.bukkit.BukkitAdapter
 import me.weiwen.blanktopia.tweaks.modules.*
 import org.bukkit.ChatColor
+import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 
 
 class BlanktopiaTweaks : JavaPlugin() {
     var modules = mutableListOf<Module>()
+
+    private var sakuraBiome: SakuraBiome? = null
 
     companion object {
         lateinit var INSTANCE: BlanktopiaTweaks
@@ -31,7 +36,38 @@ class BlanktopiaTweaks : JavaPlugin() {
                     sender.sendMessage(ChatColor.GOLD.toString() + "Reloaded configuration!")
                     true
                 }
+                "biome" -> {
+                    if (sakuraBiome == null) {
+                        sender.sendMessage(ChatColor.RED.toString() + "Biome module not loaded.")
+                        return@setExecutor false
+                    }
+                    if (!server.pluginManager.isPluginEnabled("WorldEdit")) {
+                        sender.sendMessage(ChatColor.RED.toString() + "WorldEdit not loaded.")
+                        return@setExecutor false
+                    }
+                    if (sender is Player) {
+                        val bPlayer = BukkitAdapter.adapt(sender)
+                        val region =
+                            WorldEdit.getInstance().sessionManager.get(bPlayer)
+                                .getSelection(bPlayer.world)
+
+                        val world = BukkitAdapter.adapt(region.world)
+                        sakuraBiome?.setBiome(
+                            BukkitAdapter.adapt(world, region.minimumPoint),
+                            BukkitAdapter.adapt(world, region.maximumPoint)
+                        )
+
+                        true
+                    } else {
+                        false
+                    }
+                }
                 else -> false
+            }
+        }
+        if (config.getBoolean("sakura-biome")) {
+            sakuraBiome = SakuraBiome(this).also {
+                modules.add(it)
             }
         }
         if (config.getBoolean("use-crafting-table-and-ender-chest-from-inventory")) {

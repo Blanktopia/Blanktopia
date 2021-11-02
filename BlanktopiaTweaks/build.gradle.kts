@@ -1,10 +1,15 @@
 repositories {
     // ChestSort
     maven { url = uri("https://repo.jeff-media.de/maven2") }
+
+    // WorldEdit
+    maven { url = uri("https://maven.enginehub.org/repo/") }
 }
 
 dependencies {
     compileOnly("de.jeff_media", "ChestSortAPI", "11.0.0-SNAPSHOT")
+    implementation(files("vendor/AdvancedWorldCreator.jar"))
+    compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.3.0-SNAPSHOT")
 }
 
 bukkit {
