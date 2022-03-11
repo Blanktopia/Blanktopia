@@ -7,9 +7,11 @@ repositories {
 }
 
 dependencies {
+    compileOnly("org.spigotmc", "spigot", "1.18-R0.1-SNAPSHOT")
     compileOnly("de.jeff_media", "ChestSortAPI", "11.0.0-SNAPSHOT")
-    implementation(files("vendor/AdvancedWorldCreator.jar"))
     compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.3.0-SNAPSHOT")
+
+    implementation(files("vendor/AdvancedWorldCreatorAPI.jar"))
 }
 
 bukkit {

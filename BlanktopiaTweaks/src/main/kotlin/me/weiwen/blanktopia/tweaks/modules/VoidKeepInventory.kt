@@ -4,6 +4,7 @@ import me.weiwen.blanktopia.tweaks.Module
 import org.bukkit.ChatColor
 import org.bukkit.World
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.PlayerDeathEvent
@@ -22,7 +23,7 @@ class VoidKeepInventory(val plugin: JavaPlugin) : Module, Listener {
 
     override fun reload() {}
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     fun onPlayerDeath(event: PlayerDeathEvent) {
         val player = event.entity
         if (player.lastDamageCause?.cause == EntityDamageEvent.DamageCause.VOID) {

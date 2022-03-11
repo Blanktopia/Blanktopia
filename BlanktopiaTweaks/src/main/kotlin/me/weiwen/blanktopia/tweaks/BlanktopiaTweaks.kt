@@ -4,6 +4,7 @@ import com.sk89q.worldedit.WorldEdit
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import me.weiwen.blanktopia.tweaks.modules.*
 import org.bukkit.ChatColor
+import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
@@ -12,7 +13,7 @@ import java.io.File
 class BlanktopiaTweaks : JavaPlugin() {
     var modules = mutableListOf<Module>()
 
-    private var sakuraBiome: SakuraBiome? = null
+    private var customBiome: CustomBiome? = null
 
     companion object {
         lateinit var INSTANCE: BlanktopiaTweaks
@@ -27,7 +28,7 @@ class BlanktopiaTweaks : JavaPlugin() {
     override fun onEnable() {
         reloadConfig()
         getCommand("blanktopiatweaks")?.setExecutor { sender, _, _, args ->
-            when (args[0]) {
+            when (args.getOrNull(0)) {
                 "reload" -> {
                     reloadConfig()
                     for (module in modules) {
@@ -37,7 +38,7 @@ class BlanktopiaTweaks : JavaPlugin() {
                     true
                 }
                 "biome" -> {
-                    if (sakuraBiome == null) {
+                    if (customBiome == null) {
                         sender.sendMessage(ChatColor.RED.toString() + "Biome module not loaded.")
                         return@setExecutor false
                     }
@@ -52,21 +53,27 @@ class BlanktopiaTweaks : JavaPlugin() {
                                 .getSelection(bPlayer.world)
 
                         val world = BukkitAdapter.adapt(region.world)
-                        sakuraBiome?.setBiome(
+                        customBiome?.setBiome(
                             BukkitAdapter.adapt(world, region.minimumPoint),
-                            BukkitAdapter.adapt(world, region.maximumPoint)
+                            BukkitAdapter.adapt(world, region.maximumPoint),
+                            NamespacedKey.fromString(args[1]) ?: NamespacedKey("minecraft", "plains")
                         )
 
+                        sender.sendMessage(ChatColor.GOLD.toString() + "Set biome to '" + args[1] + "'.")
                         true
                     } else {
+                        sender.sendMessage(ChatColor.RED.toString() + "Invalid arguments.")
                         false
                     }
                 }
-                else -> false
+                else -> {
+                    sender.sendMessage(ChatColor.RED.toString() + "Invalid arguments.")
+                    false
+                }
             }
         }
-        if (config.getBoolean("sakura-biome")) {
-            sakuraBiome = SakuraBiome(this).also {
+        if (config.getBoolean("custom-biome")) {
+            customBiome = CustomBiome(this).also {
                 modules.add(it)
             }
         }
@@ -96,6 +103,9 @@ class BlanktopiaTweaks : JavaPlugin() {
         }
         if (config.getBoolean("void-keep-inventory")) {
             modules.add(VoidKeepInventory(this))
+        }
+        if (config.getBoolean("suffocate-keep-inventory")) {
+            modules.add(SuffocateKeepInventory(this))
         }
         for (module in modules) {
             module.enable()

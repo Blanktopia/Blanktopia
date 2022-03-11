@@ -2,14 +2,13 @@ package me.weiwen.blanktopia.tweaks.modules
 
 import io.papermc.paper.event.player.PlayerDeepSleepEvent
 import me.weiwen.blanktopia.tweaks.Module
-import org.bukkit.ChatColor
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextColor
 import org.bukkit.World
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerBedEnterEvent
-import org.bukkit.event.player.PlayerBedLeaveEvent
 import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.scheduler.BukkitTask
 import java.util.*
 
 class SinglePlayerSleep(val plugin: JavaPlugin) : Module, Listener {
@@ -33,7 +32,13 @@ class SinglePlayerSleep(val plugin: JavaPlugin) : Module, Listener {
             return
         }
         if (sleeping.add(event.player.uniqueId)) {
-            plugin.server.broadcastMessage(event.player.displayName + ChatColor.GRAY + " is going to bed. Sweet dreams!")
+            event.player.world.sendMessage(
+                event.player.displayName().append(
+                    Component.text(" is going to bed. Sweet dreams!").color(
+                        TextColor.color(0xbf9999)
+                    )
+                )
+            )
         }
     }
 

@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.5.0" apply false
+    kotlin("jvm") version "1.6.0" apply false
     id("net.minecrell.plugin-yml.bukkit") apply false
     id("com.github.johnrengelman.shadow") apply false
 }
@@ -39,12 +39,17 @@ subprojects {
     val api by configurations
 
     dependencies {
-        compileOnly("io.papermc.paper:paper-api:1.17-R0.1-SNAPSHOT")
+        compileOnly("io.papermc.paper:paper-api:1.18-R0.1-SNAPSHOT")
         compileOnly("net.kyori:adventure-api:4.8.1")
     }
 
     tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "17"
+        kotlinOptions.languageVersion = "1.6"
+        kotlinOptions.freeCompilerArgs = listOf(
+            "-Xopt-in=kotlin.RequiresOptIn",
+            "-Xuse-experimental=org.jetbrains.kotlinx.serialization.ExperimentalSerializationApi"
+        )
     }
 
     tasks.withType<ShadowJar> {

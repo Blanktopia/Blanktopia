@@ -25,15 +25,19 @@ class PetTeleport(val plugin: JavaPlugin) : Module, Listener {
         val leashedEntities = player.world.getNearbyLivingEntities(player.location, 5.0).filter {
             it.isLeashed && it.leashHolder == player
         }
-        val vehicle = player.vehicle
+        val vehicle = player.vehicle as? LivingEntity
 
-        plugin.server.scheduler.runTask(plugin) { ->
+        plugin.server.scheduler.runTaskLater(plugin, { ->
             leashedEntities.forEach {
+                it.setLeashHolder(null)
                 it.teleport(event.to)
+                it.setLeashHolder(player)
             }
-            if (vehicle is LivingEntity) {
+            if (vehicle != null) {
+                vehicle.removePassenger(player)
                 vehicle.teleport(event.to)
+                vehicle.addPassenger(player)
             }
-        }
+        }, 1)
     }
 }
