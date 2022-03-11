@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.EnchantmentStorageMeta
 
 open class CustomEnchantment(
-    key: String,
+    val _key: String,
     val _name: String,
     val _maxLevel: Int,
     val primaryItems: Set<Material>,
@@ -30,11 +30,15 @@ open class CustomEnchantment(
     Enchantment(
         NamespacedKey(
             Blanktopia.INSTANCE,
-            key
+            _key
         )
     ) {
     var _isTreasure = false
     var _startLevel = 1
+
+    override fun translationKey(): String {
+        return _key
+    }
 
     override fun getName(): String {
         return _name

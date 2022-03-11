@@ -18,13 +18,17 @@ import kotlin.math.ceil
 class AnvilListener(val plugin: Blanktopia) : Listener {
     @EventHandler
     private fun onPrepareAnvil(event: PrepareAnvilEvent) {
-        val target = event.inventory.contents.getOrNull(0) ?: return
-        val sacrifice = event.inventory.contents.getOrNull(1)
+        val target = event.inventory.contents?.getOrNull(0) ?: return
+        val sacrifice = event.inventory.contents?.getOrNull(1)
 
         val result = target.clone()
         val resultMeta = result.itemMeta ?: Bukkit.getItemFactory().getItemMeta(result.type)!!
         val targetMeta = target.itemMeta ?: Bukkit.getItemFactory().getItemMeta(target.type)!!
-        val sacrificeMeta = if (sacrifice == null) { null } else {sacrifice.itemMeta ?: Bukkit.getItemFactory().getItemMeta(sacrifice.type)!!}
+        val sacrificeMeta = if (sacrifice == null) {
+            null
+        } else {
+            sacrifice.itemMeta ?: Bukkit.getItemFactory().getItemMeta(sacrifice.type)!!
+        }
 
         var repairCost = 0
         var canAnvil = false
@@ -87,7 +91,8 @@ class AnvilListener(val plugin: Blanktopia) : Listener {
         if (target.type == sacrifice.type && resultMeta is Damageable && targetMeta is Damageable && sacrificeMeta is Damageable && targetMeta.hasDamage()) {
             repairCost += 2
             val max = result.type.maxDurability.toInt()
-            resultMeta.damage = max - minOf((max - targetMeta.damage + max - sacrificeMeta.damage + max * 1.12).toInt(), max)
+            resultMeta.damage =
+                max - minOf((max - targetMeta.damage + max - sacrificeMeta.damage + max * 1.12).toInt(), max)
             canAnvil = true
         }
 

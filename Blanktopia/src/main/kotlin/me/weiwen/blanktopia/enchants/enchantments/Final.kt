@@ -28,7 +28,7 @@ object Final : Listener {
 
     @EventHandler
     fun onPrepareAnvilEvent(event: PrepareAnvilEvent) {
-        val items = event.inventory.contents
+        val items = event.inventory.contents ?: return
         for (item in items) {
             if (item != null) {
                 print(item.containsEnchantment(FINAL))

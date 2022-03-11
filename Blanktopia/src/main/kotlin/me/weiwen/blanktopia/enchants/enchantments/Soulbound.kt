@@ -5,10 +5,12 @@ import me.weiwen.blanktopia.enchants.BOOKS
 import me.weiwen.blanktopia.enchants.CustomEnchantment
 import me.weiwen.blanktopia.enchants.NONE
 import org.bukkit.ChatColor
+import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.inventory.ItemStack
 
 val SOULBOUND = CustomEnchantment(
     "soulbound",
@@ -25,28 +27,28 @@ val SOULBOUND = CustomEnchantment(
 )
 
 object Soulbound : Listener {
-    init {}
+    init {
+    }
 
     @EventHandler
     fun onPlayerDeath(event: PlayerDeathEvent): Boolean {
         if (event.keepInventory) {
             return false
         }
-        val player = event.entity
-        val items = player.inventory.contents.clone()
-        for ((i, item) in items.withIndex()) {
-            item ?: continue
-            if (item.containsEnchantment(SOULBOUND) ||
-                item.itemMeta?.lore?.contains(ChatColor.GRAY.toString() + "Soulbound") == true // compat
-               )
-            {
-                event.drops.remove(item)
+
+        val items = event.entity.inventory.contents?.map {
+            if (it != null && (it.containsEnchantment(SOULBOUND) ||
+                        it.itemMeta?.lore?.contains(ChatColor.GRAY.toString() + "Soulbound") == true) // compat
+            ) {
+                event.drops.remove(it)
+                it
             } else {
-                items[i] = null;
+                ItemStack(Material.AIR)
             }
-        }
+        } ?: return true
+
         event.keepInventory = true
-        player.inventory.contents = items
+        event.entity.inventory.setContents(items.toTypedArray())
         return true
     }
 }
