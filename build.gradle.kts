@@ -2,54 +2,42 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.6.0" apply false
-    id("net.minecrell.plugin-yml.bukkit") apply false
-    id("com.github.johnrengelman.shadow") apply false
+    id("com.mineinabyss.conventions.kotlin")
+    id("com.mineinabyss.conventions.copyjar") apply false
+    id("net.minecrell.plugin-yml.bukkit") version "0.5.2" apply false
+    id("com.github.johnrengelman.shadow") version "7.1.0" apply false
 }
 
 subprojects {
-    apply {
-        plugin("kotlin")
-        plugin("net.minecrell.plugin-yml.bukkit")
-        plugin("com.github.johnrengelman.shadow")
-    }
+    apply(plugin = "java")
+    apply(plugin = "com.mineinabyss.conventions.kotlin")
+    apply(plugin = "com.mineinabyss.conventions.copyjar")
+    apply(plugin = "net.minecrell.plugin-yml.bukkit")
+    apply(plugin = "com.github.johnrengelman.shadow")
 
-    group = "me.weiwen.blanktopia"
-    version = "1.0.0"
 
-    apply {
-        plugin("org.jetbrains.kotlin.jvm")
+    tasks.withType<KotlinCompile> {
+        kotlinOptions.freeCompilerArgs = listOf("-opt-in=kotlinx.serialization.ExperimentalSerializationApi")
     }
 
     repositories {
-        jcenter()
-        mavenCentral()
-        maven { url = uri("https://papermc.io/repo/repository/maven-public/") }
-        maven { url = uri("https://repo.minebench.de/") }
-        maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
-        maven { url = uri("https://repo.dmulloy2.net/nexus/repository/public/") }
-        maven { url = uri("https://repo.md-5.net/content/repositories/releases/") }
-        maven { url = uri("https://ci.ender.zone/plugin/repository/everything/") }
-        maven { url = uri("https://jitpack.io") }
         mavenLocal()
+        mavenCentral()
+        maven("https://repo.mineinabyss.com")
+        maven("https://repo.minebench.de/")
+        maven("https://oss.sonatype.org/content/repositories/snapshots/")
+        maven("https://repo.dmulloy2.net/nexus/repository/public/")
+        maven("https://repo.md-5.net/content/repositories/releases/")
+        maven("https://ci.ender.zone/plugin/repository/everything/")
     }
 
-    val implementation by configurations
-    val compileOnly by configurations
-    val api by configurations
 
     dependencies {
-        compileOnly("io.papermc.paper:paper-api:1.18-R0.1-SNAPSHOT")
-        compileOnly("net.kyori:adventure-api:4.8.1")
-    }
+        val libs = rootProject.libs
 
-    tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "17"
-        kotlinOptions.languageVersion = "1.6"
-        kotlinOptions.freeCompilerArgs = listOf(
-            "-Xopt-in=kotlin.RequiresOptIn",
-            "-Xuse-experimental=org.jetbrains.kotlinx.serialization.ExperimentalSerializationApi"
-        )
+        implementation(libs.idofront.platform.loader)
+        compileOnly(libs.kotlin.stdlib)
+        compileOnly("io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT")
     }
 
     tasks.withType<ShadowJar> {

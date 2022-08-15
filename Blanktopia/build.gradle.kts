@@ -1,6 +1,3 @@
-dependencies {
-}
-
 bukkit {
     main = "me.weiwen.blanktopia.enchants.Blanktopia"
     name = "Blanktopia"
@@ -11,7 +8,7 @@ bukkit {
     website = "www.blanktopia.com"
     depend = listOf()
     softDepend = listOf()
-    loadBefore = listOf("GoldenCrates")
+    loadBefore = listOf("ExcellentCrates")
     commands {
         register("blanktopia") {
             description = "Manages the Blanktopia plugin"

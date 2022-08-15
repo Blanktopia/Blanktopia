@@ -1,5 +1,6 @@
 package me.weiwen.blanktopia
 
+import com.mineinabyss.idofront.platforms.IdofrontPlatforms
 import io.papermc.lib.PaperLib
 import me.ryanhamshire.GriefPrevention.GriefPrevention
 import org.bukkit.*
@@ -18,7 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 
 class BlanktopiaPortals : JavaPlugin(), Listener {
-    val incompletePortals: MutableMap<UUID, Location> = mutableMapOf()
+    private val incompletePortals: MutableMap<UUID, Location> = mutableMapOf()
 
     companion object {
         lateinit var INSTANCE: BlanktopiaPortals
@@ -27,6 +28,7 @@ class BlanktopiaPortals : JavaPlugin(), Listener {
 
     override fun onLoad() {
         INSTANCE = this
+        IdofrontPlatforms.load(this, "mineinabyss")
     }
 
     override fun onEnable() {
@@ -52,26 +54,34 @@ class BlanktopiaPortals : JavaPlugin(), Listener {
         val x = beacon.get(NamespacedKey(this, "x"), PersistentDataType.INTEGER) ?: return
         val y = beacon.get(NamespacedKey(this, "y"), PersistentDataType.INTEGER) ?: return
         val z = beacon.get(NamespacedKey(this, "z"), PersistentDataType.INTEGER) ?: return
-        val loc = Location(server.getWorld(world), x.toDouble(), y.toDouble() + 1, z.toDouble())
-        loc.pitch = event.player.location.pitch
-        loc.yaw = event.player.location.yaw
-        event.player.teleportAsync(loc.add(0.5, 0.0, 0.5), PlayerTeleportEvent.TeleportCause.PLUGIN).thenAccept {
-            event.player.playSound(event.to, Sound.ITEM_CHORUS_FRUIT_TELEPORT, 1.0f, 1.0f)
+        val yaw = beacon.get(NamespacedKey(this, "yaw"), PersistentDataType.INTEGER) ?: 0
+        val loc = Location(
+            server.getWorld(world),
+            x.toDouble() + 0.5,
+            y.toDouble() + 1,
+            z.toDouble() + 0.5,
+            event.player.location.yaw + yaw,
+            event.player.location.pitch,
+        )
+
+        event.player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN).thenAccept {
+            event.from.world.playSound(event.from, Sound.ITEM_CHORUS_FRUIT_TELEPORT, SoundCategory.PLAYERS, 1.0f, 1.0f)
+            event.to.world.playSound(event.to, Sound.ITEM_CHORUS_FRUIT_TELEPORT, SoundCategory.PLAYERS, 1.0f, 1.0f)
         }
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     fun onPlayerInteract(event: PlayerInteractEvent) {
-        val block = event.clickedBlock ?: return
+        val exit = event.clickedBlock ?: return
         val player = event.player
         val item = event.hand?.let { player.inventory.getItem(it) } ?: return
         if (item.type != Material.NETHER_STAR) return
-        if (block.type != Material.BEACON) return
+        if (exit.type != Material.BEACON) return
         if (event.action != Action.RIGHT_CLICK_BLOCK) return
         if (!player.hasPermission("blanktopia.portals.create")) return
-        if (!player.canBuildAt(block.location)) return
+        if (!player.canBuildAt(exit.location)) return
         event.isCancelled = true
-        val state = block.state as? Beacon ?: return
+        val state = exit.state as? Beacon ?: return
         val beacon = state.persistentDataContainer
         val world = beacon.get(NamespacedKey(this, "world"), PersistentDataType.STRING)
         if (world != null) {
@@ -82,7 +92,7 @@ class BlanktopiaPortals : JavaPlugin(), Listener {
         val uuid = player.uniqueId
         val entrance = incompletePortals[uuid]
         if (entrance != null) {
-            if (entrance == block.location) {
+            if (exit.world == entrance.world && entrance.distance(exit.location) < 0.5) {
                 player.sendMessage("${ChatColor.GOLD}Portal entrance set.")
                 return
             }
@@ -94,27 +104,47 @@ class BlanktopiaPortals : JavaPlugin(), Listener {
                     player.sendMessage("${ChatColor.GOLD}Portal entrance set.")
                 }
 
+                val entranceYaw = ((entrance.yaw + 180 + 45) / 90).toInt() * 90
+                val exitYaw = ((player.location.yaw + 180 + 45) / 90).toInt() * 90
+                val yaw = (exitYaw - entranceYaw) % 90
+
                 val entranceState = entrance.block.state as? Beacon ?: return@thenAccept
                 val entranceBeacon = entranceState.persistentDataContainer
-                entranceBeacon.set(NamespacedKey(this, "world"), PersistentDataType.STRING, block.world.name)
-                entranceBeacon.set(NamespacedKey(this, "x"), PersistentDataType.INTEGER, block.x)
-                entranceBeacon.set(NamespacedKey(this, "y"), PersistentDataType.INTEGER, block.y)
-                entranceBeacon.set(NamespacedKey(this, "z"), PersistentDataType.INTEGER, block.z)
+                entranceBeacon.set(NamespacedKey(this, "world"), PersistentDataType.STRING, exit.world.name)
+                entranceBeacon.set(NamespacedKey(this, "x"), PersistentDataType.INTEGER, exit.x)
+                entranceBeacon.set(NamespacedKey(this, "y"), PersistentDataType.INTEGER, exit.y)
+                entranceBeacon.set(NamespacedKey(this, "z"), PersistentDataType.INTEGER, exit.z)
+                entranceBeacon.set(NamespacedKey(this, "yaw"), PersistentDataType.INTEGER, -yaw)
                 entranceState.update()
 
-                val exitState = block.state as? Beacon ?: return@thenAccept
+                val exitState = exit.state as? Beacon ?: return@thenAccept
                 val exitBeacon = exitState.persistentDataContainer
                 exitBeacon.set(NamespacedKey(this, "world"), PersistentDataType.STRING, entrance.world.name)
                 exitBeacon.set(NamespacedKey(this, "x"), PersistentDataType.INTEGER, entrance.blockX)
                 exitBeacon.set(NamespacedKey(this, "y"), PersistentDataType.INTEGER, entrance.blockY)
                 exitBeacon.set(NamespacedKey(this, "z"), PersistentDataType.INTEGER, entrance.blockZ)
+                exitBeacon.set(NamespacedKey(this, "yaw"), PersistentDataType.INTEGER, yaw)
                 exitState.update()
 
                 incompletePortals.remove(uuid)
+                entrance.world.playSound(
+                    entrance.clone().add(0.5, 0.0, 0.5),
+                    Sound.ITEM_CHORUS_FRUIT_TELEPORT,
+                    1.0f,
+                    1.0f
+                )
+                exit.world.playSound(
+                    exit.location.clone().add(0.5, 0.0, 0.5),
+                    Sound.ITEM_CHORUS_FRUIT_TELEPORT,
+                    1.0f,
+                    1.0f
+                )
                 player.sendMessage("${ChatColor.GOLD}Portal created!")
             }
         } else {
-            incompletePortals[uuid] = block.location
+            incompletePortals[uuid] = exit.location.clone().apply {
+                yaw = player.location.yaw
+            }
             player.sendMessage("${ChatColor.GOLD}Portal entrance set.")
         }
     }

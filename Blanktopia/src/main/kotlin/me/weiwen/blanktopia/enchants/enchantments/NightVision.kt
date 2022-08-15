@@ -4,6 +4,7 @@ import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent
 import me.weiwen.blanktopia.enchants.*
 import me.weiwen.blanktopia.enchants.managers.addPermanentPotionEffects
 import me.weiwen.blanktopia.enchants.managers.removePermanentPotionEffects
+import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.potion.PotionEffectType
@@ -28,9 +29,9 @@ object NightVision : Listener {
     fun enable(plugin: Blanktopia) {
         NightVision.plugin = plugin
 
-        for (player in plugin.server.onlinePlayers) {
-            for (item in player.inventory.armorContents) {
-                if (item == null) continue
+        for (player in plugin.server.onlinePlayers.filterNotNull()) {
+            for (item in player.inventory.armorContents!!) {
+                if (item == null || item.type == Material.AIR) continue
                 if (item.enchantments.containsKey(NIGHT_VISION)) {
                     player.addPermanentPotionEffects("night_vision", mapOf(
                         Pair(PotionEffectType.NIGHT_VISION, 0)

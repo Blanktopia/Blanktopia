@@ -1,5 +1,6 @@
 package me.weiwen.blanktopia.tweaks
 
+import com.mineinabyss.idofront.platforms.IdofrontPlatforms
 import com.sk89q.worldedit.WorldEdit
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import me.weiwen.blanktopia.tweaks.modules.*
@@ -13,8 +14,6 @@ import java.io.File
 class BlanktopiaTweaks : JavaPlugin() {
     var modules = mutableListOf<Module>()
 
-    private var customBiome: CustomBiome? = null
-
     companion object {
         lateinit var INSTANCE: BlanktopiaTweaks
             private set
@@ -22,6 +21,7 @@ class BlanktopiaTweaks : JavaPlugin() {
 
     override fun onLoad() {
         INSTANCE = this
+        IdofrontPlatforms.load(this, "mineinabyss")
         createConfig()
     }
 
@@ -37,44 +37,7 @@ class BlanktopiaTweaks : JavaPlugin() {
                     sender.sendMessage(ChatColor.GOLD.toString() + "Reloaded configuration!")
                     true
                 }
-                "biome" -> {
-                    if (customBiome == null) {
-                        sender.sendMessage(ChatColor.RED.toString() + "Biome module not loaded.")
-                        return@setExecutor false
-                    }
-                    if (!server.pluginManager.isPluginEnabled("WorldEdit")) {
-                        sender.sendMessage(ChatColor.RED.toString() + "WorldEdit not loaded.")
-                        return@setExecutor false
-                    }
-                    if (sender is Player) {
-                        val bPlayer = BukkitAdapter.adapt(sender)
-                        val region =
-                            WorldEdit.getInstance().sessionManager.get(bPlayer)
-                                .getSelection(bPlayer.world)
-
-                        val world = BukkitAdapter.adapt(region.world)
-                        customBiome?.setBiome(
-                            BukkitAdapter.adapt(world, region.minimumPoint),
-                            BukkitAdapter.adapt(world, region.maximumPoint),
-                            NamespacedKey.fromString(args[1]) ?: NamespacedKey("minecraft", "plains")
-                        )
-
-                        sender.sendMessage(ChatColor.GOLD.toString() + "Set biome to '" + args[1] + "'.")
-                        true
-                    } else {
-                        sender.sendMessage(ChatColor.RED.toString() + "Invalid arguments.")
-                        false
-                    }
-                }
-                else -> {
-                    sender.sendMessage(ChatColor.RED.toString() + "Invalid arguments.")
-                    false
-                }
-            }
-        }
-        if (config.getBoolean("custom-biome")) {
-            customBiome = CustomBiome(this).also {
-                modules.add(it)
+                else -> false
             }
         }
         if (config.getBoolean("use-crafting-table-and-ender-chest-from-inventory")) {

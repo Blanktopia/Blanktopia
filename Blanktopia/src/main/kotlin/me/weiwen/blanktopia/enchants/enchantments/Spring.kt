@@ -29,7 +29,7 @@ object Spring : Listener {
 
     @EventHandler
     fun onPlayerJump(event: PlayerJumpEvent) {
-        for (item in event.player.inventory.armorContents) {
+        for (item in event.player.inventory.armorContents!!) {
             item ?: continue
             if (item.containsEnchantment(SPRING)) {
                 val level = item.getEnchantmentLevel(SPRING)

@@ -1,5 +1,6 @@
 package me.weiwen.blanktopia.enchants
 
+import com.mineinabyss.idofront.platforms.IdofrontPlatforms
 import me.weiwen.blanktopia.enchants.listeners.AnvilListener
 import me.weiwen.blanktopia.enchants.listeners.EnchantingTableListener
 import me.weiwen.blanktopia.enchants.listeners.GrindStoneListener
@@ -20,6 +21,7 @@ class Blanktopia : JavaPlugin() {
 
     override fun onLoad() {
         INSTANCE = this
+        IdofrontPlatforms.load(this, "mineinabyss")
     }
 
     override fun onEnable() {

@@ -1,25 +1,43 @@
 rootProject.name = "Blanktopia"
-include("Blanktopia")
-include("BlanktopiaTweaks")
-include("BlanktopiaPortals")
+
+include(
+    "Blanktopia",
+    "BlanktopiaTweaks",
+    "BlanktopiaPortals",
+)
+
+enableFeaturePreview("VERSION_CATALOGS")
 
 pluginManagement {
     repositories {
         gradlePluginPortal()
+        maven("https://repo.mineinabyss.com/releases")
+        maven("https://papermc.io/repo/repository/maven-public/")
     }
+
+    plugins {
+        val kotlinVersion: String by settings
+        kotlin("jvm") version kotlinVersion
+    }
+
+    val idofrontVersion: String by settings
     resolutionStrategy {
         eachPlugin {
-            val id = requested.id.id
-
-            if (id.startsWith("org.jetbrains.kotlin"))
-                useVersion("1.6.0")
-
-            if(id.startsWith("net.minecrell.plugin-yml.bukkit"))
-                useVersion("0.5.1")
-
-            if(id.startsWith("com.github.johnrengelman.shadow"))
-                useVersion("7.1.0")
+            if (requested.id.id.startsWith("com.mineinabyss.conventions"))
+                useVersion(idofrontVersion)
         }
+    }
+}
+
+dependencyResolutionManagement {
+    val idofrontVersion: String by settings
+
+    repositories {
+        maven("https://repo.mineinabyss.com/releases")
+    }
+
+    versionCatalogs {
+        create("libs").from("com.mineinabyss:catalog:$idofrontVersion")
     }
 }
 
