@@ -58,7 +58,8 @@ fun Player.addPermanentPotionEffects(key: String, effects: Map<PotionEffectType,
                 type,
                 619,
                 level,
-                true
+                true,
+                false,
             )
         )
     }
