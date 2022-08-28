@@ -50,8 +50,6 @@ class SinglePlayerSleep(val plugin: JavaPlugin) : Module, Listener {
 
     private fun skipNight(world: World) {
         world.time = 1000
-        if (world.hasStorm()) {
-            world.setStorm(false)
-        }
+        world.setStorm(false)
     }
 }
