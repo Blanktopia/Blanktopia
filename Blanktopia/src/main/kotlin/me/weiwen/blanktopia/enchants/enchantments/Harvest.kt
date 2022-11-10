@@ -44,8 +44,6 @@ object Harvest : Listener {
 
             event.isCancelled = true
 
-            tool.damage(1)
-
             if (blockData.age < blockData.maximumAge) return
 
             for (drop in event.block.getDrops(tool)) {
