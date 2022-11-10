@@ -44,8 +44,8 @@ object Frost : Listener {
         if (entity is HumanEntity && entity.isBlocking) return
         if (entity is LivingEntity && damager is LivingEntity) {
             val weapon = damager.equipment?.itemInMainHand ?: return
-            if (weapon.containsEnchantment(FROST)) {
-                val level = weapon.getEnchantmentLevel(FROST)
+            if (weapon.enchantments.containsKey(FROST)) {
+                val level = weapon.enchantments[FROST] ?: 1
                 entity.spawnParticle(Particle.SNOWBALL, 20, 0.01)
                 if (event.cause == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
                     entity.playSoundAt(Sound.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS, 0.5f, 0.1f)

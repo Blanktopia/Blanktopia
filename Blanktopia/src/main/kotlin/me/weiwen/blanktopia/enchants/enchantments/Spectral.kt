@@ -39,8 +39,8 @@ object Spectral : Listener {
         if (event.isCancelled) return
         if (entity is LivingEntity && damager is LivingEntity) {
             val weapon = damager.equipment?.itemInMainHand ?: return
-            if (weapon.containsEnchantment(SPECTRAL)) {
-                val level = weapon.getEnchantmentLevel(SPECTRAL)
+            if (weapon.enchantments.containsKey(SPECTRAL)) {
+                val level = weapon.enchantments[SPECTRAL] ?: 1
                 entity.addPotionEffect(PotionEffect(PotionEffectType.GLOWING, 20 + level * 20, 0, true))
             }
         }

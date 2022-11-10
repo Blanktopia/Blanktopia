@@ -38,7 +38,7 @@ object Parry : Listener {
         val entity: Entity = event.entity
         if (entity is HumanEntity && entity.isBlocking) {
             val weapon = entity.equipment?.itemInOffHand ?: return
-            if (weapon.containsEnchantment(PARRY)) {
+            if (weapon.enchantments.containsKey(PARRY)) {
                 val level = weapon.getEnchantmentLevel(PARRY)
                 entity.spawnParticle(Particle.CRIT, 10, 0.01)
                 if (event.isCancelled) return

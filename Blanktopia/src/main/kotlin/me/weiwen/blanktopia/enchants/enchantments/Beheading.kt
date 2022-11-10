@@ -51,7 +51,7 @@ object Beheading : Listener {
         val killer = event.entity.killer
         if (killer != null) {
             val weapon = killer.equipment?.itemInMainHand ?: return
-            if (weapon.containsEnchantment(BEHEADING)) {
+            if (weapon.enchantments.containsKey(BEHEADING)) {
                 if (entity is Player) {
                     val skull = ItemStack(Material.PLAYER_HEAD)
                     val skullMeta = skull.itemMeta as SkullMeta
@@ -700,7 +700,7 @@ object Beheading : Listener {
                     )
                     else -> Pair(0.0, null)
                 }
-                if (skull != null && weapon.getEnchantmentLevel(BEHEADING) * chance > Math.random()) {
+                if (skull != null && (weapon.enchantments[BEHEADING] ?: 1) * chance > Math.random()) {
                     event.drops.add(skull)
                 }
             }

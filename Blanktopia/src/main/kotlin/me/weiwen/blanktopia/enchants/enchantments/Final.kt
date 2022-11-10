@@ -31,10 +31,10 @@ object Final : Listener {
         val items = event.inventory.contents ?: return
         for (item in items) {
             if (item != null) {
-                print(item.containsEnchantment(FINAL))
+                print(item.enchantments.containsKey(FINAL))
             }
         }
-        if (items.any { it != null && it.containsEnchantment(FINAL) }) {
+        if (items.any { it != null && it.enchantments.containsKey(FINAL) }) {
             event.result = null
             for (viewer in event.viewers) {
                 (viewer as? Player)?.updateInventory()

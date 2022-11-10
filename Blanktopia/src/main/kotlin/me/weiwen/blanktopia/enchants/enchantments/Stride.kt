@@ -29,8 +29,8 @@ object Stride : Listener {
     fun onPlayerArmorChange(event: PlayerArmorChangeEvent) {
         val newItem = event.newItem
         val oldItem = event.oldItem
-        if (newItem != null && newItem.containsEnchantment(STRIDE)) {
-            event.player.walkSpeed = when (newItem.getEnchantmentLevel(STRIDE)) {
+        if (newItem != null && newItem.enchantments.containsKey(STRIDE)) {
+            event.player.walkSpeed = when (newItem.enchantments[STRIDE]) {
                 0 -> 0.2f
                 1 -> 0.225f
                 2 -> 0.240f
@@ -39,7 +39,7 @@ object Stride : Listener {
                 5 -> 0.275f
                 else -> 0.2f
             }
-        } else if (oldItem != null && oldItem.containsEnchantment(STRIDE)) {
+        } else if (oldItem != null && oldItem.enchantments.containsKey(STRIDE)) {
             event.player.walkSpeed = 0.2f
         }
     }

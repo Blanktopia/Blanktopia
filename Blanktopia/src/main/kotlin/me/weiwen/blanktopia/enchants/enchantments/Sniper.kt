@@ -31,8 +31,8 @@ object Sniper : Listener {
     fun onEntityShootBow(event: EntityShootBowEvent) {
         val item = event.entity.equipment?.itemInMainHand ?: return
 
-        if (!item.containsEnchantment(SNIPER)) return
-        val level = item.getEnchantmentLevel(SNIPER)
+        if (!item.enchantments.containsKey(SNIPER)) return
+        val level = item.enchantments[SNIPER]
 
         val projectile = event.projectile
         val boost =

@@ -54,7 +54,7 @@ object Smelt : Listener {
     fun onBlockDropItem(event: BlockDropItemEvent) {
         val player = event.player
         val tool = player.inventory.itemInMainHand
-        if (!tool.containsEnchantment(SMELT)) return
+        if (!tool.enchantments.containsKey(SMELT)) return
         val block = event.block
         var smelted = false
         var experience = 0.0

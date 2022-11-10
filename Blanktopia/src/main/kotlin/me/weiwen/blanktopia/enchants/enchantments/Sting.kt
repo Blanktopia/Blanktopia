@@ -41,8 +41,8 @@ object Sting : Listener {
         if (entity is HumanEntity && entity.isBlocking) return
         if (entity is LivingEntity && damager is LivingEntity) {
             val weapon = damager.equipment?.itemInMainHand ?: return
-            if (weapon.containsEnchantment(STING)) {
-                val level = weapon.getEnchantmentLevel(STING)
+            if (weapon.enchantments.containsKey(STING)) {
+                val level = weapon.enchantments[STING]
                 entity.spawnParticle(Particle.SNEEZE, 10, 0.01)
                 entity.addPotionEffect(PotionEffect(PotionEffectType.POISON, 80,
                     when (level) {

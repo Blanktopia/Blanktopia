@@ -37,7 +37,7 @@ object Soulbound : Listener {
         }
 
         val items = event.entity.inventory.contents?.map {
-            if (it != null && (it.containsEnchantment(SOULBOUND) ||
+            if (it != null && (it.enchantments.containsKey(SOULBOUND) ||
                         it.itemMeta?.lore?.contains(ChatColor.GRAY.toString() + "Soulbound") == true) // compat
             ) {
                 event.drops.remove(it)

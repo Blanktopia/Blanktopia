@@ -38,7 +38,7 @@ object Rush : Listener {
         val entity: Entity = event.entity
         if (entity is HumanEntity && entity.isBlocking) {
             val weapon = entity.equipment?.itemInOffHand ?: return
-            if (weapon.containsEnchantment(RUSH)) {
+            if (weapon.enchantments.containsKey(RUSH)) {
                 val level = weapon.getEnchantmentLevel(RUSH)
                 entity.spawnParticle(Particle.CRIT, 10, 0.01)
                 if (event.isCancelled) return
