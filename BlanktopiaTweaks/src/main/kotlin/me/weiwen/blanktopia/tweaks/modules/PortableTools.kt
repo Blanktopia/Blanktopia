@@ -45,25 +45,25 @@ class PortableTools(private val plugin: JavaPlugin) :
     private fun usePortableTool(player: Player, item: ItemStack): Boolean {
         val scheduler = plugin.server.scheduler
         when (item.type) {
-            Material.CRAFTING_TABLE -> scheduler.scheduleSyncDelayedTask(plugin, {
+            Material.CRAFTING_TABLE -> scheduler.runTaskLater(plugin, { ->
                 player.openWorkbench(null, true)
             }, 1)
             Material.ENDER_CHEST -> {
                 player.world.playSound(player.location, Sound.BLOCK_ENDER_CHEST_OPEN, SoundCategory.BLOCKS, 1.0f, 1.0f)
-                scheduler.scheduleSyncDelayedTask(plugin, {
+                scheduler.runTaskLater(plugin, { ->
                     player.openInventory(player.enderChest)
                 }, 1)
             }
-            Material.LOOM -> scheduler.scheduleSyncDelayedTask(plugin, {
+            Material.LOOM -> scheduler.runTaskLater(plugin, { ->
                 player.openLoom(null, true)
             }, 1)
-            Material.STONECUTTER -> scheduler.scheduleSyncDelayedTask(plugin, {
+            Material.STONECUTTER -> scheduler.runTaskLater(plugin, { ->
                 player.openStonecutter(null, true)
             }, 1)
-            Material.GRINDSTONE -> scheduler.scheduleSyncDelayedTask(plugin, {
+            Material.GRINDSTONE -> scheduler.runTaskLater(plugin, { ->
                 player.openGrindstone(null, true)
             }, 1)
-            Material.CARTOGRAPHY_TABLE -> scheduler.scheduleSyncDelayedTask(plugin, {
+            Material.CARTOGRAPHY_TABLE -> scheduler.runTaskLater(plugin, { ->
                 player.openCartographyTable(null, true)
             }, 1)
             else -> return false

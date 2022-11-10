@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("com.mineinabyss.conventions.kotlin")
-    id("com.mineinabyss.conventions.copyjar") apply false
     id("net.minecrell.plugin-yml.bukkit") version "0.5.2" apply false
     id("com.github.johnrengelman.shadow") version "7.1.0" apply false
 }
@@ -42,5 +41,21 @@ subprojects {
 
     tasks.withType<ShadowJar> {
         classifier = null
+    }
+
+    val pluginPath = project.findProperty("plugin_path")
+
+    if(pluginPath != null) {
+        tasks {
+            named<DefaultTask>("build") {
+                dependsOn("shadowJar")
+                doLast {
+                    copy {
+                        from(findByName("reobfJar") ?: findByName("shadowJar") ?: findByName("jar"))
+                        into(pluginPath)
+                    }
+                }
+            }
+        }
     }
 }
