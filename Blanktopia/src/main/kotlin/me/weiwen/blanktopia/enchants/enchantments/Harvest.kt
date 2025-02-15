@@ -55,7 +55,7 @@ object Harvest : Listener {
                 }
             }
 
-            event.block.spawnParticle(Particle.VILLAGER_HAPPY, 4, 0.01)
+            event.block.spawnParticle(Particle.HAPPY_VILLAGER, 4, 0.01)
             blockData.age = 0
             event.block.blockData = blockData
         }

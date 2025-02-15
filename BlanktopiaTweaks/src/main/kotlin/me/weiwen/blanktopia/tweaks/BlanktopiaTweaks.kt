@@ -1,6 +1,5 @@
 package me.weiwen.blanktopia.tweaks
 
-import com.mineinabyss.idofront.platforms.IdofrontPlatforms
 import com.sk89q.worldedit.WorldEdit
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import me.weiwen.blanktopia.tweaks.modules.*
@@ -21,7 +20,6 @@ class BlanktopiaTweaks : JavaPlugin() {
 
     override fun onLoad() {
         INSTANCE = this
-        IdofrontPlatforms.load(this, "mineinabyss")
         createConfig()
     }
 

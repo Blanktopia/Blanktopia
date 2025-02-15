@@ -7,6 +7,7 @@ import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
+import org.bukkit.Registry
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.enchantments.EnchantmentTarget
 import org.bukkit.entity.EntityCategory
@@ -27,12 +28,8 @@ open class CustomEnchantment(
     val anvilCostPerLevel: Int,
     val conflicts: () -> Set<Enchantment>,
     val listener: Listener) :
-    Enchantment(
-        NamespacedKey(
-            Blanktopia.INSTANCE,
-            _key
-        )
-    ) {
+    Enchantment() {
+
     var _isTreasure = false
     var _startLevel = 1
 

@@ -2,60 +2,49 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("com.mineinabyss.conventions.kotlin")
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.2" apply false
-    id("com.github.johnrengelman.shadow") version "7.1.0" apply false
+    kotlin("jvm") version "1.9.22"
+    kotlin("plugin.serialization") version "1.9.22"
+    id("maven-publish")
+    id("net.minecrell.plugin-yml.bukkit") version "0.6.0" apply false
+    id("io.github.goooler.shadow") version "8.1.7"
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven("https://repo.minebench.de/")
+    maven("https://oss.sonatype.org/content/repositories/snapshots/")
+    maven("https://repo.dmulloy2.net/nexus/repository/public/")
+    maven("https://repo.md-5.net/content/repositories/releases/")
+    maven("https://ci.ender.zone/plugin/repository/everything/")
+}
+
+dependencies {
+    subprojects
 }
 
 subprojects {
-    apply(plugin = "java")
-    apply(plugin = "com.mineinabyss.conventions.kotlin")
-    apply(plugin = "com.mineinabyss.conventions.copyjar")
+    apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
     apply(plugin = "net.minecrell.plugin-yml.bukkit")
-    apply(plugin = "com.github.johnrengelman.shadow")
-
-
-    tasks.withType<KotlinCompile> {
-        kotlinOptions.freeCompilerArgs = listOf("-opt-in=kotlinx.serialization.ExperimentalSerializationApi")
-    }
-
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        maven("https://repo.mineinabyss.com")
-        maven("https://repo.minebench.de/")
-        maven("https://oss.sonatype.org/content/repositories/snapshots/")
-        maven("https://repo.dmulloy2.net/nexus/repository/public/")
-        maven("https://repo.md-5.net/content/repositories/releases/")
-        maven("https://ci.ender.zone/plugin/repository/everything/")
-    }
-
 
     dependencies {
-        val libs = rootProject.libs
-
-        implementation(libs.idofront.platform.loader)
-        compileOnly(libs.kotlin.stdlib)
-        compileOnly("io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT")
+        compileOnly(kotlin("stdlib"))
+        compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
     }
 
     tasks.withType<ShadowJar> {
-        classifier = null
-    }
+        fun reloc(pkg: String) = relocate(pkg, "$group.dependency.$pkg")
 
-    val pluginPath = project.findProperty("plugin_path")
-
-    if(pluginPath != null) {
-        tasks {
-            named<DefaultTask>("build") {
-                dependsOn("shadowJar")
-                doLast {
-                    copy {
-                        from(findByName("reobfJar") ?: findByName("shadowJar") ?: findByName("jar"))
-                        into(pluginPath)
-                    }
-                }
-            }
-        }
+        reloc("org.bstats")
+        reloc("de.themoep.minedown")
+        reloc("cloud.commandframework")
+        reloc("com.github.stefvanschie.inventoryframework")
     }
 }

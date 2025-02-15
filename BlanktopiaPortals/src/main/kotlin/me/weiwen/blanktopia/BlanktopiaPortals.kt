@@ -1,6 +1,5 @@
 package me.weiwen.blanktopia
 
-import com.mineinabyss.idofront.platforms.IdofrontPlatforms
 import io.papermc.lib.PaperLib
 import me.ryanhamshire.GriefPrevention.GriefPrevention
 import org.bukkit.*
@@ -28,7 +27,6 @@ class BlanktopiaPortals : JavaPlugin(), Listener {
 
     override fun onLoad() {
         INSTANCE = this
-        IdofrontPlatforms.load(this, "mineinabyss")
     }
 
     override fun onEnable() {
