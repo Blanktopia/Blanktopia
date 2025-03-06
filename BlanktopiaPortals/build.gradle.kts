@@ -1,8 +1,3 @@
-repositories {
-    maven("https://papermc.io/repo/repository/maven-public/")
-    maven("https://jitpack.io")
-}
-
 dependencies {
     implementation("io.papermc:paperlib:1.0.7")
     compileOnly("com.github.TechFortress:GriefPrevention:16.18")

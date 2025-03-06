@@ -1,6 +1,6 @@
 repositories {
     // ChestSort
-    maven { url = uri("https://hub.jeff-media.com/nexus/repository/jeff-media-public/") }
+    maven { url = uri("https://repo.jeff-media.com/public/") }
 
     // WorldEdit
     maven { url = uri("https://maven.enginehub.org/repo/") }
@@ -16,7 +16,7 @@ bukkit {
     name = "BlanktopiaTweaks"
     version = "1.0.0"
     description = "Blanktopia's custom tweaks"
-    apiVersion = "1.16"
+    apiVersion = "1.21.4"
     author = "Goh Wei Wen <goweiwen@gmail.com>"
     website = "www.blanktopia.com"
     depend = listOf()

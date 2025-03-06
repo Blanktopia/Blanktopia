@@ -1,11 +1,7 @@
 package me.weiwen.blanktopia.tweaks
 
-import com.sk89q.worldedit.WorldEdit
-import com.sk89q.worldedit.bukkit.BukkitAdapter
 import me.weiwen.blanktopia.tweaks.modules.*
 import org.bukkit.ChatColor
-import org.bukkit.NamespacedKey
-import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 
@@ -67,6 +63,12 @@ class BlanktopiaTweaks : JavaPlugin() {
         }
         if (config.getBoolean("suffocate-keep-inventory")) {
             modules.add(SuffocateKeepInventory(this))
+        }
+        if (config.getList("random-sized-entities")?.isNotEmpty() == true) {
+            modules.add(RandomSizedEntities(this))
+        }
+        if (config.getBoolean("protect-named-entities")) {
+            modules.add(ProtectNamedEntities(this))
         }
         for (module in modules) {
             module.enable()

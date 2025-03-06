@@ -44,7 +44,7 @@ class Petting(private val plugin: JavaPlugin) :
         if (!event.player.isSneaking) return
 
         if (entity is Damageable && entity is Attributable) {
-            val maxHealth = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value ?: return
+            val maxHealth = entity.getAttribute(Attribute.MAX_HEALTH)?.value ?: return
             entity.health = min(entity.health + 1, maxHealth)
         }
 
