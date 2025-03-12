@@ -18,6 +18,9 @@ class RandomSizedEntities(private val plugin: JavaPlugin) :
 
     private var entitySpawnReasons: Set<CreatureSpawnEvent.SpawnReason> = setOf(
         CreatureSpawnEvent.SpawnReason.NATURAL,
+        CreatureSpawnEvent.SpawnReason.EGG,
+        CreatureSpawnEvent.SpawnReason.DISPENSE_EGG,
+        CreatureSpawnEvent.SpawnReason.SPAWNER_EGG,
         CreatureSpawnEvent.SpawnReason.BREEDING
     )
     private var randomSizedEntities: Set<EntityType> = setOf()
@@ -60,7 +63,7 @@ class RandomSizedEntities(private val plugin: JavaPlugin) :
         val fatherScale = event.father.getAttribute(Attribute.SCALE) ?: return
         val motherScale = event.mother.getAttribute(Attribute.SCALE) ?: return
         val baseScale = ((fatherScale.value + motherScale.value) / 2 - 1) * 0.5
-        val scale = ThreadLocalRandom.current().nextGaussian(baseScale, 0.04)
+        val scale = ThreadLocalRandom.current().nextGaussian(baseScale, 0.08)
         val attribute = entity.getAttribute(Attribute.SCALE) ?: return
         if (attribute.getModifier(key) != null) return
         attribute.addModifier(AttributeModifier(key, scale, AttributeModifier.Operation.MULTIPLY_SCALAR_1))
