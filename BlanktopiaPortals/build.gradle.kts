@@ -8,7 +8,7 @@ bukkit {
     name = "BlanktopiaPortals"
     version = "1.0.0"
     description = "Blanktopia's custom plugin"
-    apiVersion = "1.16"
+    apiVersion = "26.3"
     author = "Goh Wei Wen <goweiwen@gmail.com>"
     website = "www.blanktopia.com"
     depend = listOf("GriefPrevention")

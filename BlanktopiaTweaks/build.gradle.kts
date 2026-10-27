@@ -16,7 +16,7 @@ bukkit {
     name = "BlanktopiaTweaks"
     version = "1.0.0"
     description = "Blanktopia's custom tweaks"
-    apiVersion = "1.21.4"
+    apiVersion = "26.3"
     author = "Goh Wei Wen <goweiwen@gmail.com>"
     website = "www.blanktopia.com"
     depend = listOf()

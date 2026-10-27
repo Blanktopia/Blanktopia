@@ -53,7 +53,7 @@ subprojects {
     dependencies {
         compileOnly(kotlin("stdlib"))
         compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.12.0")
-        compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+        compileOnly("io.papermc.paper:paper-api:26.3.build.226-stable")
     }
 
     tasks.withType<ShadowJar> {
