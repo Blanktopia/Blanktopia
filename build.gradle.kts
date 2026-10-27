@@ -2,16 +2,16 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "2.1.10"
-    kotlin("plugin.serialization") version "2.1.10"
+    kotlin("jvm") version "2.4.21"
+    kotlin("plugin.serialization") version "2.4.21"
     id("maven-publish")
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0" apply false
-    id("io.github.goooler.shadow") version "8.1.7"
+    id("com.gradleup.shadow") version "9.6.1"
 }
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion.set(JavaLanguageVersion.of(25))
     }
 }
 
@@ -24,7 +24,7 @@ repositories {
     maven("https://repo.dmulloy2.net/nexus/repository/public/")
     maven("https://repo.md-5.net/content/repositories/releases/")
     maven("https://ci.ender.zone/plugin/repository/everything/")
-    maven("https://papermc.io/repo/repository/maven-public/")
+    maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://jitpack.io")
 }
 
@@ -46,13 +46,13 @@ subprojects {
         maven("https://repo.dmulloy2.net/nexus/repository/public/")
         maven("https://repo.md-5.net/content/repositories/releases/")
         maven("https://ci.ender.zone/plugin/repository/everything/")
-        maven("https://papermc.io/repo/repository/maven-public/")
+        maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://jitpack.io")
     }
 
     dependencies {
         compileOnly(kotlin("stdlib"))
-        compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+        compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.12.0")
         compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
     }
 
