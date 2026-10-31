@@ -47,7 +47,7 @@ class RandomSizedEntities(private val plugin: JavaPlugin) :
         if (entity.entitySpawnReason !in entitySpawnReasons) return
         if (entity.entitySpawnReason == CreatureSpawnEvent.SpawnReason.BREEDING) return
 
-        val scale = ThreadLocalRandom.current().nextGaussian(0.0, 0.08)
+        val scale = ThreadLocalRandom.current().nextGaussian(0.0, 0.12).coerceIn(-2.0 / 3, 2.0)
         val attribute = entity.getAttribute(Attribute.SCALE) ?: return
         if (attribute.getModifier(key) != null) return
         attribute.addModifier(AttributeModifier(key, scale, AttributeModifier.Operation.MULTIPLY_SCALAR_1))
@@ -62,8 +62,8 @@ class RandomSizedEntities(private val plugin: JavaPlugin) :
 
         val fatherScale = event.father.getAttribute(Attribute.SCALE) ?: return
         val motherScale = event.mother.getAttribute(Attribute.SCALE) ?: return
-        val baseScale = ((fatherScale.value + motherScale.value) / 2 - 1) * 0.5
-        val scale = ThreadLocalRandom.current().nextGaussian(baseScale, 0.08)
+        val parentScale = (fatherScale.value + motherScale.value) / 2
+        val scale = (parentScale * (1 + ThreadLocalRandom.current().nextGaussian(0.0, 0.06)) - 1).coerceIn(-2.0 / 3, 2.0)
         val attribute = entity.getAttribute(Attribute.SCALE) ?: return
         if (attribute.getModifier(key) != null) return
         attribute.addModifier(AttributeModifier(key, scale, AttributeModifier.Operation.MULTIPLY_SCALAR_1))
