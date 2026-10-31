@@ -67,6 +67,9 @@ class BlanktopiaTweaks : JavaPlugin() {
         if (config.getList("random-sized-entities")?.isNotEmpty() == true) {
             modules.add(RandomSizedEntities(this))
         }
+        if (config.isConfigurationSection("server-links")) {
+            modules.add(ServerLinks(this))
+        }
         if (config.getBoolean("protect-named-entities")) {
             modules.add(ProtectNamedEntities(this))
         }
