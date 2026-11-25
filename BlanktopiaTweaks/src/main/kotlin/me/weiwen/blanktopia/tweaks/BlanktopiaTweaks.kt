@@ -73,6 +73,7 @@ class BlanktopiaTweaks : JavaPlugin() {
         if (config.getBoolean("protect-named-entities")) {
             modules.add(ProtectNamedEntities(this))
         }
+        modules.add(LegacyCrateKeys(this))
         for (module in modules) {
             module.enable()
         }
